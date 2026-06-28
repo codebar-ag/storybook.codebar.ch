@@ -1,0 +1,16 @@
+/* Storybook canvas styling — mirrors a consuming app: tokens first, then
+   Tailwind, then `@source` so the atom SFC classes get generated. */
+@import "../src/tokens.css";
+@import "tailwindcss";
+@source "../src";
+
+:root {
+    color-scheme: light;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    -webkit-font-smoothing: antialiased;
+}
