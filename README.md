@@ -108,6 +108,16 @@ npm run typecheck        # vue-tsc
 npm run lint
 ```
 
+## What's new in v1.4.0
+
+- **Inter is the UI font.** The design system previously rendered everything in
+  JetBrains Mono; the UI is now set in Inter (loaded via Google Fonts in
+  `tokens.css`, exposed as the `--font-sans` token). JetBrains Mono stays as
+  the accent face (`--font-mono`) for ids and code — `IdCell`,
+  `PrimarySubtitleCell`'s mono subtitle, and `CodePreview` are unchanged.
+  Chart defaults (`chartTheme`) follow the new stack. No API changes; consuming
+  apps pick the font up automatically through `tokens.css`.
+
 ## What's new in v1.3.0
 
 - **New components** — atoms `Avatar`, `Divider`, `Kbd`, `Spinner`; molecules
