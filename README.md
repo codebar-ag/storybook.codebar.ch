@@ -1,10 +1,10 @@
-# @codebar-ag/storybook
+# @codebar-ag/storybook-docuhub
 
 Shared **Vue 3 + Tailwind v4** design-system atoms and design tokens for codebar-ag
 applications, documented in **Storybook**. One source of truth so every app looks
 identical.
 
-**Live Storybook:** https://codebar-ag.github.io/storybook.codebar.ch/ — every atom
+**Live Storybook:** https://codebar-ag.github.io/storybook.docuhub.app/ — every atom
 and its variants, deployed automatically from `main`.
 
 > **Atoms only.** This package ships the basic building blocks (button, card,
@@ -23,11 +23,11 @@ The package is published to **GitHub Packages**. Add an `.npmrc` to the consumin
 ```
 
 ```bash
-npm install @codebar-ag/storybook
+npm install @codebar-ag/storybook-docuhub
 ```
 
-> **Note:** the package is public, but GitHub's npm registry still requires
-> authentication to install. Set `GITHUB_TOKEN` to any GitHub token with the
+> **Note:** the package is private; GitHub's npm registry requires
+> authentication to install. Set `GITHUB_TOKEN` to a GitHub token with the
 > `read:packages` scope (a classic PAT works) — locally, in CI, and on deploy
 > targets.
 
@@ -36,9 +36,9 @@ npm install @codebar-ag/storybook
 **1. Tokens + Tailwind** — in your app's `app.css`:
 
 ```css
-@import "@codebar-ag/storybook/tokens.css";   /* @theme: colors, type scale, radius */
+@import "@codebar-ag/storybook-docuhub/tokens.css";   /* @theme: colors, type scale, radius */
 @import "tailwindcss";
-@source "../../node_modules/@codebar-ag/storybook/dist";  /* scan atoms for classes */
+@source "../../node_modules/@codebar-ag/storybook-docuhub/dist";  /* scan atoms for classes */
 ```
 
 The `@source` line is required: Tailwind must scan the compiled atoms so their
@@ -47,20 +47,20 @@ utility classes are generated in your app's stylesheet.
 **2. Register the atoms** — in your Vue entry:
 
 ```ts
-import { Flows } from '@codebar-ag/storybook';
+import { Flows } from '@codebar-ag/storybook-docuhub';
 createApp(...).use(Flows);   // global <Button>, <Card>, <Icon>, …
 ```
 
 Or import individually:
 
 ```ts
-import { Button, Card, useToast } from '@codebar-ag/storybook';
+import { Button, Card, useToast } from '@codebar-ag/storybook-docuhub';
 ```
 
 **3. Toasts** — mount `<Toaster />` once near the root, then `push()` from anywhere:
 
 ```ts
-import { pushToast } from '@codebar-ag/storybook';
+import { pushToast } from '@codebar-ag/storybook-docuhub';
 pushToast({ message: 'Saved.', type: 'success' });
 ```
 
@@ -70,7 +70,7 @@ Component-based consistency is the point of this package: every app should look
 identical because every app is built from the same atoms.
 
 1. **Check Storybook first.** Browse the
-   [live Storybook](https://codebar-ag.github.io/storybook.codebar.ch/) (or run
+   [live Storybook](https://codebar-ag.github.io/storybook.docuhub.app/) (or run
    `npm run dev` in this package) and search `src/index.ts`'s barrel export before
    writing any markup for a new screen or feature.
 2. **Never re-implement an atom.** If this package already ships a `Button`,
@@ -107,6 +107,35 @@ npm run build-storybook  # static styleguide → storybook-static/
 npm run typecheck        # vue-tsc
 npm run lint
 ```
+
+## Migration notes (v1.3, unreleased)
+
+Non-breaking, but worth knowing when upgrading:
+
+- **Tones unified.** `Badge`/`StatusBadge` now use the semantic tones
+  `neutral | info | success | warning | danger`; `Alert` gained `danger`.
+  The old values (`gray`/`blue`/`green`/`amber`/`red`, Alert's `error`) keep
+  rendering identically via `resolveTone()` but log a dev-only deprecation
+  warning and will be removed in the next major.
+- **Dropdown DOM changed.** The root moved from `<details>/<summary>` to
+  `<div><button aria-haspopup="menu">…` with full keyboard support (arrows,
+  Home/End, Escape, click-outside). Props and slots are unchanged; only CSS
+  targeting `details`/`summary` needs updating. Optional `v-model:open`.
+- **Button** gained a `loading` prop (spinner + `disabled` + `aria-busy`);
+  the default slot is now wrapped in a layout `<span>`.
+- **Modal** now traps focus, locks page scroll, restores focus on close and
+  supports `initialFocus`; API unchanged.
+- **FileInput** supports `v-model` (`File[]`); the previous `change`
+  (FileList) emit is retained. It now renders inside the standard control box.
+- **`Switch`** is a new alias export for `Toggle` (both names work).
+- **Components moved** into `src/components/{atoms,molecules,organisms,layouts}`;
+  the public API (`src/index.ts`) is unchanged.
+- **Storybook story IDs changed** with the new `Foundations/Atoms/Molecules/
+  Organisms/Layouts/Pages` hierarchy — deep links into the published
+  styleguide need re-copying.
+- **Bugfix:** dismissed toasts were hidden but never removed from the DOM
+  (`useToast` reassigned the array its consumers had captured); they are now
+  spliced in place.
 
 ## License
 
