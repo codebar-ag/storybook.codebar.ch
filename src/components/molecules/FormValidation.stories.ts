@@ -69,10 +69,10 @@ export const ServerDrivenErrors: Story = {
         await expect(nameInput).toHaveAttribute('aria-describedby', 'name-error');
 
         // Fixing the fields clears the error state on resubmit.
-        await userEvent.type(nameInput, 'Luxor Production');
+        await userEvent.type(nameInput, 'Mustermann Production');
         const urlInput = canvas.getByLabelText('DocuWare URL');
         await userEvent.clear(urlInput);
-        await userEvent.type(urlInput, 'https://luxor.docuware.cloud');
+        await userEvent.type(urlInput, 'https://mustermann.docuware.cloud');
         await userEvent.click(canvas.getByRole('button', { name: 'Save instance' }));
         await expect(canvas.queryByText('Could not save')).not.toBeInTheDocument();
     },

@@ -6,7 +6,7 @@ const meta: Meta<typeof PrimarySubtitleCell> = {
     component: PrimarySubtitleCell,
     args: {
         primary: 'Invoice 2026-0142.pdf',
-        subtitle: 'Invoices · DocuWare Luxor',
+        subtitle: 'Invoices · DocuWare Mustermann',
     },
 };
 
@@ -20,7 +20,7 @@ export const Default: Story = {};
 export const MonoSubtitle: Story = {
     args: {
         primary: 'search-documents',
-        subtitle: 'docuware.luxor.search-documents-tool',
+        subtitle: 'docuware.mustermann.search-documents-tool',
         subtitleMono: true,
     },
 };

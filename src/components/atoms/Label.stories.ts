@@ -30,7 +30,7 @@ export const WithInput: Story = {
         template: `
             <div class="w-80 space-y-1.5">
                 <Label for="host">Host</Label>
-                <Input name="host" placeholder="luxor.docuware.cloud" />
+                <Input name="host" placeholder="mustermann.docuware.cloud" />
             </div>`,
     }),
 };

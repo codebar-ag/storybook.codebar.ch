@@ -20,7 +20,7 @@ interface DocumentRow extends Record<string, unknown> {
 const documents: DocumentRow[] = [
     { id: 4711, title: 'Invoice 2026-0142', cabinet: 'e_invoices', trust: 'Green', amount: 1240.5 },
     { id: 4712, title: 'Invoice 2026-0143', cabinet: 'e_invoices', trust: 'Yellow', amount: 320 },
-    { id: 4713, title: 'Framework contract Sonepar', cabinet: 'e_contracts', trust: 'Green', amount: 15800 },
+    { id: 4713, title: 'Framework contract Mustermann', cabinet: 'e_contracts', trust: 'Green', amount: 15800 },
     { id: 4714, title: 'Delivery note 88-1204', cabinet: 'b_inbox', trust: 'Red', amount: 0 },
     { id: 4715, title: 'Invoice 2026-0144', cabinet: 'e_invoices', trust: 'Green', amount: 87.9 },
 ];

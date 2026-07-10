@@ -34,8 +34,8 @@ export const StackedList: Story = {
             <div class="bg-surface border border-line rounded-surface overflow-hidden max-w-lg">
                 <ListRow href="#" :first="true">
                     <template #leading><ListIcon name="server" /></template>
-                    <div class="font-medium text-ink">DocuWare Luxor</div>
-                    <div class="text-xs text-muted">luxor.docuware.cloud</div>
+                    <div class="font-medium text-ink">DocuWare Mustermann</div>
+                    <div class="text-xs text-muted">mustermann.docuware.cloud</div>
                     <template #trailing><Badge variant="success">Connected</Badge></template>
                 </ListRow>
                 <ListRow href="#">

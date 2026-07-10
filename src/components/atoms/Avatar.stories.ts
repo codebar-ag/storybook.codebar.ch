@@ -7,7 +7,7 @@ const meta: Meta<typeof Avatar> = {
     argTypes: {
         size: { control: 'inline-radio', options: ['sm', 'md', 'lg'] },
     },
-    args: { name: 'Sebastian Burgin', size: 'md' },
+    args: { name: 'Max Mustermann', size: 'md' },
 };
 
 export default meta;
@@ -20,9 +20,9 @@ export const Sizes: Story = {
         components: { Avatar },
         template: `
             <div class="flex items-center gap-3">
-                <Avatar name="Sebastian Burgin" size="sm" />
-                <Avatar name="Sebastian Burgin" size="md" />
-                <Avatar name="Sebastian Burgin" size="lg" />
+                <Avatar name="Max Mustermann" size="sm" />
+                <Avatar name="Max Mustermann" size="md" />
+                <Avatar name="Max Mustermann" size="lg" />
             </div>`,
     }),
 };

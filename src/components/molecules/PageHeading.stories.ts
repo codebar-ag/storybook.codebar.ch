@@ -17,12 +17,12 @@ type Story = StoryObj<typeof PageHeading>;
 
 export const Default: Story = {};
 
-export const WithEyebrow: Story = { args: { eyebrow: 'Luxor Haushaltsapparate AG' } };
+export const WithEyebrow: Story = { args: { eyebrow: 'Mustermann AG' } };
 
 export const WithDescription: Story = {
     render: () => ({
         components: { PageHeading },
-        template: `<PageHeading eyebrow="Luxor Haushaltsapparate AG">
+        template: `<PageHeading eyebrow="Mustermann AG">
             File cabinets
             <template #description>
                 Archives and document trays available to the connected MCP gateway.

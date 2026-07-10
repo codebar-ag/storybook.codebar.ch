@@ -53,7 +53,7 @@ interface DocumentRow extends Record<string, unknown> {
 const documents: DocumentRow[] = [
     { id: 4711, title: 'Invoice 2026-0142', cabinet: 'e_invoices', trust: 'Green', filedAt: '2026-07-09' },
     { id: 4712, title: 'Invoice 2026-0143', cabinet: 'e_invoices', trust: 'Yellow', filedAt: '2026-07-09' },
-    { id: 4713, title: 'Framework contract Sonepar', cabinet: 'e_contracts', trust: 'Green', filedAt: '2026-07-08' },
+    { id: 4713, title: 'Framework contract Mustermann', cabinet: 'e_contracts', trust: 'Green', filedAt: '2026-07-08' },
     { id: 4714, title: 'Delivery note 88-1204', cabinet: 'b_inbox', trust: 'Red', filedAt: '2026-07-08' },
     { id: 4715, title: 'Invoice 2026-0144', cabinet: 'e_invoices', trust: 'Green', filedAt: '2026-07-07' },
     { id: 4716, title: 'HR onboarding P. Meier', cabinet: 'e_hr', trust: 'Yellow', filedAt: '2026-07-07' },
@@ -87,7 +87,7 @@ const shell = `
             <template #brand><span class="text-sm font-semibold text-ink">DocuHub</span></template>
             <template #actions>
                 <Badge variant="success">Connected</Badge>
-                <Avatar name="Sebastian Burgin" size="sm" />
+                <Avatar name="Max Mustermann" size="sm" />
             </template>
         </Navbar>
     </template>`;
@@ -208,8 +208,8 @@ export const Settings: Story = {
             Input, InputNumber, Navbar, PageHeading, Sidebar, SidebarGroup, SidebarItem, Tabs, Toggle,
         },
         setup: () => {
-            const name = ref('Luxor Haushaltsapparate AG');
-            const url = ref('luxor.docuware.cloud');
+            const name = ref('Mustermann AG');
+            const url = ref('mustermann.docuware.cloud');
             const retries = ref(3);
             const autoFile = ref(true);
             const errors = ref<Record<string, string> | null>(null);

@@ -7,7 +7,7 @@ import Toaster from '../organisms/Toaster.vue';
 const meta: Meta<typeof CodeLine> = {
     title: 'Molecules/CodeLine',
     component: CodeLine,
-    args: { value: 'https://mcp.gateway.test/mcp/acme/luxor', copyable: true },
+    args: { value: 'https://mcp.gateway.test/mcp/acme/mustermann', copyable: true },
     render: (args) => ({
         components: { CodeLine, Toaster },
         setup: () => ({ args }),
@@ -31,7 +31,7 @@ export const Labeled: Story = {
     render: () => ({
         components: { LabeledCodeBlock, Toaster },
         template: `<div class="max-w-lg space-y-3">
-            <LabeledCodeBlock label="MCP server URL" value="https://mcp.gateway.test/mcp/acme/luxor" />
+            <LabeledCodeBlock label="MCP server URL" value="https://mcp.gateway.test/mcp/acme/mustermann" />
             <LabeledCodeBlock label="Client secret" value="dhs_demo_placeholder_value" />
             <Toaster />
         </div>`,

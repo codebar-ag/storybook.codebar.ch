@@ -31,7 +31,7 @@ export const SingleColumn: Story = {
         template: `
             <FormGrid :cols="1" class="max-w-md">
                 <Field label="Display name" name="name"><Input name="name" /></Field>
-                <Field label="Host" name="host"><Input name="host" placeholder="luxor.docuware.cloud" /></Field>
+                <Field label="Host" name="host"><Input name="host" placeholder="mustermann.docuware.cloud" /></Field>
             </FormGrid>`,
     }),
 };
@@ -43,7 +43,7 @@ export const ThreeColumn: Story = {
             <FormGrid :cols="3" class="max-w-4xl">
                 <Field label="File cabinet" name="cabinet"><Input name="cabinet" placeholder="e_invoices" /></Field>
                 <Field label="Flow" name="flow"><Input name="flow" placeholder="Invoice approval" /></Field>
-                <Field label="Instance" name="instance"><Input name="instance" placeholder="DocuWare Luxor" /></Field>
+                <Field label="Instance" name="instance"><Input name="instance" placeholder="DocuWare Mustermann" /></Field>
             </FormGrid>`,
     }),
 };

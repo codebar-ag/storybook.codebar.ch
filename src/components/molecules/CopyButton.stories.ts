@@ -18,7 +18,7 @@ export const Default: Story = {
         components: { CopyButton, Toaster },
         template: `<div>
             <CopyButton
-                value="https://mcp.gateway.test/mcp/acme/luxor"
+                value="https://mcp.gateway.test/mcp/acme/mustermann"
                 class="text-dim hover:text-ink focus-visible:ring-accent/50"
             />
             <Toaster />

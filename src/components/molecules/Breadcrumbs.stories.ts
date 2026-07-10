@@ -9,7 +9,7 @@ const meta: Meta<typeof Breadcrumbs> = {
     args: {
         items: [
             { label: 'Instances', href: '#' },
-            { label: 'Luxor Haushaltsapparate AG', href: '#' },
+            { label: 'Mustermann AG', href: '#' },
             { label: 'File cabinets' },
         ],
     },
@@ -35,7 +35,7 @@ export const LongTrail: Story = {
     args: {
         items: [
             { label: 'Instances', href: '#' },
-            { label: 'Luxor Haushaltsapparate AG', href: '#' },
+            { label: 'Mustermann AG', href: '#' },
             { label: 'File cabinets', href: '#' },
             { label: 'Invoices', href: '#' },
             { label: 'INV-2026-00841' },
@@ -51,7 +51,7 @@ export const AsLinkComponent: Story = {
         setup: () => ({
             items: [
                 { label: 'Instances', href: '#' },
-                { label: 'Luxor Haushaltsapparate AG', href: '#' },
+                { label: 'Mustermann AG', href: '#' },
                 { label: 'File cabinets' },
             ],
             stub: (props: { href: string }, { slots }: { slots: { default?: () => VNode[] } }) =>

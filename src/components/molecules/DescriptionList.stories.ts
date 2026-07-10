@@ -17,7 +17,7 @@ export const Metadata: Story = {
         components: { DescriptionList, DescriptionItem },
         template: `
             <DescriptionList class="max-w-md">
-                <DescriptionItem label="URL">luxor.docuware.cloud</DescriptionItem>
+                <DescriptionItem label="URL">mustermann.docuware.cloud</DescriptionItem>
                 <DescriptionItem label="Auth">Authorization Code</DescriptionItem>
                 <DescriptionItem label="Created" tone="muted">12 Jun 2026</DescriptionItem>
             </DescriptionList>`,

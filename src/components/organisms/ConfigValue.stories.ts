@@ -36,7 +36,7 @@ export const Json: Story = {
 export const Text: Story = {
     render: () => ({
         components: { ConfigValue },
-        template: '<div class="max-w-xl"><ConfigValue label="Gateway endpoint" value="https://mcp.gateway.test/mcp/acme/luxor" /></div>',
+        template: '<div class="max-w-xl"><ConfigValue label="Gateway endpoint" value="https://mcp.gateway.test/mcp/acme/mustermann" /></div>',
     }),
 };
 

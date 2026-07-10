@@ -16,7 +16,7 @@ export const Populated: Story = {
         components: { ResourceList, StatusBadge },
         setup() {
             const items = [
-                { displayName: 'DocuWare Luxor', host: 'luxor.docuware.cloud', href: '#1' },
+                { displayName: 'DocuWare Mustermann', host: 'mustermann.docuware.cloud', href: '#1' },
                 { displayName: 'codebar Solutions', host: 'codebar.docuware.cloud', href: '#2' },
             ];
             return { items };

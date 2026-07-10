@@ -97,7 +97,7 @@ export const Login: Story = {
         await expect(canvas.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'true');
 
         // Filling the form clears it and the button enters its loading state.
-        await userEvent.type(canvas.getByLabelText('Email'), 'sebastian@codebar.ch');
+        await userEvent.type(canvas.getByLabelText('Email'), 'max.mustermann@example.com');
         await userEvent.type(canvas.getByLabelText('Password'), 'demo value only');
         await userEvent.click(submit);
         await expect(canvas.queryByText('Sign-in failed')).not.toBeInTheDocument();
@@ -176,7 +176,7 @@ export const PasswordResetSet: Story = {
         components: { AuthLayout, Button, Field, PasswordInput },
         setup: () => ({ password: ref(''), confirm: ref('') }),
         template: `
-            <AuthLayout title="Choose a new password" description="For sebastian@codebar.ch">
+            <AuthLayout title="Choose a new password" description="For max.mustermann@example.com">
                 <template #brand><span class="text-lg font-semibold text-ink">DocuHub</span></template>
                 <form class="space-y-4" novalidate @submit.prevent>
                     <Field label="New password" name="password" hint="At least 8 characters.">
@@ -195,7 +195,7 @@ export const MagicLink: Story = {
     render: () => ({
         components: { Alert, AuthLayout, Button, Link },
         template: `
-            <AuthLayout title="Check your inbox" description="We sent a sign-in link to sebastian@codebar.ch.">
+            <AuthLayout title="Check your inbox" description="We sent a sign-in link to max.mustermann@example.com.">
                 <template #brand><span class="text-lg font-semibold text-ink">DocuHub</span></template>
                 <div class="space-y-4">
                     <Alert variant="info">

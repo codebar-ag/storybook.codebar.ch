@@ -23,7 +23,7 @@ export const Default: Story = {
                 <Button @click="open = true">Show document details</Button>
                 <Drawer v-model="open" title="Invoice 2026-0142" description="Filed to e_invoices · Intellix trust: Green">
                     <DescriptionList>
-                        <DescriptionItem label="Company">Sonepar Suisse AG</DescriptionItem>
+                        <DescriptionItem label="Company">Mustermann AG</DescriptionItem>
                         <DescriptionItem label="Amount">CHF 1'240.50</DescriptionItem>
                         <DescriptionItem label="Status">Filed</DescriptionItem>
                     </DescriptionList>

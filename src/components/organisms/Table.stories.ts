@@ -25,10 +25,10 @@ export const DataTable: Story = {
                     <Th>Tool</Th><Th>Instance</Th><NumericCell :head="true">Calls</NumericCell>
                 </template>
                 <TableRow>
-                    <Td>search-documents</Td><Td>Luxor</Td><NumericCell>1,204</NumericCell>
+                    <Td>search-documents</Td><Td>Mustermann</Td><NumericCell>1,204</NumericCell>
                 </TableRow>
                 <TableRow>
-                    <Td>get-document</Td><Td>Luxor</Td><NumericCell>318</NumericCell>
+                    <Td>get-document</Td><Td>Mustermann</Td><NumericCell>318</NumericCell>
                 </TableRow>
             </Table>`,
     }),
@@ -59,10 +59,10 @@ export const SortableHeader: Story = {
                     <NumericCell :head="true">Calls</NumericCell>
                 </template>
                 <TableRow>
-                    <Td>get-document</Td><Td>Luxor</Td><NumericCell>318</NumericCell>
+                    <Td>get-document</Td><Td>Mustermann</Td><NumericCell>318</NumericCell>
                 </TableRow>
                 <TableRow>
-                    <Td>search-documents</Td><Td>Luxor</Td><NumericCell>1,204</NumericCell>
+                    <Td>search-documents</Td><Td>Mustermann</Td><NumericCell>1,204</NumericCell>
                 </TableRow>
             </Table>`,
     }),
@@ -77,7 +77,7 @@ export const WithBadges: Story = {
                     <Th>Instance</Th><Th>Status</Th><NumericCell :head="true">Documents</NumericCell>
                 </template>
                 <TableRow>
-                    <Td>DocuWare Luxor</Td>
+                    <Td>DocuWare Mustermann</Td>
                     <Td><Badge variant="success">Connected</Badge></Td>
                     <NumericCell>1,902</NumericCell>
                 </TableRow>

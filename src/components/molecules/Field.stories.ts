@@ -23,7 +23,7 @@ const meta: Meta<typeof Field> = {
     },
     render: (args) => ({
         components: { Field, Input },
-        setup: () => ({ args, value: ref('DocuWare Luxor') }),
+        setup: () => ({ args, value: ref('DocuWare Mustermann') }),
         template: `
             <div class="max-w-md">
                 <Field v-bind="args">

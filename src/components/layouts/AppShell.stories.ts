@@ -48,7 +48,7 @@ export const Default: Story = {
                         <template #brand><span class="text-sm font-semibold text-ink">DocuHub</span></template>
                         <template #actions>
                             <Badge variant="success">All systems go</Badge>
-                            <Avatar name="Sebastian Burgin" size="sm" />
+                            <Avatar name="Max Mustermann" size="sm" />
                         </template>
                     </Navbar>
                 </template>

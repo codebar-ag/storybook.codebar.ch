@@ -22,7 +22,7 @@ type Story = StoryObj<typeof Input>;
 export const Default: Story = {
     render: (args) => ({
         components: { Input, Field },
-        setup: () => ({ args, value: ref('DocuWare Luxor') }),
+        setup: () => ({ args, value: ref('DocuWare Mustermann') }),
         template: `
             <div class="max-w-md">
                 <Field label="Instance name" name="name" hint="Shown in the dashboard.">
@@ -36,7 +36,7 @@ export const Types: Story = {
     render: () => ({
         components: { Input, Field },
         setup: () => ({
-            url: ref('https://luxor.docuware.cloud'),
+            url: ref('https://mustermann.docuware.cloud'),
             email: ref('info@codebar.ch'),
             query: ref(''),
         }),
