@@ -108,6 +108,13 @@ npm run typecheck        # vue-tsc
 npm run lint
 ```
 
+## What's new in v1.4.2
+
+- **Placeholder names in story fixtures.** Real client and person names were
+  replaced with `Mustermann AG` / `Max Mustermann` placeholders (and
+  `mustermann.*` hosts) throughout the Storybook stories. No component or API
+  changes.
+
 ## What's new in v1.4.1
 
 - **All-mono restored.** v1.4.0 switched the UI font to Inter; that is reverted.
