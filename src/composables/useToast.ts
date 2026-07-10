@@ -65,7 +65,13 @@ export function dismiss(id: number): void {
     }
     toast.show = false;
     setTimeout(() => {
-        state.toasts = state.toasts.filter((t) => t.id !== id);
+        // Splice in place: consumers hold a readonly proxy of THIS array
+        // (see useToast), so reassigning `state.toasts` to a filtered copy
+        // would leave them rendering the stale array forever.
+        const index = state.toasts.findIndex((t) => t.id === id);
+        if (index !== -1) {
+            state.toasts.splice(index, 1);
+        }
     }, 200);
 }
 
