@@ -108,7 +108,25 @@ npm run typecheck        # vue-tsc
 npm run lint
 ```
 
-## Migration notes (v1.3, unreleased)
+## What's new in v1.3.0
+
+- **New components** — atoms `Avatar`, `Divider`, `Kbd`, `Spinner`; molecules
+  `Accordion`/`AccordionItem`, `Combobox`, `InputNumber`, `PasswordInput`,
+  `PinInput`, `Popover`, `Tabs`, `Tooltip`; organisms `DataTable` (sortable,
+  selectable, paginated), `Drawer`, `Navbar`, `Sidebar`/`SidebarGroup`/
+  `SidebarItem`; layouts `AppShell`, `AuthLayout`, `ErrorLayout`.
+- **Composables are now part of the public API** — overlay/keyboard utilities
+  (`useFocusTrap`, `useClickOutside`, `useEscapeKey`, `useScrollLock`,
+  `useListNavigation`), form helpers (`useFieldA11y`, `useFormErrors`,
+  `usePasswordManagerAttrs`), data-table helpers (`useSort`, `useSelection`,
+  `usePagination`), plus `useControllable` and `useRootAttrs`.
+- **Helpers** — `cx` class combiner and `resolveTone` with the
+  `Tone`/`LegacyTone` types.
+- **Storybook** — Foundations docs (colors, typography, spacing, radii &
+  shadows, icons), example pages (Auth, Errors, Dashboard), docs + a11y
+  addons, and per-story play functions that run in CI via Playwright.
+
+### Migration notes
 
 Non-breaking, but worth knowing when upgrading:
 
