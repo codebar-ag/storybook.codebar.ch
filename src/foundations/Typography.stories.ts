@@ -15,7 +15,7 @@ export const Scale: Story = {
         template: `
             <div class="max-w-3xl">
                 <p class="text-sm text-muted mb-4">
-                    Single scale set in Inter (JetBrains Mono as the accent for ids/code); the text-* utilities are remapped in tokens.css.
+                    Single all-mono scale (JetBrains Mono); the text-* utilities are remapped in tokens.css.
                 </p>
                 <ul class="divide-y divide-line/40 border-y border-line/40">
                     <li v-for="step in steps" :key="step.token" class="flex items-baseline gap-6 py-3">
