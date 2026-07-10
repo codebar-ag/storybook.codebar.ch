@@ -29,6 +29,10 @@ jobs:
 
       - run: npm ci
 
+      # vite-plugin-dts (shared via vite.config.ts) needs dist/index.d.ts present
+      - name: Build library
+        run: npm run build
+
       - name: Build Storybook
         run: npm run build-storybook
 
