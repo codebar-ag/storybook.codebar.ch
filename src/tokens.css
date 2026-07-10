@@ -1,9 +1,9 @@
-/* @codebar-ag/storybook-docuhub — design tokens (single source of truth across apps).
+/* @codebar-ag/storybook — design tokens (single source of truth across apps).
    Import this BEFORE `tailwindcss` in a consuming app's stylesheet:
 
-       @import "@codebar-ag/storybook-docuhub/tokens.css";
+       @import "@codebar-ag/storybook/tokens.css";
        @import "tailwindcss";
-       @source "../../node_modules/@codebar-ag/storybook-docuhub/dist";
+       @source "../../node_modules/@codebar-ag/storybook/dist";
 
    The `@source` line lets Tailwind scan the compiled atoms so their utility
    classes are generated in the consuming app. */

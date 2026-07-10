@@ -1,4 +1,4 @@
-# @codebar-ag/storybook-docuhub
+# @codebar-ag/storybook
 
 Shared **Vue 3 + Tailwind v4** design-system atoms and design tokens for codebar-ag
 applications, documented in **Storybook**. One source of truth so every app looks
@@ -23,7 +23,7 @@ The package is published to **GitHub Packages**. Add an `.npmrc` to the consumin
 ```
 
 ```bash
-npm install @codebar-ag/storybook-docuhub
+npm install @codebar-ag/storybook
 ```
 
 > **Note:** the package is private; GitHub's npm registry requires
@@ -36,9 +36,9 @@ npm install @codebar-ag/storybook-docuhub
 **1. Tokens + Tailwind** — in your app's `app.css`:
 
 ```css
-@import "@codebar-ag/storybook-docuhub/tokens.css";   /* @theme: colors, type scale, radius */
+@import "@codebar-ag/storybook/tokens.css";   /* @theme: colors, type scale, radius */
 @import "tailwindcss";
-@source "../../node_modules/@codebar-ag/storybook-docuhub/dist";  /* scan atoms for classes */
+@source "../../node_modules/@codebar-ag/storybook/dist";  /* scan atoms for classes */
 ```
 
 The `@source` line is required: Tailwind must scan the compiled atoms so their
@@ -47,20 +47,20 @@ utility classes are generated in your app's stylesheet.
 **2. Register the atoms** — in your Vue entry:
 
 ```ts
-import { Flows } from '@codebar-ag/storybook-docuhub';
+import { Flows } from '@codebar-ag/storybook';
 createApp(...).use(Flows);   // global <Button>, <Card>, <Icon>, …
 ```
 
 Or import individually:
 
 ```ts
-import { Button, Card, useToast } from '@codebar-ag/storybook-docuhub';
+import { Button, Card, useToast } from '@codebar-ag/storybook';
 ```
 
 **3. Toasts** — mount `<Toaster />` once near the root, then `push()` from anywhere:
 
 ```ts
-import { pushToast } from '@codebar-ag/storybook-docuhub';
+import { pushToast } from '@codebar-ag/storybook';
 pushToast({ message: 'Saved.', type: 'success' });
 ```
 

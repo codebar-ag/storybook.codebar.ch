@@ -288,7 +288,7 @@ const components: Record<string, Component> = {
  * Vue plugin that registers every flows atom globally, so Inertia pages can use
  * `<Button>`, `<Card>`, … without per-file imports:
  *
- *     import { Flows } from '@codebar-ag/storybook-docuhub';
+ *     import { Flows } from '@codebar-ag/storybook';
  *     createApp(...).use(Flows);
  */
 export const Flows = {
