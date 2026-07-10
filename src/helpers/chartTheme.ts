@@ -3,7 +3,7 @@
  * so charts track light/dark themes without hardcoded hex values.
  */
 
-const FONT_FAMILY = 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+const FONT_FAMILY = '"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
 
 export function cssToken(name: string, fallback: string): string {
     if (typeof document === 'undefined') {
