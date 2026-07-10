@@ -4,7 +4,7 @@ Shared **Vue 3 + Tailwind v4** design-system atoms and design tokens for codebar
 applications, documented in **Storybook**. One source of truth so every app looks
 identical.
 
-**Live Storybook:** https://codebar-ag.github.io/storybook.docuhub.app/ — every atom
+**Live Storybook:** https://codebar-ag.github.io/storybook.codebar.ch/ — every atom
 and its variants, deployed automatically from `main`.
 
 > **Atoms only.** This package ships the basic building blocks (button, card,
@@ -70,7 +70,7 @@ Component-based consistency is the point of this package: every app should look
 identical because every app is built from the same atoms.
 
 1. **Check Storybook first.** Browse the
-   [live Storybook](https://codebar-ag.github.io/storybook.docuhub.app/) (or run
+   [live Storybook](https://codebar-ag.github.io/storybook.codebar.ch/) (or run
    `npm run dev` in this package) and search `src/index.ts`'s barrel export before
    writing any markup for a new screen or feature.
 2. **Never re-implement an atom.** If this package already ships a `Button`,
