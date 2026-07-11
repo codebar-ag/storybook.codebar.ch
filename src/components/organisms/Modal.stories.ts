@@ -57,3 +57,45 @@ export const Default: Story = {
         await expect(canvas.getByRole('button', { name: 'Open modal' })).toHaveFocus();
     },
 };
+
+export const FullSize: Story = {
+    render: () => ({
+        components: { Modal, Button },
+        setup: () => ({ open: ref(false), rows: Array.from({ length: 60 }, (_, i) => `Row ${i + 1}`) }),
+        template: `
+            <div>
+                <Button @click="open = true">Open full modal</Button>
+                <Modal v-model="open" size="full" title="Pick an item">
+                    <ul class="flex flex-col gap-2">
+                        <li v-for="row in rows" :key="row" class="text-sm text-muted">{{ row }}</li>
+                    </ul>
+                    <template #footer>
+                        <Button variant="primary" @click="open = false">Done</Button>
+                    </template>
+                </Modal>
+            </div>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const body = within(canvasElement.ownerDocument.body);
+
+        await userEvent.click(canvas.getByRole('button', { name: 'Open full modal' }));
+        const dialog = await body.findByRole('dialog');
+        await waitFor(() => expect(dialog).toBeVisible());
+
+        // The panel fills the viewport (minus the p-4 overlay inset) and the
+        // body scrolls instead of growing the dialog: the footer stays visible.
+        const panel = dialog.querySelector<HTMLElement>('[tabindex="-1"]');
+        await expect(panel).not.toBeNull();
+        const inset = 2 * 16;
+        await waitFor(() =>
+            expect(Math.round(panel!.getBoundingClientRect().height)).toBe(
+                Math.round(dialog.getBoundingClientRect().height - inset),
+            ),
+        );
+        await expect(body.getByRole('button', { name: 'Done' })).toBeVisible();
+
+        await userEvent.keyboard('{Escape}');
+        await waitFor(() => expect(body.queryByRole('dialog')).not.toBeInTheDocument());
+    },
+};

@@ -17,8 +17,18 @@ const props = withDefaults(
         // CSS selector (scoped to the panel) for the element to focus on open,
         // e.g. 'input[name=email]'. Defaults to the first focusable element.
         initialFocus?: string | null;
+        // 'full' stretches the panel to the viewport (minus the overlay inset)
+        // and scrolls the body slot instead of growing the dialog.
+        size?: 'md' | 'full';
     }>(),
-    { modelValue: false, title: null, description: null, closeOnBackdrop: true, initialFocus: null },
+    {
+        modelValue: false,
+        title: null,
+        description: null,
+        closeOnBackdrop: true,
+        initialFocus: null,
+        size: 'md',
+    },
 );
 
 const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>();
@@ -56,7 +66,10 @@ useFocusTrap(panel, open, {
         <div
           ref="panel"
           tabindex="-1"
-          class="relative z-10 w-full max-w-lg rounded-surface border border-line bg-surface shadow-card-hover focus:outline-none"
+          :class="[
+            'relative z-10 w-full rounded-surface border border-line bg-surface shadow-card-hover focus:outline-none',
+            size === 'full' ? 'flex h-full flex-col' : 'max-w-lg',
+          ]"
         >
           <div
             v-if="title !== null || $slots.header"
@@ -89,7 +102,7 @@ useFocusTrap(panel, open, {
           </div>
           <div
             v-if="$slots.default"
-            class="px-5 py-4"
+            :class="['px-5 py-4', { 'min-h-0 flex-1 overflow-y-auto': size === 'full' }]"
           >
             <slot />
           </div>
