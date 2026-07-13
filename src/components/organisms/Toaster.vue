@@ -5,7 +5,24 @@ import Icon from '../atoms/Icon.vue';
 
 // Unified toast overlay. Mount once near the app root; producers call `push()`
 // from the useToast composable (copy buttons, Inertia flash bridging, etc.).
+const props = withDefaults(
+    defineProps<{
+        // Cap on the toast stack width; raise it where messages run long
+        // (e.g. flash messages that echo user input back).
+        maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+    }>(),
+    { maxWidth: 'sm' },
+);
+
 const { toasts, dismiss, pause, resume } = useToast();
+
+const widths: Record<string, string> = {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+    '2xl': 'max-w-2xl',
+};
 
 const iconFor: Record<ToastType, IconName> = {
     success: 'check',
@@ -26,7 +43,10 @@ const styleFor: Record<ToastType, string> = {
   <div
     aria-live="polite"
     aria-atomic="true"
-    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 w-full max-w-sm px-4 pointer-events-none"
+    :class="[
+      'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 w-full px-4 pointer-events-none',
+      widths[props.maxWidth],
+    ]"
   >
     <TransitionGroup
       enter-active-class="transition ease-out duration-200"

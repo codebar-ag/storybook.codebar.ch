@@ -8,15 +8,23 @@ const meta: Meta<typeof Toaster> = {
     title: 'Organisms/Toaster',
     component: Toaster,
     parameters: { layout: 'padded' },
+    argTypes: {
+        maxWidth: {
+            control: 'select',
+            options: ['sm', 'md', 'lg', 'xl', '2xl'],
+        },
+    },
+    args: { maxWidth: 'sm' },
 };
 
 export default meta;
 type Story = StoryObj<typeof Toaster>;
 
 export const Default: Story = {
-    render: () => ({
+    render: (args) => ({
         components: { Toaster, Button },
         setup: () => ({
+            args,
             success: () => push({ message: 'Instance saved.', type: 'success' }),
             error: () => push({ message: 'Could not reach DocuWare.', type: 'error' }),
             info: () => push({ message: 'Copied to clipboard', type: 'info' }),
@@ -26,7 +34,7 @@ export const Default: Story = {
                 <Button variant="secondary" @click="success">Success</Button>
                 <Button variant="secondary" @click="error">Error</Button>
                 <Button variant="secondary" @click="info">Info</Button>
-                <Toaster />
+                <Toaster v-bind="args" />
             </div>`,
     }),
     play: async ({ canvasElement }) => {
@@ -46,6 +54,29 @@ export const Default: Story = {
             expect(body.queryByText('Could not reach DocuWare.')).not.toBeInTheDocument(),
         );
     },
+};
+
+// Long flash messages (e.g. echoing the submitted email back) stay on one or
+// two lines instead of wrapping into a tall narrow block.
+export const Wide: Story = {
+    args: { maxWidth: 'xl' },
+    render: (args) => ({
+        components: { Toaster, Button },
+        setup: () => ({
+            args,
+            success: () =>
+                push({
+                    message:
+                        'If sebastian.burgin@codebar.ch is registered, you will receive a login link shortly.',
+                    type: 'success',
+                }),
+        }),
+        template: `
+            <div>
+                <Button variant="secondary" @click="success">Success</Button>
+                <Toaster v-bind="args" />
+            </div>`,
+    }),
 };
 
 // No play function on purpose: tests/interactions.spec.ts drives this story

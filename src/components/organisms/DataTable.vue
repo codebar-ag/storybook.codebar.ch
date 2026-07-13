@@ -10,7 +10,7 @@
 // Cell rendering is overridable per column via #cell-<key>="{ row, value }";
 // #row-actions adds a trailing actions cell, #bulk-actions a toolbar that
 // appears while rows are selected.
-import { computed } from 'vue';
+import { computed, getCurrentInstance } from 'vue';
 import { useSort } from '../../composables/useSort';
 import { useSelection } from '../../composables/useSelection';
 import { usePagination } from '../../composables/usePagination';
@@ -64,6 +64,11 @@ const emit = defineEmits<{
     'update:page': [page: number];
     'row-click': [row: T];
 }>();
+
+// `emits` listeners are stripped from $attrs, so detect a bound `row-click`
+// handler via the raw incoming vnode props instead.
+const instance = getCurrentInstance();
+const hasRowClick = computed(() => Boolean(instance?.vnode.props?.onRowClick));
 
 function keyOf(row: T): RowKey {
     return typeof props.rowKey === 'function'
@@ -262,7 +267,10 @@ function onRowClick(row: T, event: MouseEvent): void {
             v-for="row in visibleRows"
             v-else
             :key="keyOf(row)"
-            :class="isSelected(keyOf(row)) ? 'bg-surface-2/60' : 'hover:bg-surface-2/40'"
+            :class="[
+              isSelected(keyOf(row)) ? 'bg-surface-2/60' : 'hover:bg-surface-2/40',
+              hasRowClick ? 'cursor-pointer' : '',
+            ]"
             class="transition"
             @click="onRowClick(row, $event)"
           >
