@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { EditorView as EditorViewType } from '@codemirror/view';
+import { createCodeMirrorTheme } from '../../helpers/codeMirrorTheme';
 
 // CodeMirror is an OPTIONAL peer dependency: it is imported lazily so apps
 // that never render a code preview don't pay for the bundle.
@@ -54,11 +55,12 @@ async function mount(): Promise<void> {
         return;
     }
 
-    const [{ EditorState }, { EditorView, lineNumbers }, lang] = await Promise.all([
+    const [{ EditorState }, EditorViewModule, lang] = await Promise.all([
         import('@codemirror/state'),
         import('@codemirror/view'),
         loadLanguage(props.language),
     ]);
+    const { EditorView, lineNumbers } = EditorViewModule;
 
     if (!host.value) {
         return;
@@ -74,20 +76,12 @@ async function mount(): Promise<void> {
                 EditorView.lineWrapping,
                 lineNumbers(),
                 lang,
+                // Shared theme (same as CodeEditor) plus this component's own
+                // maxHeight cap, which only makes sense for a preview surface.
+                createCodeMirrorTheme(EditorViewModule, { autoHeight: true }),
                 EditorView.theme({
-                    '&': {
-                        fontSize: '12px',
-                        backgroundColor: 'transparent',
-                    },
-                    '.cm-scroller': {
-                        fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
-                        overflow: 'auto',
-                        maxHeight: props.maxHeight,
-                    },
-                    '.cm-gutters': {
-                        backgroundColor: 'transparent',
-                        borderRight: '1px solid var(--color-line, #e5e7eb)',
-                    },
+                    '&': { fontSize: '12px' },
+                    '.cm-scroller': { maxHeight: props.maxHeight },
                 }),
             ],
         }),

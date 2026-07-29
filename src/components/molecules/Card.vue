@@ -13,8 +13,10 @@ const props = withDefaults(
         variant?: 'default' | 'danger';
         hoverable?: boolean;
         // 'lg' is for screens with a single, centered card as the focal point
-        // (e.g. auth screens) where the default density reads cramped.
-        size?: 'md' | 'lg';
+        // (e.g. auth screens) where the default density reads cramped. 'sm'
+        // is for cards nested inside another card/list — a denser container,
+        // not a different component.
+        size?: 'sm' | 'md' | 'lg';
     }>(),
     { title: null, description: null, padded: true, variant: 'default', hoverable: false, size: 'md' },
 );
@@ -25,18 +27,22 @@ const { rootAttrs, classAttr } = useRootAttrs();
 const variants: Record<string, string> = { default: '', danger: 'border-danger-line/60' };
 
 const headerPadding: Record<string, string> = {
+    sm: 'px-3 sm:px-4 pt-3 pb-2.5',
     md: 'px-4 sm:px-5 pt-5 pb-4',
     lg: 'px-5 sm:px-6 pt-6 pb-5',
 };
 const bodyPadding: Record<string, string> = {
+    sm: 'px-3 sm:px-4 py-3',
     md: 'px-4 sm:px-5 py-5',
     lg: 'px-5 sm:px-6 py-6',
 };
 const footerPadding: Record<string, string> = {
+    sm: 'px-3 sm:px-4 py-2.5',
     md: 'px-4 sm:px-5 py-4',
     lg: 'px-5 sm:px-6 py-5',
 };
 const titleSize: Record<string, string> = {
+    sm: 'text-sm',
     md: 'text-lg',
     lg: 'text-xl',
 };
