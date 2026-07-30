@@ -5,6 +5,18 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.7.1
+
+### Fixed
+
+- **`Input` hid credential fields from password managers even with an
+  explicit `autocomplete`.** `usePasswordManagerAttrs()` set
+  `data-1p-ignore`/`data-lpignore` on every non-password `Input` unconditionally,
+  so 1Password and LastPass couldn't recognize fields like a login form's email
+  input even though it passed `autocomplete="username"`. The ignore attrs now
+  apply only when the caller left `autocomplete` unset, the same condition that
+  already gated `autocomplete="off"`.
+
 ## v1.7.0
 
 ### Added
