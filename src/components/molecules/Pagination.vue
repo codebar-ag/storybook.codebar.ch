@@ -37,7 +37,7 @@ function click(event: MouseEvent, href: string | null): void {
       :href="prevHref"
       variant="ghost"
       size="sm"
-      @click="(event) => click(event, prevHref)"
+      @click="(event: MouseEvent) => click(event, prevHref)"
     >
       {{ prevLabel }}
     </Button>
@@ -46,7 +46,7 @@ function click(event: MouseEvent, href: string | null): void {
       :href="nextHref"
       variant="ghost"
       size="sm"
-      @click="(event) => click(event, nextHref)"
+      @click="(event: MouseEvent) => click(event, nextHref)"
     >
       {{ nextLabel }}
     </Button>
