@@ -15,7 +15,24 @@ and its variants, deployed automatically from `main`.
 
 ## Install
 
-The package is published to **GitHub Packages**. Add an `.npmrc` to the consuming app:
+Two ways, and the first needs no credentials.
+
+### From this repository — no token
+
+The repository is public and `prepare` builds `dist` on install, so a git
+dependency works anywhere with no setup:
+
+```bash
+npm install github:codebar-ag/storybook.codebar.ch#v1.7.0
+```
+
+Pin a tag rather than a branch, so installs stay reproducible. npm installs this
+repo's devDependencies to run the build, which makes a cold install slower than a
+registry one — that is the trade for needing no token.
+
+### From GitHub Packages — token required
+
+Add an `.npmrc` to the consuming app:
 
 ```
 @codebar-ag:registry=https://npm.pkg.github.com
@@ -26,10 +43,11 @@ The package is published to **GitHub Packages**. Add an `.npmrc` to the consumin
 npm install @codebar-ag/storybook
 ```
 
-> **Note:** the package is private; GitHub's npm registry requires
-> authentication to install. Set `GITHUB_TOKEN` to a GitHub token with the
-> `read:packages` scope (a classic PAT works) — locally, in CI, and on deploy
-> targets.
+> **Note:** GitHub's npm registry requires authentication for **every** read,
+> public packages included — unlike npmjs.com. This repository being public does
+> not change that, and neither does the package's own visibility. Set
+> `GITHUB_TOKEN` to a token with the `read:packages` scope (a classic PAT works,
+> as does `gh auth token`) locally, in CI, and on every deploy target.
 
 ## Use
 
@@ -108,66 +126,10 @@ npm run typecheck        # vue-tsc
 npm run lint
 ```
 
-## What's new in v1.4.2
+## Changelog
 
-- **Placeholder names in story fixtures.** Real client and person names were
-  replaced with `Mustermann AG` / `Max Mustermann` placeholders (and
-  `mustermann.*` hosts) throughout the Storybook stories. No component or API
-  changes.
-
-## What's new in v1.4.1
-
-- **All-mono restored.** v1.4.0 switched the UI font to Inter; that is reverted.
-  The all-mono look (JetBrains Mono everywhere, via `--font-mono`) is the
-  brand's visual identity and is intentional. Skip v1.4.0 and upgrade straight
-  to v1.4.1.
-
-## What's new in v1.3.0
-
-- **New components** — atoms `Avatar`, `Divider`, `Kbd`, `Spinner`; molecules
-  `Accordion`/`AccordionItem`, `Combobox`, `InputNumber`, `PasswordInput`,
-  `PinInput`, `Popover`, `Tabs`, `Tooltip`; organisms `DataTable` (sortable,
-  selectable, paginated), `Drawer`, `Navbar`, `Sidebar`/`SidebarGroup`/
-  `SidebarItem`; layouts `AppShell`, `AuthLayout`, `ErrorLayout`.
-- **Composables are now part of the public API** — overlay/keyboard utilities
-  (`useFocusTrap`, `useClickOutside`, `useEscapeKey`, `useScrollLock`,
-  `useListNavigation`), form helpers (`useFieldA11y`, `useFormErrors`,
-  `usePasswordManagerAttrs`), data-table helpers (`useSort`, `useSelection`,
-  `usePagination`), plus `useControllable` and `useRootAttrs`.
-- **Helpers** — `cx` class combiner and `resolveTone` with the
-  `Tone`/`LegacyTone` types.
-- **Storybook** — Foundations docs (colors, typography, spacing, radii &
-  shadows, icons), example pages (Auth, Errors, Dashboard), docs + a11y
-  addons, and per-story play functions that run in CI via Playwright.
-
-### Migration notes
-
-Non-breaking, but worth knowing when upgrading:
-
-- **Tones unified.** `Badge`/`StatusBadge` now use the semantic tones
-  `neutral | info | success | warning | danger`; `Alert` gained `danger`.
-  The old values (`gray`/`blue`/`green`/`amber`/`red`, Alert's `error`) keep
-  rendering identically via `resolveTone()` but log a dev-only deprecation
-  warning and will be removed in the next major.
-- **Dropdown DOM changed.** The root moved from `<details>/<summary>` to
-  `<div><button aria-haspopup="menu">…` with full keyboard support (arrows,
-  Home/End, Escape, click-outside). Props and slots are unchanged; only CSS
-  targeting `details`/`summary` needs updating. Optional `v-model:open`.
-- **Button** gained a `loading` prop (spinner + `disabled` + `aria-busy`);
-  the default slot is now wrapped in a layout `<span>`.
-- **Modal** now traps focus, locks page scroll, restores focus on close and
-  supports `initialFocus`; API unchanged.
-- **FileInput** supports `v-model` (`File[]`); the previous `change`
-  (FileList) emit is retained. It now renders inside the standard control box.
-- **`Switch`** is a new alias export for `Toggle` (both names work).
-- **Components moved** into `src/components/{atoms,molecules,organisms,layouts}`;
-  the public API (`src/index.ts`) is unchanged.
-- **Storybook story IDs changed** with the new `Foundations/Atoms/Molecules/
-  Organisms/Layouts/Pages` hierarchy — deep links into the published
-  styleguide need re-copying.
-- **Bugfix:** dismissed toasts were hidden but never removed from the DOM
-  (`useToast` reassigned the array its consumers had captured); they are now
-  spliced in place.
+Release notes, migration notes and upgrade warnings live in
+[CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

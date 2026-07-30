@@ -10,7 +10,12 @@ import dts from 'vite-plugin-dts';
 export default defineConfig({
     plugins: [
         vue(),
-        dts({ include: ['src'], rollupTypes: true }),
+        // `bundleTypes`, not `rollupTypes`: vite-plugin-dts 5 renamed it and the
+        // old name is accepted-and-ignored rather than rejected, which quietly
+        // emitted split per-component .d.ts files instead of the single bundled
+        // index.d.ts every published version so far has shipped. Requires
+        // @microsoft/api-extractor, hence its devDependency.
+        dts({ include: ['src'], bundleTypes: true }),
     ],
     resolve: {
         alias: {

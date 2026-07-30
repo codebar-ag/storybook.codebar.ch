@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import PageHeading from './PageHeading.vue';
+import Button from '../atoms/Button.vue';
 
 const meta: Meta<typeof PageHeading> = {
     title: 'Molecules/PageHeading',
@@ -26,6 +27,22 @@ export const WithDescription: Story = {
             File cabinets
             <template #description>
                 Archives and document trays available to the connected MCP gateway.
+            </template>
+        </PageHeading>`,
+    }),
+};
+
+export const WithActions: Story = {
+    render: () => ({
+        components: { PageHeading, Button },
+        template: `<PageHeading eyebrow="Mustermann AG">
+            File cabinets
+            <template #description>
+                Archives and document trays available to the connected MCP gateway.
+            </template>
+            <template #actions>
+                <Button variant="secondary" size="sm">Export</Button>
+                <Button size="sm">New cabinet</Button>
             </template>
         </PageHeading>`,
     }),
