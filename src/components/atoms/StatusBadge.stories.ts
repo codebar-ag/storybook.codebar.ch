@@ -37,3 +37,9 @@ export const InstanceStatuses: Story = {
         </div>`,
     }),
 };
+
+// `purple` is a deprecated legacy alias (rides `info`) for non-severity
+// statuses like "seen this before" — e.g. a duplicate webhook delivery.
+export const LegacyPurpleAlias: Story = {
+    args: { variant: 'purple', label: 'Duplicate', dot: false },
+};

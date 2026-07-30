@@ -1,6 +1,6 @@
 {
   "name": "@codebar-ag/storybook",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "codebar-ag DocuHub — shared Vue 3 + Tailwind v4 design-system atoms and tokens, documented in Storybook.",
   "license": "MIT",
   "author": "codebar Solutions AG",
@@ -55,11 +55,19 @@
     },
     "@codemirror/lang-markdown": {
       "optional": true
+    },
+    "@codemirror/commands": {
+      "optional": true
+    },
+    "@codemirror/language": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@codemirror/commands": "^6.10.4",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/language": "^6.12.4",
     "@codemirror/state": "^6.7.0",
     "@codemirror/view": "^6.43.4",
     "@playwright/test": "^1.48.0",

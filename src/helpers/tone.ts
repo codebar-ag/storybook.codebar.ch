@@ -9,7 +9,7 @@
 export type Tone = 'neutral' | 'info' | 'success' | 'warning' | 'danger';
 
 /** @deprecated Use the semantic {@link Tone} names instead. */
-export type LegacyTone = 'gray' | 'blue' | 'green' | 'amber' | 'red' | 'error';
+export type LegacyTone = 'gray' | 'blue' | 'green' | 'amber' | 'red' | 'error' | 'purple';
 
 const LEGACY_TONES: Record<LegacyTone, Tone> = {
     gray: 'neutral',
@@ -18,6 +18,10 @@ const LEGACY_TONES: Record<LegacyTone, Tone> = {
     amber: 'warning',
     red: 'danger',
     error: 'danger',
+    // Not a severity — "seen this before" (e.g. a duplicate-delivery status).
+    // The tone vocabulary stays at 5 semantic values, so this rides `info`
+    // rather than introducing a 6th hue.
+    purple: 'info',
 };
 
 const warned = new Set<string>();

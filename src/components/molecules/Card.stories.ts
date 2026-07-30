@@ -30,3 +30,12 @@ export const WithActionsAndFooter: Story = {
         </Card>`,
     }),
 };
+
+export const Small: Story = {
+    render: () => ({
+        components: { Card },
+        template: `<Card size="sm" title="Header field">
+            <p class="text-sm text-muted">A denser card for rows nested inside a larger container.</p>
+        </Card>`,
+    }),
+};

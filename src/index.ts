@@ -13,6 +13,7 @@ import AppShell from './components/layouts/AppShell.vue';
 import Card from './components/molecules/Card.vue';
 import Chart from './components/organisms/Chart.vue';
 import Checkbox from './components/atoms/Checkbox.vue';
+import CodeEditor from './components/organisms/CodeEditor.vue';
 import CodeLine from './components/molecules/CodeLine.vue';
 import CodePreview from './components/organisms/CodePreview.vue';
 import Combobox from './components/molecules/Combobox.vue';
@@ -32,6 +33,7 @@ import FileInput from './components/molecules/FileInput.vue';
 import FilterBar from './components/molecules/FilterBar.vue';
 import FormActions from './components/molecules/FormActions.vue';
 import FormGrid from './components/molecules/FormGrid.vue';
+import FullscreenPanel from './components/molecules/FullscreenPanel.vue';
 import Icon from './components/atoms/Icon.vue';
 import IconBadge from './components/atoms/IconBadge.vue';
 import IdCell from './components/atoms/IdCell.vue';
@@ -94,6 +96,7 @@ export {
     Card,
     Chart,
     Checkbox,
+    CodeEditor,
     CodeLine,
     CodePreview,
     Combobox,
@@ -113,6 +116,7 @@ export {
     FilterBar,
     FormActions,
     FormGrid,
+    FullscreenPanel,
     Icon,
     IconBadge,
     IdCell,
@@ -214,6 +218,7 @@ const components: Record<string, Component> = {
     Card,
     Chart,
     Checkbox,
+    CodeEditor,
     CodeLine,
     CodePreview,
     Combobox,
@@ -233,6 +238,7 @@ const components: Record<string, Component> = {
     FilterBar,
     FormActions,
     FormGrid,
+    FullscreenPanel,
     Icon,
     IconBadge,
     IdCell,

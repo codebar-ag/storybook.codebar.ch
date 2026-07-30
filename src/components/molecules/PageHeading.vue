@@ -1,8 +1,9 @@
 <script setup lang="ts">
 // Page/section title, optionally preceded by an eyebrow caption and followed
 // by a description. Covers the plain `<h1 class="text-xl font-semibold
-// text-ink">` pattern repeated across most pages — badges/actions alongside
-// the title stay as siblings in the caller's own header row.
+// text-ink">` pattern repeated across most pages. An optional `#actions`
+// slot renders a right-aligned action cluster beside the title (wraps below
+// it on narrow screens) — omit the slot and this renders exactly as before.
 import { computed, useSlots } from 'vue';
 import { cx } from '../../helpers/cx';
 import { useRootAttrs } from '../../composables/useRootAttrs';
@@ -23,24 +24,32 @@ const classes = computed(() => cx('text-xl font-semibold text-ink', classAttr.va
 </script>
 
 <template>
-  <div class="min-w-0">
-    <p
-      v-if="eyebrow"
-      class="text-2xs uppercase tracking-wide text-muted"
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div class="min-w-0">
+      <p
+        v-if="eyebrow"
+        class="text-2xs uppercase tracking-wide text-muted"
+      >
+        {{ eyebrow }}
+      </p>
+      <h1
+        :class="classes"
+        v-bind="rootAttrs"
+      >
+        <slot />
+      </h1>
+      <p
+        v-if="slots.description"
+        class="mt-1 text-sm text-muted"
+      >
+        <slot name="description" />
+      </p>
+    </div>
+    <div
+      v-if="slots.actions"
+      class="flex flex-wrap items-center gap-2 shrink-0"
     >
-      {{ eyebrow }}
-    </p>
-    <h1
-      :class="classes"
-      v-bind="rootAttrs"
-    >
-      <slot />
-    </h1>
-    <p
-      v-if="slots.description"
-      class="mt-1 text-sm text-muted"
-    >
-      <slot name="description" />
-    </p>
+      <slot name="actions" />
+    </div>
   </div>
 </template>
