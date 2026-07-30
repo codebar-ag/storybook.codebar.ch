@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
+import { expect, within } from 'storybook/test';
 import { ref } from 'vue';
 import Input from './Input.vue';
 import Field from '../molecules/Field.vue';
@@ -53,6 +54,39 @@ export const Types: Story = {
                 </Field>
             </div>`,
     }),
+};
+
+export const CredentialAutocomplete: Story = {
+    render: () => ({
+        components: { Input, Field },
+        setup: () => ({ email: ref(''), query: ref('') }),
+        template: `
+            <div class="max-w-md space-y-4">
+                <Field label="Email" name="login_email">
+                    <Input v-model="email" name="login_email" type="email" autocomplete="username" />
+                </Field>
+                <Field label="Search cabinets" name="q_no_autocomplete">
+                    <Input v-model="query" name="q_no_autocomplete" type="search" />
+                </Field>
+            </div>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+
+        // An explicit autocomplete is a credential signal: password managers
+        // must be allowed to see it, and their own value must survive.
+        const email = canvas.getByLabelText('Email');
+        await expect(email).toHaveAttribute('autocomplete', 'username');
+        await expect(email).not.toHaveAttribute('data-1p-ignore');
+        await expect(email).not.toHaveAttribute('data-lpignore');
+
+        // No autocomplete given: this is a plain field, keep it hidden from
+        // password manager suggestions.
+        const query = canvas.getByLabelText('Search cabinets');
+        await expect(query).toHaveAttribute('autocomplete', 'off');
+        await expect(query).toHaveAttribute('data-1p-ignore');
+        await expect(query).toHaveAttribute('data-lpignore', 'true');
+    },
 };
 
 export const States: Story = {
