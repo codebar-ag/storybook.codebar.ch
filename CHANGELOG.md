@@ -46,6 +46,14 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   already depended on. Merged back in; anything released from `main` before this
   would have silently regressed them.
 
+- **Types are a single bundled `index.d.ts` again.** `vite-plugin-dts` 5 renamed
+  `rollupTypes` to `bundleTypes` and *ignores* the old name instead of rejecting
+  it, so the build had quietly started emitting split per-component
+  declarations — an 84 KB entry point became 9 KB plus a `components/` tree.
+  Consumers that parse the declaration file rather than merely importing from it
+  saw an apparently valid file describing almost nothing. Adds
+  `@microsoft/api-extractor`, which `bundleTypes` requires.
+
 - Two implicit-`any` handler parameters in `Pagination.vue`. Pre-existing and
   unrelated to the upgrade, but `typecheck` could not run while the tree was
   uninstallable, so nothing had reported them.

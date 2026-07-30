@@ -70,6 +70,7 @@
     "@codemirror/language": "^6.12.4",
     "@codemirror/state": "^6.7.0",
     "@codemirror/view": "^6.43.4",
+    "@microsoft/api-extractor": "^7.58.12",
     "@playwright/test": "^1.48.0",
     "@storybook/addon-a11y": "^10.5.5",
     "@storybook/addon-docs": "^10.5.5",
