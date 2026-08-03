@@ -21,6 +21,23 @@ jobs:
           registry-url: https://npm.pkg.github.com
           scope: '@codebar-ag'
 
+      # Catches the tag/manifest mismatch BEFORE spending three minutes on a
+      # build: `git tag v1.9.0` without the matching `npm version` bump either
+      # republishes the previous version or fails at the very last step.
+      - name: Tag must match package.json version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          manifest="$(node -p "require('./package.json').version")"
+
+          if [ "$tag" != "$manifest" ]; then
+            echo "::error::Tag v${tag} does not match package.json version ${manifest}." \
+                 "Bump the manifest (npm version) and re-tag."
+            exit 1
+          fi
+
+          echo "version=${manifest}" >> "$GITHUB_OUTPUT"
+        id: version
+
       - run: npm ci
 
       - name: Typecheck + lint
@@ -40,10 +57,33 @@ jobs:
       - name: Component tests (Playwright)
         run: npm run test:ci
 
+      # v1.8.0's release went red here with "You cannot publish over the
+      # previously published versions": the version had been published BY HAND
+      # nine seconds after the tag push, while this job was still on `npm ci`.
+      # Nothing was actually wrong with the release — it had already shipped —
+      # but the red run made a healthy release indistinguishable from a broken
+      # one. Publish from CI only; if the version is somehow already on the
+      # registry, say so and pass rather than failing on a no-op.
       - name: Publish to GitHub Packages
-        run: npm publish
+        run: |
+          version="${{ steps.version.outputs.version }}"
+
+          if npm view "@codebar-ag/storybook@${version}" version >/dev/null 2>&1; then
+            echo "::warning::@codebar-ag/storybook@${version} is already on the registry;" \
+                 "nothing to publish. It was published outside this workflow —" \
+                 "release by pushing a v* tag, never by running npm publish locally."
+            exit 0
+          fi
+
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # The project .npmrc references ${GITHUB_TOKEN}, which npm resolves
           # ahead of setup-node's userconfig — keep both env vars populated.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify the published version resolves
+        run: npm view "@codebar-ag/storybook@${{ steps.version.outputs.version }}" version
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

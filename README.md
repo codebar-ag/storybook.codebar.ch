@@ -126,6 +126,21 @@ npm run typecheck        # vue-tsc
 npm run lint
 ```
 
+## Release
+
+Publishing happens in CI, on a `v*` tag. Never run `npm publish` by hand — the
+registry rejects a republish, so a manual publish turns the tag's Release run
+red even though the version shipped fine, and a healthy release stops being
+distinguishable from a broken one (this is exactly what happened to v1.8.0).
+
+```bash
+npm version minor        # bumps package.json + creates the vX.Y.Z tag
+git push --follow-tags   # Release workflow builds, tests, publishes
+```
+
+The workflow refuses to run if the tag and `package.json` version disagree, and
+verifies the version resolves on the registry once published.
+
 ## Changelog
 
 Release notes, migration notes and upgrade warnings live in
