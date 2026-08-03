@@ -61,14 +61,14 @@ const styleFor: Record<ToastType, string> = {
         v-show="t.show"
         :key="t.id"
         :class="[
-          'pointer-events-auto w-full flex items-start gap-2.5 rounded-control border px-3.5 py-2.5 text-sm shadow-lg',
+          'pointer-events-auto w-full flex items-center gap-2.5 rounded-control border px-3.5 py-2.5 text-sm shadow-lg',
           styleFor[t.type],
         ]"
         role="status"
         @mouseenter="pause(t)"
         @mouseleave="resume(t)"
       >
-        <span class="mt-px shrink-0"><Icon
+        <span class="shrink-0"><Icon
           :name="iconFor[t.type]"
           size="sm"
         /></span>
