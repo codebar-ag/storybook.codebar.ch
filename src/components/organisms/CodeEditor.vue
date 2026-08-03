@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { EditorView as EditorViewType } from '@codemirror/view';
 import { createCodeMirrorTheme } from '../../helpers/codeMirrorTheme';
+import CopyButton from '../molecules/CopyButton.vue';
 
 // CodeMirror is an OPTIONAL peer dependency: it is imported lazily so apps
 // that never render an editor don't pay for the bundle (same convention as
@@ -16,6 +17,10 @@ const props = withDefaults(
         placeholder?: string | null;
         autoHeight?: boolean;
         maxHeight?: string | null;
+        /** Pins a copy-to-clipboard button over the top-right of the editor. Opt-in, so existing surfaces keep their chrome. */
+        copyable?: boolean;
+        copyLabel?: string;
+        copiedMessage?: string;
     }>(),
     {
         modelValue: '',
@@ -24,6 +29,9 @@ const props = withDefaults(
         placeholder: null,
         autoHeight: false,
         maxHeight: null,
+        copyable: false,
+        copyLabel: 'Copy to clipboard',
+        copiedMessage: 'Copied to clipboard',
     },
 );
 
@@ -43,6 +51,10 @@ function formatValue(raw: string): string {
         return raw;
     }
 }
+
+// Copies what the operator can actually see — the pretty-printed document,
+// not the raw (often single-line) `modelValue` handed in by the caller.
+const copyValue = computed(() => formatValue(props.modelValue ?? ''));
 
 async function loadLanguage(language: string) {
     if (language === 'markdown') {
@@ -140,6 +152,23 @@ onBeforeUnmount(() => view?.destroy());
     :class="autoHeight ? 'overflow-y-auto' : 'h-full min-h-0 overflow-hidden'"
     :style="autoHeight && maxHeight ? { maxHeight } : undefined"
   >
+    <!--
+      Sticky rather than absolute, and zero-height so it claims no layout: in
+      `autoHeight` mode THIS element is the scroll container, and an absolutely
+      positioned child would scroll out of sight on any document longer than
+      the visible box.
+    -->
+    <div
+      v-if="copyable && modelValue"
+      class="sticky top-0 z-10 flex h-0 justify-end"
+    >
+      <CopyButton
+        :value="copyValue"
+        :label="copyLabel"
+        :copied-message="copiedMessage"
+        class="mt-1.5 mr-1.5 rounded-control border border-line bg-surface/90 text-dim backdrop-blur-sm hover:text-ink focus-visible:ring-accent/50"
+      />
+    </div>
     <div
       v-if="!modelValue && readonly && placeholder"
       :class="autoHeight ? 'flex min-h-16 items-center justify-center' : 'pointer-events-none absolute inset-0 flex items-center justify-center'"

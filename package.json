@@ -1,6 +1,6 @@
 {
   "name": "@codebar-ag/storybook",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "codebar-ag DocuHub — shared Vue 3 + Tailwind v4 design-system atoms and tokens, documented in Storybook.",
   "license": "MIT",
   "author": "codebar Solutions AG",
@@ -25,7 +25,8 @@
   "scripts": {
     "prepare": "npm run build",
     "dev": "storybook dev -p 6006",
-    "build": "vite build && npm run build:tokens",
+    "build": "vite build && npm run build:tokens && npm run verify:externals",
+    "verify:externals": "node scripts/verify-externals.mjs",
     "build:tokens": "node -e \"require('node:fs').copyFileSync('src/tokens.css','dist/tokens.css')\"",
     "build-storybook": "storybook build",
     "lint": "eslint \"src/**/*.{ts,vue}\"",
@@ -39,7 +40,14 @@
   },
   "peerDependencies": {
     "tailwindcss": "^4.0.0",
-    "vue": "^3.5.0"
+    "vue": "^3.5.0",
+    "apexcharts": "^4.5.0 || ^5.0.0",
+    "@codemirror/commands": "^6.10.0",
+    "@codemirror/lang-json": "^6.0.0",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/language": "^6.12.0",
+    "@codemirror/state": "^6.7.0",
+    "@codemirror/view": "^6.43.0"
   },
   "peerDependenciesMeta": {
     "apexcharts": {

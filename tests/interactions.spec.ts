@@ -28,3 +28,16 @@ test('copy button writes to the clipboard and toasts', async ({ page, context })
     await page.getByRole('button', { name: 'Copy to clipboard' }).first().click();
     await expect(page.getByText('Copied to clipboard').first()).toBeVisible();
 });
+
+test('a copyable code editor copies the document it displays', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await gotoStory(page, 'organisms-codeeditor--copyable');
+    await expect(page.locator('.cm-content')).toBeVisible();
+    await page.getByRole('button', { name: 'Copy to clipboard' }).click();
+
+    // Only the clipboard write is asserted here — the story renders no Toaster,
+    // and the toast itself is already covered by the CopyButton test above.
+    // The pretty-printed document, not whatever shape the caller passed in.
+    const clipboard = await page.evaluate(() => navigator.clipboard.readText());
+    expect(clipboard).toBe('{\n  "vendor": "string",\n  "invoice_number": "string"\n}');
+});
