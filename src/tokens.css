@@ -30,15 +30,19 @@
    because mono faux-bold is conspicuously bad, so a stray `font-bold` in a
    consuming app should hit a real cut rather than a synthesised one. Add
    `latin-ext-*` here if a consumer ever needs Central/Eastern European glyphs. */
+/* Open Sans — used only by the DocuWare App Registration mirror (.dw-screen) to
+   match DocuWare's own UI. Still CDN-loaded: it is a deliberate visual mirror of
+   DocuWare's own chrome, shown on one screen, and is not the app font. Must stay
+   ahead of the @fontsource imports below: bundlers inline local @import rules as
+   real CSS content in place, but leave this remote @import literal, so if it sat
+   after the local imports it would end up after real rules post-build — invalid
+   per spec ("@import rules must precede all rules"). */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
+
 @import "@fontsource/jetbrains-mono/latin-400.css";
 @import "@fontsource/jetbrains-mono/latin-500.css";
 @import "@fontsource/jetbrains-mono/latin-600.css";
 @import "@fontsource/jetbrains-mono/latin-700.css";
-
-/* Open Sans — used only by the DocuWare App Registration mirror (.dw-screen) to
-   match DocuWare's own UI. Still CDN-loaded: it is a deliberate visual mirror of
-   DocuWare's own chrome, shown on one screen, and is not the app font. */
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
 
 /* ---- Tailwind v4 CSS-first design tokens (PlanetScale-inspired LIGHT) ---- */
 @theme {
