@@ -5,6 +5,58 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.8.0
+
+### Fixed
+
+- **The design system declared JetBrains Mono but never shipped it, so every
+  consuming app rendered in the OS monospace fallback.** `--font-mono` named
+  `"JetBrains Mono"` in `tokens.css`, but the only font actually loaded was Open
+  Sans (used by the DocuWare mirror). The UI font was set on the Storybook canvas
+  via `.storybook/storybook.css` — a file excluded from `files: ["dist"]`, so it
+  reached the canvas and no consumer. Apps fell through to `ui-monospace`: SF
+  Mono on macOS, Consolas/Cascadia on Windows, DejaVu Sans Mono on Linux, with
+  different metrics on each.
+
+  The font is now loaded from the published `src/tokens.css`, self-hosted via
+  `@fontsource/jetbrains-mono` (a real `dependency`, so consumers receive the
+  files transitively). Latin subset, weights 400/500/600/700. Self-hosted rather
+  than CDN-loaded because consumers ship their own privacy policy and DPA, and a
+  webfont CDN sends every visitor's IP to a third party on first paint.
+
+  **Consumers need no change** — `@import "@codebar-ag/storybook/tokens.css"`
+  already pulls this in. Expect a visible shift in glyph metrics on first
+  upgrade: that is the app finally rendering in its own brand font.
+
+### Added
+
+- **`AuthLayout` gained a `maxWidth` prop** (`md` | `lg` | `xl` | `2xl`,
+  default `md`). The card was hardcoded to `max-w-md`, which forced apps with
+  wider auth-adjacent screens — onboarding with side-by-side billing fields,
+  consent screens with a document preview — to fork the component's markup.
+
+- **`PageHeading` gained `breadcrumbs` and `breadcrumbAs` props.** The trail and
+  the title are one visual unit (the trail's bottom spacing is part of the
+  heading block's rhythm), and consuming apps were otherwise re-pairing
+  `Breadcrumbs` with `PageHeading` by hand on every nested page. Pass
+  `breadcrumbAs` (e.g. Inertia's `Link`) for SPA navigation.
+
+### Changed
+
+- **`PageHeading`'s title row is now `min-h-11`.** A page with an action cluster
+  and a page without now align their titles on the same baseline; previously the
+  row's height tracked whether the page happened to have actions, so consecutive
+  pages visibly jumped. Bare headings grow by up to 16px.
+
+- **`AuthLayout` pins its footer to the bottom of the viewport** instead of
+  centering the whole stack as one group. Renders identically when no `#footer`
+  slot is passed; only footer-using callers see the difference.
+
+- **Type-scale documentation corrected.** `--text-xl` (20px) was labelled
+  "auth/section headers" and `--text-2xl` (24px) "page H1", but `PageHeading`
+  renders `text-xl` and only `ErrorLayout` uses `text-2xl`. Comments and the
+  token catalogue now match what the components do. No values changed.
+
 ## v1.7.1
 
 ### Fixed

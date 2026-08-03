@@ -71,8 +71,8 @@ export const typeScale: TypeStep[] = [
     { token: '--text-sm', textClass: 'text-sm', px: '13px / 18px', use: 'Body default, controls' },
     { token: '--text-base', textClass: 'text-base', px: '14px / 20px', use: 'Emphasized body, buttons' },
     { token: '--text-lg', textClass: 'text-lg', px: '16px / 24px', use: 'Card titles, section leads' },
-    { token: '--text-xl', textClass: 'text-xl', px: '20px / 28px', use: 'Auth/section headers' },
-    { token: '--text-2xl', textClass: 'text-2xl', px: '24px / 32px', use: 'Page H1' },
+    { token: '--text-xl', textClass: 'text-xl', px: '20px / 28px', use: 'Page H1, auth/section headers' },
+    { token: '--text-2xl', textClass: 'text-2xl', px: '24px / 32px', use: 'Error-page headline, display figures' },
 ];
 
 export interface RadiusToken {

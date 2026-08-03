@@ -1,6 +1,6 @@
 {
   "name": "@codebar-ag/storybook",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "codebar-ag DocuHub — shared Vue 3 + Tailwind v4 design-system atoms and tokens, documented in Storybook.",
   "license": "MIT",
   "author": "codebar Solutions AG",
@@ -34,6 +34,7 @@
     "test:ci": "playwright test"
   },
   "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.3.0",
     "tailwind-merge": "^3.0.0"
   },
   "peerDependencies": {

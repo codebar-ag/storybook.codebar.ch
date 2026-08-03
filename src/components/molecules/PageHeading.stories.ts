@@ -47,3 +47,38 @@ export const WithActions: Story = {
         </PageHeading>`,
     }),
 };
+
+export const WithBreadcrumbs: Story = {
+    args: {
+        breadcrumbs: [
+            { label: 'Gateways', href: '#' },
+            { label: 'Mustermann AG', href: '#' },
+            { label: 'File cabinets' },
+        ],
+    },
+};
+
+// The everything case, and what most consuming pages actually render: trail,
+// title, description and an action cluster as one heading block.
+export const WithBreadcrumbsAndActions: Story = {
+    render: () => ({
+        components: { PageHeading, Button },
+        setup: () => ({
+            breadcrumbs: [
+                { label: 'Gateways', href: '#' },
+                { label: 'Mustermann AG', href: '#' },
+                { label: 'File cabinets' },
+            ],
+        }),
+        template: `<PageHeading :breadcrumbs="breadcrumbs">
+            File cabinets
+            <template #description>
+                Archives and document trays available to the connected MCP gateway.
+            </template>
+            <template #actions>
+                <Button variant="secondary" size="sm">Export</Button>
+                <Button size="sm">New cabinet</Button>
+            </template>
+        </PageHeading>`,
+    }),
+};

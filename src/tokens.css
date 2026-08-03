@@ -8,9 +8,36 @@
    The `@source` line lets Tailwind scan the compiled atoms so their utility
    classes are generated in the consuming app. */
 
+/* ---- Fonts ----
+   All @import rules must precede everything else (CSS requires it), and this
+   file is itself imported before `tailwindcss` by every consumer.
+
+   JetBrains Mono IS the UI font (--font-mono below, and the app font in every
+   consumer). It is loaded HERE, in the published tokens.css, rather than in
+   .storybook/storybook.css — the canvas stylesheet is not part of `files:
+   ["dist"]`, so anything declared only there reaches the Storybook canvas and
+   no consumer. Declaring the family without shipping it is what left consuming
+   apps silently rendering in the ui-monospace fallback (SF Mono / Consolas /
+   DejaVu Sans Mono, per OS).
+
+   Self-hosted via @fontsource (a real `dependency`, so consumers get the files
+   transitively) rather than a Google Fonts URL: consumers ship their own
+   privacy policy and DPA, and a webfont CDN sends every visitor's IP to a third
+   party on first paint. It also drops a render-blocking cross-origin round trip.
+
+   Latin subset only, weights 400/500/600 — the exact set the atoms use
+   (`font-medium` = 500, `font-semibold` = 600, body = 400). 700 is included
+   because mono faux-bold is conspicuously bad, so a stray `font-bold` in a
+   consuming app should hit a real cut rather than a synthesised one. Add
+   `latin-ext-*` here if a consumer ever needs Central/Eastern European glyphs. */
+@import "@fontsource/jetbrains-mono/latin-400.css";
+@import "@fontsource/jetbrains-mono/latin-500.css";
+@import "@fontsource/jetbrains-mono/latin-600.css";
+@import "@fontsource/jetbrains-mono/latin-700.css";
+
 /* Open Sans — used only by the DocuWare App Registration mirror (.dw-screen) to
-   match DocuWare's own UI. Must precede the Tailwind import (CSS requires all
-   @import rules come first). */
+   match DocuWare's own UI. Still CDN-loaded: it is a deliberate visual mirror of
+   DocuWare's own chrome, shown on one screen, and is not the app font. */
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
 
 /* ---- Tailwind v4 CSS-first design tokens (PlanetScale-inspired LIGHT) ---- */
@@ -63,9 +90,9 @@
   --text-base--line-height:  1.25rem;
   --text-lg:                 1rem;        /* 16px — card titles, section leads */
   --text-lg--line-height:    1.5rem;
-  --text-xl:                 1.25rem;     /* 20px — auth/section headers */
+  --text-xl:                 1.25rem;     /* 20px — page H1 (PageHeading), auth/section headers */
   --text-xl--line-height:    1.75rem;
-  --text-2xl:                1.5rem;      /* 24px — page H1 */
+  --text-2xl:                1.5rem;      /* 24px — error-page headline (ErrorLayout), display figures */
   --text-2xl--line-height:   2rem;
 
   /* Radius — semantic steps (pills nested in controls, controls, surfaces). */

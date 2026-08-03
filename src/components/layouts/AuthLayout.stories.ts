@@ -33,3 +33,33 @@ export const Default: Story = {
             </AuthLayout>`,
     }),
 };
+
+// `maxWidth` widens the card for auth-adjacent screens that outgrow a single
+// column — onboarding with side-by-side fields, consent screens with a preview.
+export const Wide: Story = {
+    render: () => ({
+        components: { AuthLayout, Button, Field, Input },
+        template: `
+            <AuthLayout
+                max-width="2xl"
+                title="Create your workspace"
+                description="Billing details can be changed later."
+            >
+                <form class="grid gap-4 sm:grid-cols-2" novalidate @submit.prevent>
+                    <Field label="Company" name="company">
+                        <Input name="company" />
+                    </Field>
+                    <Field label="VAT number" name="vat">
+                        <Input name="vat" />
+                    </Field>
+                    <Field label="Street" name="street">
+                        <Input name="street" />
+                    </Field>
+                    <Field label="City" name="city">
+                        <Input name="city" />
+                    </Field>
+                    <Button type="submit" class="w-full sm:col-span-2">Continue</Button>
+                </form>
+            </AuthLayout>`,
+    }),
+};

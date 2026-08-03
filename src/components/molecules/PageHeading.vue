@@ -4,17 +4,27 @@
 // text-ink">` pattern repeated across most pages. An optional `#actions`
 // slot renders a right-aligned action cluster beside the title (wraps below
 // it on narrow screens) — omit the slot and this renders exactly as before.
+//
+// `breadcrumbs` renders a trail above the title. It lives here rather than
+// being composed by each caller because the two are a single visual unit: the
+// trail's spacing below itself is part of the heading block's rhythm, and every
+// consuming app was otherwise re-pairing them by hand on every nested page.
+// Pass `breadcrumbAs` (e.g. Inertia's `Link`) for SPA navigation, exactly as
+// Breadcrumbs' own `as` prop expects.
 import { computed, useSlots } from 'vue';
 import { cx } from '../../helpers/cx';
 import { useRootAttrs } from '../../composables/useRootAttrs';
+import Breadcrumbs, { type BreadcrumbItem } from './Breadcrumbs.vue';
 
 defineOptions({ inheritAttrs: false });
 
 withDefaults(
     defineProps<{
         eyebrow?: string | null;
+        breadcrumbs?: BreadcrumbItem[];
+        breadcrumbAs?: string | object;
     }>(),
-    { eyebrow: null },
+    { eyebrow: null, breadcrumbs: () => [], breadcrumbAs: 'a' },
 );
 
 const slots = useSlots();
@@ -24,32 +34,45 @@ const classes = computed(() => cx('text-xl font-semibold text-ink', classAttr.va
 </script>
 
 <template>
-  <div class="flex flex-wrap items-start justify-between gap-4">
-    <div class="min-w-0">
-      <p
-        v-if="eyebrow"
-        class="text-2xs uppercase tracking-wide text-muted"
+  <div>
+    <Breadcrumbs
+      v-if="breadcrumbs.length"
+      :items="breadcrumbs"
+      :as="breadcrumbAs"
+      class="mb-2"
+    />
+
+    <!-- `min-h-11` matches the height of a Button, so a page WITH an action
+         cluster and a page without still line their titles up at the same
+         baseline. Without it the heading row's height tracks whether the page
+         happens to have actions, and consecutive pages visibly jump. -->
+    <div class="flex min-h-11 flex-wrap items-start justify-between gap-4">
+      <div class="min-w-0">
+        <p
+          v-if="eyebrow"
+          class="text-2xs uppercase tracking-wide text-muted"
+        >
+          {{ eyebrow }}
+        </p>
+        <h1
+          :class="classes"
+          v-bind="rootAttrs"
+        >
+          <slot />
+        </h1>
+        <p
+          v-if="slots.description"
+          class="mt-1 text-sm text-muted"
+        >
+          <slot name="description" />
+        </p>
+      </div>
+      <div
+        v-if="slots.actions"
+        class="flex flex-wrap items-center gap-2 shrink-0"
       >
-        {{ eyebrow }}
-      </p>
-      <h1
-        :class="classes"
-        v-bind="rootAttrs"
-      >
-        <slot />
-      </h1>
-      <p
-        v-if="slots.description"
-        class="mt-1 text-sm text-muted"
-      >
-        <slot name="description" />
-      </p>
-    </div>
-    <div
-      v-if="slots.actions"
-      class="flex flex-wrap items-center gap-2 shrink-0"
-    >
-      <slot name="actions" />
+        <slot name="actions" />
+      </div>
     </div>
   </div>
 </template>
