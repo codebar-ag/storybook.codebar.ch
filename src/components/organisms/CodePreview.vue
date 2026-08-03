@@ -55,9 +55,10 @@ async function mount(): Promise<void> {
         return;
     }
 
-    const [{ EditorState }, EditorViewModule, lang] = await Promise.all([
+    const [{ EditorState }, EditorViewModule, { syntaxHighlighting, defaultHighlightStyle }, lang] = await Promise.all([
         import('@codemirror/state'),
         import('@codemirror/view'),
+        import('@codemirror/language'),
         loadLanguage(props.language),
     ]);
     const { EditorView, lineNumbers } = EditorViewModule;
@@ -76,6 +77,10 @@ async function mount(): Promise<void> {
                 EditorView.lineWrapping,
                 lineNumbers(),
                 lang,
+                // Same highlighter as CodeEditor — a preview surface that
+                // renders code as flat grey text is the one thing it exists
+                // not to do.
+                syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
                 // Shared theme (same as CodeEditor) plus this component's own
                 // maxHeight cap, which only makes sense for a preview surface.
                 createCodeMirrorTheme(EditorViewModule, { autoHeight: true }),

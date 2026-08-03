@@ -30,11 +30,22 @@ export default defineConfig({
             formats: ['es'],
         },
         rollupOptions: {
+            // EVERY @codemirror/* package must be listed here, not just the
+            // ones imported by name in a component. `@codemirror/language`
+            // owns the facets that tie a language's syntax tree to the
+            // highlighter; if it is bundled while `lang-json`/`lang-markdown`
+            // stay external, the consumer ends up with two instances of it —
+            // the parser registers its tree against one set of facets and
+            // `syntaxHighlighting()` reads the other, so code renders
+            // completely unhighlighted with no error anywhere.
+            // `@codemirror/commands` is the same hazard for the default keymap.
             external: [
                 'vue',
                 'apexcharts',
                 '@codemirror/state',
                 '@codemirror/view',
+                '@codemirror/language',
+                '@codemirror/commands',
                 '@codemirror/lang-json',
                 '@codemirror/lang-markdown',
             ],
