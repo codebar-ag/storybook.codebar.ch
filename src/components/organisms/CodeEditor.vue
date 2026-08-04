@@ -157,10 +157,14 @@ onBeforeUnmount(() => view?.destroy());
       `autoHeight` mode THIS element is the scroll container, and an absolutely
       positioned child would scroll out of sight on any document longer than
       the visible box.
+
+      `items-start` is load-bearing: without it the default `align-items:
+      stretch` squashes the button to this row's zero height, leaving a
+      padding-only stadium with the icon spilling out top and bottom.
     -->
     <div
       v-if="copyable && modelValue"
-      class="sticky top-0 z-10 flex h-0 justify-end"
+      class="sticky top-0 z-10 flex h-0 items-start justify-end"
     >
       <CopyButton
         :value="copyValue"
