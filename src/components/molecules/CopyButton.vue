@@ -20,9 +20,35 @@ const props = withDefaults(
     },
 );
 
+function copyFallback(value: string): boolean {
+    const textarea = document.createElement('textarea');
+    textarea.value = value;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    let succeeded = false;
+    try {
+        succeeded = document.execCommand('copy');
+    } catch {
+        succeeded = false;
+    }
+    document.body.removeChild(textarea);
+    return succeeded;
+}
+
 async function copy(): Promise<void> {
-    await navigator.clipboard?.writeText(props.value);
-    push({ message: props.copiedMessage, type: 'success' });
+    try {
+        if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(props.value);
+        } else if (!copyFallback(props.value)) {
+            throw new Error('Clipboard copy failed');
+        }
+        push({ message: props.copiedMessage, type: 'success' });
+    } catch {
+        push({ message: 'Could not copy to clipboard', type: 'error' });
+    }
 }
 </script>
 
