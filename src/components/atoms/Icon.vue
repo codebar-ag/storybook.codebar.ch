@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { icons, type IconName } from '../../icons';
+import { pick } from '../../helpers/pick';
 
 const props = withDefaults(
     defineProps<{
@@ -14,7 +15,9 @@ const sizeClass = computed(
     () => ({ sm: 'size-4', md: 'size-5', lg: 'size-6' })[props.size],
 );
 
-const body = computed(() => icons[props.name] ?? icons.plus);
+// A typo'd icon name silently rendered a plus sign — visually plausible,
+// so it survived review. Now it still renders the plus, but says so.
+const body = computed(() => pick(icons, props.name, 'plus', 'Icon.name'));
 </script>
 
 <template>

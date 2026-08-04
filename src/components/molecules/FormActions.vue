@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue';
+import { pick } from '../../helpers/pick';
 
 // Form-footer action row. `between` puts the secondary action (Cancel) on the
 // left and the primary on the right; `end` right-aligns everything. The
@@ -11,12 +12,13 @@ const props = withDefaults(
 
 const slots = useSlots();
 
-const alignment = computed(
-    () =>
-        ({ between: 'justify-between', end: 'justify-end', start: 'justify-start' })[
-            props.align
-        ] ?? 'justify-between',
-);
+const alignments: Record<string, string> = {
+    between: 'justify-between',
+    end: 'justify-end',
+    start: 'justify-start',
+};
+
+const alignment = computed(() => pick(alignments, props.align, 'between', 'FormActions.align'));
 </script>
 
 <template>

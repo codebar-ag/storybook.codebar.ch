@@ -10,6 +10,7 @@
 //         </template>
 //     </Tooltip>
 import { computed, ref, useId } from 'vue';
+import { pick } from '../../helpers/pick';
 
 const props = withDefaults(
     defineProps<{
@@ -31,7 +32,7 @@ const placements: Record<string, string> = {
 
 const bubbleClasses = computed(() => [
     'pointer-events-none absolute z-40 whitespace-nowrap rounded-control bg-ink px-2 py-1 text-2xs text-white shadow-card transition-opacity',
-    placements[props.placement] ?? placements.top,
+    pick(placements, props.placement, 'top', 'Tooltip.placement'),
     visible.value ? 'opacity-100' : 'opacity-0',
 ]);
 

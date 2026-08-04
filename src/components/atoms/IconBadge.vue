@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import Icon from './Icon.vue';
 import type { IconName } from '../../icons';
+import { pick } from '../../helpers/pick';
 
 // Icon inside a tinted, bordered badge. size: sm = 40px tile, md = 48px disc.
 const props = withDefaults(
@@ -27,9 +28,9 @@ const shapes: Record<string, string> = { circle: 'rounded-full', surface: 'round
 const classes = computed(
     () =>
         'inline-grid place-items-center shrink-0 border ' +
-        `${sizes[props.size] ?? sizes.md} ${shapes[props.shape] ?? shapes.circle} ${
-            variants[props.variant] ?? variants.accent
-        }`,
+        `${pick(sizes, props.size, 'md', 'IconBadge.size')} `
+        + `${pick(shapes, props.shape, 'circle', 'IconBadge.shape')} `
+        + `${pick(variants, props.variant, 'accent', 'IconBadge.variant')}`,
 );
 </script>
 

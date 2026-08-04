@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { resolveTone } from '../../helpers/tone';
 import type { LegacyTone, Tone } from '../../helpers/tone';
+import { pick } from '../../helpers/pick';
 
 const props = withDefaults(
     defineProps<{
@@ -31,7 +32,7 @@ const sizes: Record<string, string> = {
 const classes = computed(
     () =>
         'inline-flex items-center gap-1 font-medium rounded-control border ' +
-        `${palette[resolveTone(props.variant, 'neutral')]} ${sizes[props.size] ?? sizes.md}`,
+        `${palette[resolveTone(props.variant, 'neutral')]} ${pick(sizes, props.size, 'md', 'Badge.size')}`,
 );
 </script>
 

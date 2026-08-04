@@ -3,6 +3,7 @@
 // `name` (first letter of the first two words).
 import { computed } from 'vue';
 import { cx } from '../../helpers/cx';
+import { pick } from '../../helpers/pick';
 import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
@@ -36,7 +37,7 @@ const initials = computed(() =>
 const classes = computed(() =>
     cx(
         'inline-flex items-center justify-center shrink-0 overflow-hidden rounded-full border border-line bg-surface-2 font-semibold text-muted select-none',
-        sizes[props.size] ?? sizes.md,
+        pick(sizes, props.size, 'md', 'Avatar.size'),
         classAttr.value,
     ),
 );

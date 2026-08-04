@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { pick } from '../../helpers/pick';
 
 // Responsive form/field grid: single column on mobile, splitting at `sm`. Replaces
 // the ad-hoc `grid gap-4 sm:grid-cols-2` blocks repeated across forms. Class strings
@@ -17,7 +18,7 @@ const colClasses: Record<number, string> = {
     3: 'grid gap-4 sm:grid-cols-2 lg:grid-cols-3',
 };
 
-const classes = computed(() => colClasses[props.cols] ?? colClasses[2]);
+const classes = computed(() => pick(colClasses, props.cols, 2, 'FormGrid.cols'));
 </script>
 
 <template>

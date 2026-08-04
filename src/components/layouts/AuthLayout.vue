@@ -3,6 +3,7 @@
 // The brand slot sits above the card; footer links render quiet below it.
 import { computed } from 'vue';
 import Card from '../molecules/Card.vue';
+import { pick } from '../../helpers/pick';
 
 // Tailwind scans for literal class names, so each width is spelled out here
 // rather than interpolated into `max-w-${maxWidth}` at render time.
@@ -26,7 +27,9 @@ const props = withDefaults(
     { title: null, description: null, maxWidth: 'md' },
 );
 
-const cardWidth = computed(() => MAX_WIDTHS[props.maxWidth]);
+// No `??` here previously: an unknown key produced `undefined`, so the card
+// rendered with no max-width class at all and stretched the full column.
+const cardWidth = computed(() => pick(MAX_WIDTHS, props.maxWidth, 'md', 'AuthLayout.maxWidth'));
 </script>
 
 <template>

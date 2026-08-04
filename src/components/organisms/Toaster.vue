@@ -2,6 +2,7 @@
 import { useToast, type ToastType, type Toast } from '../../composables/useToast';
 import type { IconName } from '../../icons';
 import Icon from '../atoms/Icon.vue';
+import { pick } from '../../helpers/pick';
 
 // Unified toast overlay. Mount once near the app root; producers call `push()`
 // from the useToast composable (copy buttons, Inertia flash bridging, etc.).
@@ -45,7 +46,7 @@ const styleFor: Record<ToastType, string> = {
     aria-atomic="true"
     :class="[
       'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 w-full px-4 pointer-events-none',
-      widths[props.maxWidth],
+      pick(widths, props.maxWidth, 'sm', 'Toaster.maxWidth'),
     ]"
   >
     <TransitionGroup

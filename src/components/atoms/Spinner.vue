@@ -4,6 +4,7 @@
 // label covers standalone use.
 import { computed } from 'vue';
 import { cx } from '../../helpers/cx';
+import { pick } from '../../helpers/pick';
 import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
@@ -25,7 +26,7 @@ const sizes: Record<string, string> = {
 const { rootAttrs, classAttr } = useRootAttrs();
 
 const classes = computed(() =>
-    cx('inline-block animate-spin text-current', sizes[props.size] ?? sizes.md, classAttr.value),
+    cx('inline-block animate-spin text-current', pick(sizes, props.size, 'md', 'Spinner.size'), classAttr.value),
 );
 </script>
 
