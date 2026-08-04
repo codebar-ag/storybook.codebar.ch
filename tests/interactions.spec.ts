@@ -41,3 +41,18 @@ test('a copyable code editor copies the document it displays', async ({ page, co
     const clipboard = await page.evaluate(() => navigator.clipboard.readText());
     expect(clipboard).toBe('{\n  "vendor": "string",\n  "invoice_number": "string"\n}');
 });
+
+test('the copyable code editor button is not squashed by its zero-height row', async ({ page }) => {
+    await gotoStory(page, 'organisms-codeeditor--copyable');
+    await expect(page.locator('.cm-content')).toBeVisible();
+
+    // The button sits in a `h-0` sticky row, so a missing `items-start` lets
+    // `align-items: stretch` collapse it to padding-only and the icon spills
+    // out. Assert it still boxes its own icon: square, and taller than the glyph.
+    const button = page.getByRole('button', { name: 'Copy to clipboard' });
+    const box = (await button.boundingBox())!;
+    const icon = (await button.locator('svg').boundingBox())!;
+
+    expect(box.height).toBeGreaterThan(icon.height);
+    expect(Math.abs(box.width - box.height)).toBeLessThanOrEqual(1);
+});
