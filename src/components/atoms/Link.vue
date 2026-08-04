@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import type { Component } from 'vue';
 import { cx } from '../../helpers/cx';
+import { pick } from '../../helpers/pick';
 import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
@@ -28,7 +29,7 @@ const classes = computed(() => {
     const base = 'transition rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
     const underline = props.tone === 'accent' ? '' : 'underline underline-offset-2';
 
-    return cx(base, underline, tones[props.tone] ?? tones.default, classAttr.value);
+    return cx(base, underline, pick(tones, props.tone, 'default', 'Link.tone'), classAttr.value);
 });
 </script>
 

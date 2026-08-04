@@ -2,6 +2,7 @@
 import { computed, useSlots } from 'vue';
 import { cx } from '../../helpers/cx';
 import { useRootAttrs } from '../../composables/useRootAttrs';
+import { pick } from '../../helpers/pick';
 
 defineOptions({ inheritAttrs: false });
 
@@ -50,7 +51,7 @@ const titleSize: Record<string, string> = {
 const rootClass = computed(() =>
     cx(
         'bg-surface border border-line shadow-card rounded-surface',
-        variants[props.variant] ?? '',
+        pick(variants, props.variant, 'default', 'Card.variant'),
         props.hoverable ? 'hover:border-line-2 hover:shadow-card-hover transition' : '',
         classAttr.value,
     ),

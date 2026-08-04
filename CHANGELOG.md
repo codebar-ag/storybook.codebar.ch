@@ -5,6 +5,92 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.10.0
+
+### Fixed
+
+- **Every dev warning this kit ships was compiled out of the published bundle,
+  so none of them had ever reached a consumer.** The guards were written as
+  `import.meta.env.DEV` — but Vite resolves that at *this package's* build time,
+  not the consuming app's. Building the library for production folded the check
+  to a literal `false` and tree-shaking dropped the branch. `dist/flows.js`
+  contained **zero** occurrences of `console.warn`.
+
+  The practical cost: `resolveTone()`'s deprecation notice, whose entire job is
+  to tell an app it is still passing `green`/`red`/`amber`, could not fire in any
+  environment of any published version. One consuming app had accumulated **41**
+  legacy tone values across 9 files without a single line of feedback.
+
+  Dev guards now go through `isDev()` in `src/helpers/dev.ts`, which reads
+  `process.env.NODE_ENV` — left verbatim by the library build for the *consumer's*
+  bundler to substitute (`"development"` while developing, `"production"` in a
+  release build, where the branch folds away). This is the same mechanism Vue's
+  own `esm-bundler` build uses for `__DEV__`.
+
+  Three candidate guards were compiled and inspected in a real `vite build`
+  before settling on this one:
+
+  | Guard | Compiles to |
+  |---|---|
+  | `import.meta.env.DEV` | `return !1` — dead |
+  | `process.env.NODE_ENV !== 'production'` | preserved verbatim — **works** |
+  | `globalThis.process?.env?.NODE_ENV` | preserved, but browsers have no `process` global, so the optional chain yields `undefined !== 'production'` → warnings *in production* |
+
+  `npm run build` now runs `scripts/verify-dev-warnings.mjs`, which fails the
+  build if `console.warn` disappears from `dist`, if the `process.env.NODE_ENV`
+  read is missing, or if any `import.meta.env` gate creeps back in. Neither
+  Storybook nor the Playwright suite can catch this class of bug — both compile
+  from `src`, where the guard is still live — so it is asserted against the
+  built artefact.
+
+- **`resolveTone()` returned unknown values unchanged**, which indexed the
+  caller's palette to `undefined` and rendered the badge with no tone classes at
+  all. A typo such as `succes` now warns and falls back to the component's
+  default tone.
+
+### Added
+
+- **Unknown `variant` / `size` / `tone` / `placement` values now warn in
+  development instead of failing silently.** Every atom resolved its variant with
+  `variants[props.variant] ?? variants.primary`. The props *are* typed unions, so
+  TypeScript catches a bad value — but only at a TypeScript call site. Consuming
+  apps write plain-JS SFCs, where the union is erased and nothing checks it.
+
+  A real case: `<Button variant="success">`. `success` is valid on `Alert`,
+  `Badge`, `Card` and `IconBadge`, but **not** on `Button` — whose vocabulary is
+  `primary | secondary | ghost | danger | subtle | cta`. It rendered as `primary`,
+  silently, directly beside a genuine `primary` button. The author intended two
+  weights; the user saw two identical buttons.
+
+  The fallback itself was correct — a wrong variant must never blank out a
+  control. What was missing is that it happened quietly. The new `pick()` helper
+  (`src/helpers/pick.ts`) keeps the fallback and adds a one-time dev warning that
+  **names the valid keys**, because the vocabulary genuinely differs per
+  component and "which values are legal here" is the caller's actual question:
+
+  ```
+  [flows] Unknown Button.variant "success". Expected one of:
+  primary | secondary | ghost | danger | subtle | cta. Falling back to "primary".
+  ```
+
+  Applied to `Button` (variant, size), `Card`, `Link`, `Badge`, `Avatar`,
+  `Spinner`, `Icon`, `IconBadge` (size, shape, variant), `Tooltip`, `FormGrid`,
+  `FormActions`, `AuthLayout` and `Toaster`.
+
+  Warnings are de-duplicated per unique value: these resolve inside `computed()`
+  getters, and one warning per re-render would bury the first useful message
+  under hundreds of copies in a list.
+
+- **`AuthLayout.maxWidth` and `Toaster.maxWidth` had no fallback at all.** An
+  unknown key produced `undefined`, so the element rendered with no `max-width`
+  class and stretched to fill its column. Both now fall back to their documented
+  default and warn.
+
+**Consumers need no change.** Rendering is identical in production; the only new
+behaviour is console output in development. Expect deprecation warnings to appear
+on first upgrade — those are pre-existing legacy tone values that were always
+being silently remapped, now finally visible.
+
 ## v1.8.0
 
 ### Fixed

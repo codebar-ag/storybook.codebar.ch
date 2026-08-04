@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import type { Component } from 'vue';
 import { cx } from '../../helpers/cx';
+import { pick } from '../../helpers/pick';
 import { useRootAttrs } from '../../composables/useRootAttrs';
 import Spinner from './Spinner.vue';
 
@@ -54,8 +55,8 @@ const tag = computed(() => (props.href !== null ? 'a' : props.as));
 const classes = computed(() =>
     cx(
         base,
-        variants[props.variant] ?? variants.primary,
-        sizes[props.size] ?? sizes.md,
+        pick(variants, props.variant, 'primary', 'Button.variant'),
+        pick(sizes, props.size, 'md', 'Button.size'),
         classAttr.value,
     ),
 );
