@@ -5,6 +5,70 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.9.7
+
+### Fixed
+
+- **The kit shipped two control families whose reach differed by a factor of
+  five, and they sit next to each other in real UI.** Every `Button` is `h-11`
+  (44px) at *every* size — `sm`, `md` and `lg` all resolve to the same height,
+  which is a deliberate, documented decision. The small icon-only controls never
+  got the same treatment, and measured against the built Storybook they came out
+  at:
+
+  | Control | Target before | Target after |
+  |---|---|---|
+  | `Modal` close | **9.6 x 24 px** | 44 x 44 |
+  | `Drawer` close | **9.6 x 24 px** | 44 x 44 |
+  | `CopyButton` | 24 x 24 px | 44 x 44 |
+  | `Navbar` menu toggle | 36 x 36 px | 44 x 44 |
+
+  The two dialog close buttons are the serious ones: they were an unstyled
+  `&times;` glyph with no box of their own, so the whole hit area was the width
+  of the character — **9.6px**, which is not just below this kit's 44px but
+  below the 24x24 floor WCAG 2.5.8 Target Size (Minimum, AA) sets. Closing a
+  dialog on a touch screen was a coin flip, and the control most likely to be
+  reached for in a hurry was the hardest one in the kit to hit.
+
+  All four now carry `touchTargetClasses` from the new
+  `src/helpers/touchTarget.ts`, which hangs a transparent 44x44 `::after` off
+  the control, centred on it. The pseudo-element is out of flow, so **nothing
+  about the rendering changes**: the copy chip is still 24px of visible box and
+  still does not out-weigh the text beside it, no neighbour shifts, no row grows.
+  But a pseudo-element hit-tests as part of the element that generates it, so a
+  pointer or finger anywhere inside the 44px square activates the control.
+
+  A fixed centred `after:size-11` is used rather than the more familiar
+  `after:-inset-2`. An inset is measured from the control's own border box, so
+  it lands on 44px for exactly one control size and silently under- or
+  over-shoots for every other — with four controls at three different sizes
+  sharing one helper, that difference is the whole point. The technique is also
+  purely additive: it can only grow a hit area, never shrink one, so it stays
+  safe on a control that is already big enough.
+
+  Two limits are documented in the helper. Replaced elements (`<input>`,
+  `<img>`) render no pseudo-elements, so `DataTable`'s bare `size-4` row
+  checkbox — 16x16, also under the WCAG floor — cannot be fixed this way and
+  still needs a padded label wrapper. And targets grow outward, so two of them
+  closer than 44px apart overlap; `InputNumber`'s edge-to-edge `-`/`+` steppers
+  are therefore left at 36x36 (above the WCAG floor, `tabindex="-1"`, and fully
+  operable from the input itself) rather than have them steal each other's
+  clicks. `Toaster`'s dismiss button already reserves real layout space with
+  `min-h-11 min-w-11` and is left alone — a control that can afford 44px of box
+  should just have 44px of box.
+
+  `touchTargetClasses` is exported, so consuming apps can give their own
+  icon-only buttons the same reach instead of re-deriving the trick per
+  component.
+
+  The geometry is asserted, not assumed. `tests/touch-target.spec.ts` reads the
+  pseudo-element's computed box **and** probes the four corners of the 44px
+  square with `elementFromPoint`, checking first that each probe genuinely falls
+  outside the control's own border box — so what passes is the browser's own
+  hit-testing, not a restatement of the CSS it was generated from. A final test
+  clicks 6px *below* the copy chip's bottom edge and asserts the clipboard write
+  actually happens.
+
 ## v1.9.6
 
 ### Fixed

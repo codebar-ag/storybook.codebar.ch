@@ -3,6 +3,7 @@ import { computed, ref, useId } from 'vue';
 import { useEscapeKey } from '../../composables/useEscapeKey';
 import { useFocusTrap } from '../../composables/useFocusTrap';
 import { useScrollLock } from '../../composables/useScrollLock';
+import { touchTargetClasses } from '../../helpers/touchTarget';
 
 // Centered dialog with a scrim. Open state is v-model-driven so callers keep
 // ownership of visibility. Escape and backdrop clicks request a close. While
@@ -93,7 +94,7 @@ useFocusTrap(panel, open, {
             </div>
             <button
               type="button"
-              class="text-muted hover:text-ink"
+              :class="['text-muted hover:text-ink', touchTargetClasses]"
               aria-label="Close"
               @click="close"
             >

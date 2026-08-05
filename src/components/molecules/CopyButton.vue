@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { push } from '../../composables/useToast';
+import { touchTargetClasses } from '../../helpers/touchTarget';
 import Icon from '../atoms/Icon.vue';
 
 // Icon-only "copy to clipboard" button. Writes `value` to the clipboard and
@@ -56,7 +57,10 @@ async function copy(): Promise<void> {
   <button
     type="button"
     :aria-label="label"
-    class="shrink-0 inline-flex items-center justify-center p-1 transition rounded focus:outline-none focus-visible:ring-2"
+    :class="[
+      'shrink-0 inline-flex items-center justify-center p-1 transition rounded focus:outline-none focus-visible:ring-2',
+      touchTargetClasses,
+    ]"
     @click="copy"
   >
     <Icon
