@@ -28,8 +28,8 @@
  * Two constraints on where this can be applied:
  *
  *  - The control must be able to carry pseudo-elements. Replaced elements
- *    (`<input>`, `<img>`, `<select>`) render none, so a bare checkbox needs a
- *    padded label wrapper instead of this helper.
+ *    (`<input>`, `<img>`, `<select>`) render none, so a bare checkbox needs the
+ *    label wrapper below instead of this helper.
  *  - Targets grow outward and will overlap if two of them sit closer than 44px
  *    apart. That is fine for controls separated by normal row spacing, but
  *    controls packed edge to edge (a stepper's `-`/`+` pair) must keep their
@@ -47,3 +47,51 @@
 export const touchTargetClasses =
     "relative after:absolute after:left-1/2 after:top-1/2 after:size-11 " +
     "after:-translate-x-1/2 after:-translate-y-1/2 after:content-['']";
+
+/**
+ * The same problem for a control the helper above cannot touch: a bare
+ * `<input type="checkbox">`.
+ *
+ * An `<input>` is a *replaced* element. It has no children and generates no
+ * `::before`/`::after`, so `touchTargetClasses` is inert on it — the
+ * declaration is applied and the browser produces nothing. A `size-4` table
+ * checkbox therefore stays a 16x16 target: below this kit's 44px standard and
+ * below the 24x24 floor of WCAG 2.5.8 (AA).
+ *
+ * The way around a replaced element is to stop trying to grow the element and
+ * grow something wrapped *around* it instead. A `<label>` containing the input
+ * forwards its own clicks to that input natively — no JS, no `for`/`id` pair to
+ * keep unique per row — and, unlike the input, a label does render
+ * pseudo-elements. So the label carries a transparent absolutely positioned
+ * `::before`, and that pseudo-element is the target.
+ *
+ * `touchTargetLabelClasses` keeps the label itself `static`, which is the whole
+ * trick: an absolutely positioned box resolves against its nearest *positioned*
+ * ancestor, so skipping over the label makes the `::before` size itself to
+ * whichever ancestor carries `touchTargetBoundsClasses` — a table cell, in
+ * practice. Two consequences worth stating plainly:
+ *
+ *  - **The target is exactly the bounds element, so it can never overlap its
+ *    neighbours.** Sizing it to a fixed `size-11` instead would look better in
+ *    a changelog and be wrong in a dense table: rows shorter than 44px would
+ *    hand each other's clicks around. Filling the cell takes every pixel that
+ *    is genuinely free and not one more.
+ *  - **The target is therefore only as tall as the row.** A comfortable row
+ *    clears 44px and a compact one does not. Where it does not, this buys the
+ *    largest honest target rather than the advertised one — still several times
+ *    the 16px it replaces, and still above the WCAG 2.5.8 floor.
+ *
+ * The label stays inline and unstyled in flow (no `flex`, no padding), so it
+ * wraps the input without generating a box of its own: row height and column
+ * width are bit-for-bit what they were before the wrapper appeared. Only the
+ * out-of-flow `::before` is new.
+ *
+ * The label is also why row-level click handlers keep working. A click on the
+ * expanded area targets the `<label>`, which any "did this land on something
+ * interactive?" guard already has to recognise alongside `a`, `button` and
+ * `input` — so selecting a row does not also navigate to it.
+ */
+export const touchTargetBoundsClasses = "relative";
+
+export const touchTargetLabelClasses =
+    "static cursor-pointer before:absolute before:inset-0 before:content-['']";

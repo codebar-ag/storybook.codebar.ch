@@ -5,6 +5,89 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.9.8
+
+### Fixed
+
+- **v1.9.7 named one control it could not fix, and this is it.** `DataTable`'s
+  row-selection checkbox is a bare `size-4` `<input type="checkbox">` — a
+  **16x16** target, below this kit's 44px standard and below the 24x24 floor
+  WCAG 2.5.8 Target Size (Minimum, AA) sets. `touchTargetClasses` cannot reach
+  it: an `<input>` is a *replaced* element and generates no `::before`/`::after`
+  at all, so the declaration applies and the browser draws nothing. The
+  technique that fixed four other controls is simply inert here. Selecting a row
+  on a touch screen meant hitting a 16px square, and that is the control every
+  bulk action starts with.
+
+  The way past a replaced element is to stop growing the element and grow
+  something wrapped around it. The input now sits inside a `<label>`, which
+  forwards its own clicks to the input natively — no JS, no `for`/`id` pair to
+  keep unique per row — and which, unlike the input, does render
+  pseudo-elements. The label stays `static` so its absolutely positioned
+  `::before` resolves against the `relative` table cell instead, and fills it.
+
+  | Control | Target before | Target after |
+  |---|---|---|
+  | Row checkbox, comfortable rows | **16 x 16 px** | 48 x 57 |
+  | Row checkbox, plain comfortable rows | **16 x 16 px** | 48 x 46 |
+  | Row checkbox, `density="compact"` | **16 x 16 px** | 48 x 34 |
+  | Select-all checkbox, header | **16 x 16 px** | 48 x 40.5 |
+
+  **Two of those four are not 44 tall, and are not claimed to be.** The target
+  is the selection cell, so it is exactly as tall as its row — and a compact row
+  is 34px, a header row 40.5px. Giving those a fixed 44px target would push it
+  5px into the row above and 5px into the row below, and *every one of those
+  rows has a checkbox of its own*: the rows would trade each other's clicks, and
+  a mis-selected row in a table with bulk delete behind it is worse than a small
+  one. Filling the cell takes every pixel that is genuinely free and not one
+  more. Even at its worst that is 34px — four times the area of the 16px box it
+  replaces, and above the WCAG floor — while comfortable rows, the default,
+  clear 44 on both axes.
+
+  **Nothing about the rendering changes.** The checkbox is still drawn at 16x16,
+  the label is left inline and unstyled in flow so it generates no box of its
+  own, and only the out-of-flow `::before` is new. Row heights, column widths
+  and the checkbox's own position come out bit for bit identical — asserted, not
+  assumed: the test measures the table, unwraps every label back to the bare
+  input it used to be, measures again, and requires the two to be equal. That
+  compares the page against itself rather than against recorded pixel numbers,
+  so it cannot drift with platform font metrics.
+
+  `row-click` still works, and still does not fire from the checkbox. The
+  enlarged target now covers a whole cell *of a clickable row*, so this matters
+  more than it did: a click there targets the `<label>`, which the organism's
+  "did this land on something interactive?" guard already recognised alongside
+  `a`, `button` and `input`. A test clicks the bottom-left corner of the target
+  — inside the enlarged area, clear of the input — and asserts the row is
+  selected, is not opened, and toggles exactly once.
+
+  The two class strings live next to `touchTargetClasses` in
+  `src/helpers/touchTarget.ts` as `touchTargetBoundsClasses` and
+  `touchTargetLabelClasses`, and both are exported. The pair belongs beside the
+  original: which of the two techniques a control needs is decided entirely by
+  whether it can carry a pseudo-element, and that is a fact worth having
+  written down in one place rather than rediscovered per component.
+
+  Sizes are measured by hit-testing, not by reading back the CSS. A
+  pseudo-element has no `boundingBox()`, and Chrome's
+  `getComputedStyle(el, '::before')` reports its box a pixel short of what it
+  actually hit-tests — trusting it would have baked a rounding artefact into
+  every number above. The tests instead step `elementFromPoint` outward from the
+  input's centre one pixel at a time until the label stops answering, which is
+  the hit area itself, found the same way a finger finds it. Neighbouring
+  targets are then checked pair by pair for overlap, in both densities.
+
+  `Checkbox`, `Radio` and `Toggle` were checked for the same defect and do not
+  have it — each already wraps its input in a label with real layout
+  (`min-h-11`, or `p-3` for `Radio`'s card). That is now asserted rather than
+  assumed, along with the fact that two stacked instances do not overlap.
+
+  Two stories are new, because the failure modes only appear in combinations
+  nothing covered: `DataTable/CompactSelectable` (compact rows *and* a selection
+  column *and* a stuck header — the tightest arrangement the table offers) and
+  `DataTable/RowClick` (selection and row navigation on the same rows, with both
+  counters rendered so the assertion can be made from outside the component).
+
 ## v1.9.7
 
 ### Fixed

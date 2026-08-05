@@ -19,6 +19,7 @@ import Alert from '../molecules/Alert.vue';
 import Button from '../atoms/Button.vue';
 import EmptyState from '../molecules/EmptyState.vue';
 import Th from '../atoms/Th.vue';
+import { touchTargetBoundsClasses, touchTargetLabelClasses } from '../../helpers/touchTarget';
 
 const props = withDefaults(
     defineProps<{
@@ -120,9 +121,15 @@ const columnCount = computed(
 
 const cellPadding = computed(() => (props.density === 'compact' ? 'px-4 py-1.5' : 'px-4 py-3'));
 
+// Plain input rather than the Checkbox atom: table cells need the bare box
+// without Checkbox's label layout and its 44px of real vertical space.
+//
+// That leaves a 16x16 hit area, under the WCAG 2.5.8 floor, and an `<input>` is
+// a replaced element so `touchTargetClasses` cannot grow it. Each input is
+// wrapped in a `<label>` instead, whose `::before` fills the whole selection
+// cell and forwards clicks to the input: the cell carries the bounds, the label
+// carries the target. See helpers/touchTarget.ts.
 const checkboxClasses =
-    // Plain input rather than the Checkbox molecule: table cells need the bare
-    // box without Checkbox's label layout and touch-target padding.
     'size-4 shrink-0 rounded accent-ink cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
 
 function sortDirFor(col: DataTableColumn<T>): 'asc' | 'desc' | null {
@@ -174,16 +181,18 @@ function onRowClick(row: T, event: MouseEvent): void {
           >
             <th
               v-if="selectable"
-              class="w-10"
+              :class="['w-10', touchTargetBoundsClasses]"
             >
-              <input
-                type="checkbox"
-                :class="checkboxClasses"
-                :checked="allSelected"
-                :indeterminate="someSelected"
-                aria-label="Select all rows"
-                @change="toggleAll"
-              >
+              <label :class="touchTargetLabelClasses">
+                <input
+                  type="checkbox"
+                  :class="checkboxClasses"
+                  :checked="allSelected"
+                  :indeterminate="someSelected"
+                  aria-label="Select all rows"
+                  @change="toggleAll"
+                >
+              </label>
             </th>
             <Th
               v-for="col in columns"
@@ -276,15 +285,17 @@ function onRowClick(row: T, event: MouseEvent): void {
           >
             <td
               v-if="selectable"
-              :class="cellPadding"
+              :class="[cellPadding, touchTargetBoundsClasses]"
             >
-              <input
-                type="checkbox"
-                :class="checkboxClasses"
-                :checked="isSelected(keyOf(row))"
-                :aria-label="`Select row ${keyOf(row)}`"
-                @change="toggle(keyOf(row))"
-              >
+              <label :class="touchTargetLabelClasses">
+                <input
+                  type="checkbox"
+                  :class="checkboxClasses"
+                  :checked="isSelected(keyOf(row))"
+                  :aria-label="`Select row ${keyOf(row)}`"
+                  @change="toggle(keyOf(row))"
+                >
+              </label>
             </td>
             <td
               v-for="col in columns"
