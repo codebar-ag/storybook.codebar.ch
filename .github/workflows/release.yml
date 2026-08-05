@@ -6,7 +6,9 @@ on:
       - 'v*'
 
 permissions:
-  contents: read
+  # `contents: write` is what lets the last step cut the GitHub Release.
+  # Everything else here only reads the repo.
+  contents: write
   packages: write
 
 jobs:
@@ -87,3 +89,75 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Cutting the Release LAST is deliberate: a release is the human-facing
+      # announcement that a version exists, so it must never appear for a
+      # version that failed to publish. Everything above has to be green first.
+      #
+      # Releases used to be made by hand, and it showed: v1.6.0 and v1.9.0–1.9.2
+      # never got one, and every body that does exist is EMPTY — while
+      # CHANGELOG.md carries a detailed entry for each version. This step reads
+      # the notes out of the changelog so the two can no longer drift.
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          tag="${GITHUB_REF_NAME}"
+
+          # Everything between this version's `## vX.Y.Z` heading and the next
+          # `## v` heading. Blank leading/trailing lines are trimmed so the
+          # release body starts on the first real line.
+          notes="$(awk -v want="## v${version}" '
+            $0 == want { found = 1; next }
+            found && /^## v/ { exit }
+            found { print }
+          ' CHANGELOG.md | sed -e '/./,$!d' -e :a -e '/^\n*$/{$d;N;ba' -e '}')"
+
+          # Via a file, not an argument: the notes are multi-line Markdown
+          # containing backticks, quotes and `$`, and every one of those is a
+          # way to lose or mangle text on its way through the shell.
+          notes_file="$(mktemp)"
+          notes_args=()
+
+          if [ -z "${notes}" ]; then
+            # Not fatal: releases have historically shipped without a changelog
+            # entry, and blocking one here would trade a missing paragraph for a
+            # missing release. Fall back to GitHub's commit-derived notes.
+            echo "::warning::CHANGELOG.md has no '## v${version}' section." \
+                 "Falling back to auto-generated notes — add the entry, then run" \
+                 "\`gh release edit ${tag} --notes-file …\` to replace them."
+            notes_args=(--generate-notes)
+          else
+            printf '%s\n' "${notes}" > "${notes_file}"
+            notes_args=(--notes-file "${notes_file}")
+          fi
+
+          # A hyphen in the tag (v2.0.0-rc.1) marks a prerelease, which must not
+          # take the `latest` pointer away from the current stable version.
+          #
+          # `--latest` is otherwise passed EXPLICITLY rather than left to
+          # GitHub's default. GitHub infers "latest" from publish TIME, not
+          # version order, so the three releases pushed in one sitting on
+          # 2026-08-04 left v1.9.3 flagged Latest ahead of v1.9.5 — anyone
+          # landing on the releases page saw a superseded version as current.
+          case "${tag}" in
+            *-*) flags=(--prerelease) ;;
+            *)   flags=(--latest) ;;
+          esac
+
+          # Idempotent for re-runs, same as the publish step above: a retried
+          # job should converge on the right release, not fail on "already
+          # exists". `gh release edit` has no --generate-notes, so on the
+          # fallback path an existing release keeps whatever notes it has.
+          if gh release view "${tag}" >/dev/null 2>&1; then
+            echo "::warning::Release ${tag} already exists — updating it in place."
+
+            if [ -n "${notes}" ]; then
+              gh release edit "${tag}" "${flags[@]}" --notes-file "${notes_file}"
+            else
+              gh release edit "${tag}" "${flags[@]}"
+            fi
+          else
+            gh release create "${tag}" --title "${tag}" "${flags[@]}" "${notes_args[@]}"
+          fi
