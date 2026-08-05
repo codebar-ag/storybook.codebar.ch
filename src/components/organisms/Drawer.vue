@@ -7,6 +7,7 @@ import { computed, ref, useId } from 'vue';
 import { useEscapeKey } from '../../composables/useEscapeKey';
 import { useFocusTrap } from '../../composables/useFocusTrap';
 import { useScrollLock } from '../../composables/useScrollLock';
+import { touchTargetClasses } from '../../helpers/touchTarget';
 
 const props = withDefaults(
     defineProps<{
@@ -88,7 +89,7 @@ useFocusTrap(panel, open);
             </div>
             <button
               type="button"
-              class="text-muted hover:text-ink"
+              :class="['text-muted hover:text-ink', touchTargetClasses]"
               aria-label="Close"
               @click="close"
             >

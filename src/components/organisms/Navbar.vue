@@ -2,6 +2,7 @@
 // Top app bar: brand (mobile), centered content and trailing actions.
 // The menu button only shows below lg and asks the shell to open the sidebar.
 import Icon from '../atoms/Icon.vue';
+import { touchTargetClasses } from '../../helpers/touchTarget';
 
 withDefaults(
     defineProps<{
@@ -19,7 +20,10 @@ defineEmits<{ 'toggle-sidebar': [] }>();
     <button
       v-if="menuButton"
       type="button"
-      class="flex size-9 items-center justify-center rounded-control text-muted transition hover:text-ink lg:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+      :class="[
+        'flex size-9 items-center justify-center rounded-control text-muted transition hover:text-ink lg:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50',
+        touchTargetClasses,
+      ]"
       aria-label="Open navigation"
       @click="$emit('toggle-sidebar')"
     >
