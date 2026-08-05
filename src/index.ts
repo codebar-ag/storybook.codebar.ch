@@ -193,7 +193,7 @@ export { cx } from './helpers/cx';
 export { resolveTone } from './helpers/tone';
 export type { Tone, LegacyTone } from './helpers/tone';
 export { formControlClasses } from './helpers/formControlClasses';
-export { touchTargetClasses } from './helpers/touchTarget';
+export { touchTargetClasses, touchTargetBoundsClasses, touchTargetLabelClasses } from './helpers/touchTarget';
 export { areaChartOptions, chartBaseOptions, cssToken } from './helpers/chartTheme';
 export type { SelectOption } from './components/atoms/Select.vue';
 export type { Step } from './components/molecules/Stepper.vue';

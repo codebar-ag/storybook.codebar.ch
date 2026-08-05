@@ -196,3 +196,57 @@ export const Compact: Story = {
         template: '<DataTable :columns="columns" :rows="documents" row-key="id" density="compact" sticky-header />',
     }),
 };
+
+// The tightest arrangement the table offers: compact rows *and* a selection
+// column, with the header stuck. This is the case where a fixed 44px checkbox
+// target would not fit — the rows are shorter than that — so it is the one the
+// target sizing has to be measured against.
+export const CompactSelectable: Story = {
+    render: () => ({
+        components: { DataTable },
+        setup: () => ({ documents, columns, selected: ref<Array<string | number>>([]) }),
+        template: `
+            <DataTable
+                v-model:selected="selected"
+                :columns="columns"
+                :rows="documents"
+                row-key="id"
+                selectable
+                density="compact"
+                sticky-header
+            />`,
+    }),
+};
+
+// Selection and row navigation on the same rows. The checkbox's hit area covers
+// its whole cell, so this is where a click on the target must select the row and
+// must *not* count as opening it — both counters are rendered so the assertion
+// can be made from outside the component.
+export const RowClick: Story = {
+    render: () => ({
+        components: { DataTable },
+        setup: () => {
+            const opened = ref<string[]>([]);
+            return {
+                documents,
+                columns,
+                opened,
+                selected: ref<Array<string | number>>([]),
+                onRowClick: (row: DocumentRow) => opened.value.push(row.title),
+            };
+        },
+        template: `
+            <div>
+                <DataTable
+                    v-model:selected="selected"
+                    :columns="columns"
+                    :rows="documents"
+                    row-key="id"
+                    selectable
+                    @row-click="onRowClick"
+                />
+                <p data-testid="selected-count">Selected: {{ selected.length }}</p>
+                <p data-testid="opened-count">Opened: {{ opened.length }}</p>
+            </div>`,
+    }),
+};
