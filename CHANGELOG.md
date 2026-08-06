@@ -5,6 +5,22 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.13.0
+
+### Added
+
+- **A `map` icon** (Heroicons 24 outline, a folded three-panel map), bringing
+  the registry to 29 names.
+
+  The gap it fills: nothing in the set stood for *a diagram of a whole
+  structure*. `chart` is bars — quantities, not topology — and the nearest
+  alternatives (`document`, `code`, `link`) each name a piece rather than the
+  picture. A consumer opening an overview of how its parts connect had no
+  honest glyph to hang it on, and a bar chart on a button that opens a node
+  graph misdescribes what is behind it.
+
+  Purely additive: no existing name changes, and `IconName` widens by one.
+
 ## v1.12.0
 
 ### Added
