@@ -218,6 +218,78 @@ export const CompactSelectable: Story = {
     }),
 };
 
+// A row's related records, rendered beneath the row itself rather than behind a
+// drilldown. Three things this story exists to hold still: the detail block sits
+// inside its row's band with no divider between the two; a row with nothing to
+// show (4713) renders no block and no empty space; and a link inside the block
+// does not also fire the row click, which the counter below makes visible.
+export const RowDetail: Story = {
+    render: () => ({
+        components: { DataTable, StatusBadge },
+        setup: () => {
+            const opened = ref<string[]>([]);
+            const runsFor: Record<number, Array<{ id: string; status: string }>> = {
+                4711: [{ id: 'run-8842', status: 'success' }, { id: 'run-8830', status: 'danger' }],
+                4712: [{ id: 'run-8821', status: 'warning' }],
+                4713: [],
+                4714: [{ id: 'run-8804', status: 'danger' }],
+                4715: [{ id: 'run-8799', status: 'success' }],
+            };
+            return {
+                documents,
+                columns,
+                runsFor,
+                opened,
+                selected: ref<Array<string | number>>([]),
+                onRowClick: (row: DocumentRow) => opened.value.push(row.title),
+            };
+        },
+        template: `
+            <div>
+                <DataTable
+                    v-model:selected="selected"
+                    :columns="columns"
+                    :rows="documents"
+                    row-key="id"
+                    selectable
+                    @row-click="onRowClick"
+                >
+                    <template #cell-amount="{ value }">
+                        {{ value === 0 ? '—' : Number(value).toFixed(2) }}
+                    </template>
+                    <template #row-detail="{ row }">
+                        <div v-if="runsFor[row.id].length" class="ml-6 border-l border-line pl-4">
+                            <p class="mb-1 text-2xs uppercase tracking-wider text-dim">Processing runs</p>
+                            <div
+                                v-for="run in runsFor[row.id]"
+                                :key="run.id"
+                                class="flex flex-wrap items-center gap-x-3 gap-y-1 py-0.5 text-xs"
+                            >
+                                <a :href="'#' + run.id" class="font-mono underline">{{ run.id }}</a>
+                                <StatusBadge :variant="run.status" :label="run.status" dot />
+                                <span class="text-muted">2026-07-13 09:10:41</span>
+                            </div>
+                        </div>
+                    </template>
+                </DataTable>
+                <p data-testid="opened-count">Opened: {{ opened.length }}</p>
+            </div>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+
+        await expect(canvas.getByText('run-8842')).toBeVisible();
+        // 4713 has no runs: the slot renders nothing rather than an empty box.
+        await expect(canvas.queryByText('run-8813')).not.toBeInTheDocument();
+
+        // A link inside the block keeps its own semantics — onRowClick already
+        // ignores interactive descendants, and the detail row has no handler
+        // of its own to begin with.
+        await userEvent.click(canvas.getByText('run-8842'));
+        await expect(canvas.getByTestId('opened-count')).toHaveTextContent('Opened: 0');
+    },
+};
+
 // Selection and row navigation on the same rows. The checkbox's hit area covers
 // its whole cell, so this is where a click on the target must select the row and
 // must *not* count as opening it — both counters are rendered so the assertion

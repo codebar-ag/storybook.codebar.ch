@@ -5,6 +5,45 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.10.0
+
+### Added
+
+- **`DataTable` gained a `#row-detail="{ row }"` slot** — a full-width block
+  rendered directly beneath each row, for showing what a row is *related to*
+  (its runs, its children, its recent activity) without sending the reader
+  through a drilldown to find out. It spans the whole table width, is not
+  clickable, and carries no divider between itself and the row above, so it
+  reads as part of that row rather than as a row of its own.
+
+  There is deliberately **no expand/collapse prop, no state and no emit**:
+  visibility is the caller's, expressed by rendering nothing inside the slot
+  for a row with nothing to show. That keeps the API change to one optional
+  slot, and keeps per-row open/closed state — which would need a v-model, a
+  key strategy and a decision about what pagination does to it — out of the
+  component until something actually needs it.
+
+  **Consumers need no change.** A table that binds no `#row-detail` renders
+  exactly the markup it did before.
+
+### Changed
+
+- **The row divider moved from `<tbody>` onto the rows themselves.** It was
+  `[&>tr]:border-t [&>tr]:border-line [&>tr:first-child]:border-t-0` on the
+  `<tbody>`, which a detail row — a `<tr>` like any other — would have been
+  caught by, drawing a line between a row and its own detail block. It could
+  not be cancelled from the detail row either: `.…\:border-t > tr`
+  (specificity 0,1,1) out-specifies a plain `.border-t-0` (0,1,0). Every row
+  that used to draw a divider still draws one, and `first:border-t-0` keeps
+  the first row flush under the header. **No visual change for any existing
+  consumer.**
+
+- **The data-row `v-for` moved onto a wrapping `<template>`.** It previously
+  sat on the `<tr>` alongside `v-else`, and an element carrying `v-for`
+  renders exactly one element per iteration — so no sibling row could be
+  emitted per data row without this. Rendered output is unchanged when
+  `#row-detail` is unbound.
+
 ## v1.9.8
 
 ### Fixed

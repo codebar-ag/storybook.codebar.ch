@@ -9,7 +9,12 @@
 //
 // Cell rendering is overridable per column via #cell-<key>="{ row, value }";
 // #row-actions adds a trailing actions cell, #bulk-actions a toolbar that
-// appears while rows are selected.
+// appears while rows are selected, and #row-detail="{ row }" renders a
+// full-width block directly beneath each row — for showing what a row is
+// related to (its runs, its children) without a drilldown. The detail row is
+// not clickable and carries no divider, so it reads as part of the row above
+// rather than as a row of its own; a caller that wants nothing for a given
+// row simply renders nothing inside the slot.
 import { computed, getCurrentInstance } from 'vue';
 import { useSort } from '../../composables/useSort';
 import { useSelection } from '../../composables/useSelection';
@@ -212,12 +217,20 @@ function onRowClick(row: T, event: MouseEvent): void {
           </tr>
         </thead>
 
-        <tbody class="[&>tr]:border-t [&>tr]:border-line [&>tr:first-child]:border-t-0">
+        <!-- The row divider lives on the data/state rows themselves, not on a
+             `[&>tr]` rule here. A detail row is a `<tr>` too, so the rule
+             drew a line between a row and its own detail block — and could
+             not be cancelled from there either, since `.…\:border-t > tr`
+             (0,1,1) out-specifies a plain `.border-t-0` (0,1,0). Every row
+             that used to get the border still gets one, and `first:` keeps
+             the first one flush under the header exactly as before. -->
+        <tbody>
           <!-- Loading: one skeleton row per expected row. -->
           <template v-if="loading">
             <tr
               v-for="i in paginationMode === 'none' ? 5 : pageSize"
               :key="`skeleton-${i}`"
+              class="border-t border-line first:border-t-0"
               aria-hidden="true"
             >
               <td
@@ -239,7 +252,10 @@ function onRowClick(row: T, event: MouseEvent): void {
           </template>
 
           <!-- Error state. -->
-          <tr v-else-if="error !== null">
+          <tr
+            v-else-if="error !== null"
+            class="border-t border-line first:border-t-0"
+          >
             <td
               :colspan="columnCount"
               class="px-4 py-4"
@@ -259,7 +275,10 @@ function onRowClick(row: T, event: MouseEvent): void {
           </tr>
 
           <!-- Empty state. -->
-          <tr v-else-if="visibleRows.length === 0">
+          <tr
+            v-else-if="visibleRows.length === 0"
+            class="border-t border-line first:border-t-0"
+          >
             <td :colspan="columnCount">
               <slot name="empty">
                 <EmptyState
@@ -271,55 +290,78 @@ function onRowClick(row: T, event: MouseEvent): void {
             </td>
           </tr>
 
-          <!-- Data rows. -->
-          <tr
-            v-for="row in visibleRows"
-            v-else
-            :key="keyOf(row)"
-            :class="[
-              isSelected(keyOf(row)) ? 'bg-surface-2/60' : 'hover:bg-surface-2/40',
-              hasRowClick ? 'cursor-pointer' : '',
-            ]"
-            class="transition"
-            @click="onRowClick(row, $event)"
-          >
-            <td
-              v-if="selectable"
-              :class="[cellPadding, touchTargetBoundsClasses]"
+          <!-- Data rows, each optionally followed by its own detail row. The
+               loop is lifted into a <template> because an element carrying
+               v-for renders exactly one element per iteration — the previous
+               `<tr v-for v-else>` could not be given a sibling. -->
+          <template v-else>
+            <template
+              v-for="row in visibleRows"
+              :key="keyOf(row)"
             >
-              <label :class="touchTargetLabelClasses">
-                <input
-                  type="checkbox"
-                  :class="checkboxClasses"
-                  :checked="isSelected(keyOf(row))"
-                  :aria-label="`Select row ${keyOf(row)}`"
-                  @change="toggle(keyOf(row))"
-                >
-              </label>
-            </td>
-            <td
-              v-for="col in columns"
-              :key="col.key"
-              :class="[cellPadding, col.align === 'right' ? 'text-right tabular-nums' : '']"
-            >
-              <slot
-                :name="`cell-${col.key}`"
-                :row="row"
-                :value="row[col.key]"
+              <tr
+                :class="[
+                  isSelected(keyOf(row)) ? 'bg-surface-2/60' : 'hover:bg-surface-2/40',
+                  hasRowClick ? 'cursor-pointer' : '',
+                ]"
+                class="border-t border-line transition first:border-t-0"
+                @click="onRowClick(row, $event)"
               >
-                {{ row[col.key] }}
-              </slot>
-            </td>
-            <td
-              v-if="$slots['row-actions']"
-              :class="[cellPadding, 'w-px whitespace-nowrap text-right']"
-            >
-              <slot
-                name="row-actions"
-                :row="row"
-              />
-            </td>
-          </tr>
+                <td
+                  v-if="selectable"
+                  :class="[cellPadding, touchTargetBoundsClasses]"
+                >
+                  <label :class="touchTargetLabelClasses">
+                    <input
+                      type="checkbox"
+                      :class="checkboxClasses"
+                      :checked="isSelected(keyOf(row))"
+                      :aria-label="`Select row ${keyOf(row)}`"
+                      @change="toggle(keyOf(row))"
+                    >
+                  </label>
+                </td>
+                <td
+                  v-for="col in columns"
+                  :key="col.key"
+                  :class="[cellPadding, col.align === 'right' ? 'text-right tabular-nums' : '']"
+                >
+                  <slot
+                    :name="`cell-${col.key}`"
+                    :row="row"
+                    :value="row[col.key]"
+                  >
+                    {{ row[col.key] }}
+                  </slot>
+                </td>
+                <td
+                  v-if="$slots['row-actions']"
+                  :class="[cellPadding, 'w-px whitespace-nowrap text-right']"
+                >
+                  <slot
+                    name="row-actions"
+                    :row="row"
+                  />
+                </td>
+              </tr>
+
+              <!-- Deliberately not clickable and not bordered: it belongs to
+                   the row above, so it must not read (or behave) as a row in
+                   its own right. Only the interactive elements a caller puts
+                   inside it do anything. -->
+              <tr v-if="$slots['row-detail']">
+                <td
+                  :colspan="columnCount"
+                  class="px-4 pt-0 pb-3"
+                >
+                  <slot
+                    name="row-detail"
+                    :row="row"
+                  />
+                </td>
+              </tr>
+            </template>
+          </template>
         </tbody>
       </table>
     </div>
