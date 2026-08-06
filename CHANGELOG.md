@@ -5,6 +5,26 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.11.0
+
+### Added
+
+- **`Modal` gained an `lg` size** (`md` | `lg` | `full`, default `md`).
+  `max-w-3xl` instead of `max-w-lg`, sizing its own height exactly as `md`
+  does — only wider.
+
+  The gap it fills: `md` is reading width, and the only step up was `full`,
+  which stretches the panel to the entire viewport and scrolls the body slot.
+  Content that is intrinsically *wide* but not *tall* — a small table, fields
+  side by side, a list of dotted key paths like
+  `document.dossier.custom_field_3` — fits neither. Forced into `full`, a
+  six-line dialog renders as a full-screen panel with its content stranded at
+  the top, which reads as a broken page rather than a dialog; kept at `md`, it
+  wraps every line it should not.
+
+  **Consumers need no change.** The prop already existed and still defaults to
+  `md`; `full` is untouched.
+
 ## v1.10.0
 
 ### Added
