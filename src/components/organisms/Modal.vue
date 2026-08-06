@@ -18,9 +18,16 @@ const props = withDefaults(
         // CSS selector (scoped to the panel) for the element to focus on open,
         // e.g. 'input[name=email]'. Defaults to the first focusable element.
         initialFocus?: string | null;
-        // 'full' stretches the panel to the viewport (minus the overlay inset)
-        // and scrolls the body slot instead of growing the dialog.
-        size?: 'md' | 'full';
+        // 'md' is a reading-width dialog: a confirmation, a short form. 'lg'
+        // is the same dialog, wider — for content that is intrinsically wide
+        // (a table, a list of dotted key paths, side-by-side fields) but still
+        // short enough to size itself. 'full' stretches the panel to the
+        // viewport (minus the overlay inset) and scrolls the body slot instead
+        // of growing the dialog. The gap between 'md' and 'full' is why 'lg'
+        // exists: without it, anything too wide for max-w-lg had to go
+        // edge-to-edge, and a six-line picker in a full-screen panel reads as
+        // a broken page rather than a dialog.
+        size?: 'md' | 'lg' | 'full';
     }>(),
     {
         modelValue: false,
@@ -69,7 +76,7 @@ useFocusTrap(panel, open, {
           tabindex="-1"
           :class="[
             'relative z-10 w-full rounded-surface border border-line bg-surface shadow-card-hover focus:outline-none',
-            size === 'full' ? 'flex h-full flex-col' : 'max-w-lg',
+            size === 'full' ? 'flex h-full flex-col' : size === 'lg' ? 'max-w-3xl' : 'max-w-lg',
           ]"
         >
           <div

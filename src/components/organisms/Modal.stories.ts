@@ -58,6 +58,52 @@ export const Default: Story = {
     },
 };
 
+export const Large: Story = {
+    render: () => ({
+        components: { Modal, Button },
+        setup: () => ({ open: ref(false) }),
+        template: `
+            <div>
+                <Button @click="open = true">Open large modal</Button>
+                <Modal v-model="open" size="lg" title="Extra columns" description="Content that is wide but not tall.">
+                    <p class="font-mono text-sm text-muted">document.dossier.custom_field_3</p>
+                    <template #footer>
+                        <div class="flex justify-end">
+                            <Button variant="primary" @click="open = false">Save</Button>
+                        </div>
+                    </template>
+                </Modal>
+            </div>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const body = within(canvasElement.ownerDocument.body);
+
+        await userEvent.click(canvas.getByRole('button', { name: 'Open large modal' }));
+        const dialog = await body.findByRole('dialog');
+        await waitFor(() => expect(dialog).toBeVisible());
+
+        const panel = dialog.querySelector<HTMLElement>('[tabindex="-1"]');
+        await expect(panel).not.toBeNull();
+
+        // The one thing worth pinning: 'lg' is WIDER than the md default and
+        // still sizes its own height. Asserted against max-w-3xl (48rem)
+        // clamped to what the overlay leaves, so the story survives a narrow
+        // runner viewport instead of failing on it.
+        const inset = 2 * 16;
+        const available = dialog.getBoundingClientRect().width - inset;
+        await waitFor(() =>
+            expect(Math.round(panel!.getBoundingClientRect().width)).toBe(Math.round(Math.min(768, available))),
+        );
+        await expect(Math.round(panel!.getBoundingClientRect().height)).toBeLessThan(
+            Math.round(dialog.getBoundingClientRect().height - inset),
+        );
+
+        await userEvent.keyboard('{Escape}');
+        await waitFor(() => expect(body.queryByRole('dialog')).not.toBeInTheDocument());
+    },
+};
+
 export const FullSize: Story = {
     render: () => ({
         components: { Modal, Button },
