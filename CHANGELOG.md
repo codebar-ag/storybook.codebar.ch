@@ -5,6 +5,29 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.12.0
+
+### Added
+
+- **`DescriptionList` gained a `layout` prop** (`gutter` | `rows`, default
+  `gutter`). `gutter` is the shape it has always had: the label sits in a fixed
+  `w-36` column so every value starts on the same x, which is what a
+  sidebar-width list wants. That gutter is also a wrap machine — any label
+  longer than 9rem ("Workspace-wide rate limit multiplier") breaks over two or
+  three lines beside a value of "4", which is how a full-width card of short
+  numbers ends up ragged. `rows` gives the label as much width as it needs
+  (`whitespace-nowrap`, so it never wraps), pushes the value to the far edge,
+  and rules a line under each pair: one entry per line, however long the label
+  runs.
+
+  The prop is on the **list**, not the item — a list whose rows disagree about
+  where the value sits is not a list. `DescriptionItem` picks the shape up
+  through provide/inject, and an item rendered outside a list falls back to
+  `gutter`.
+
+  **Consumers need no change.** The prop defaults to today's behaviour, and a
+  list that passes nothing renders exactly the markup it did before.
+
 ## v1.11.0
 
 ### Added
