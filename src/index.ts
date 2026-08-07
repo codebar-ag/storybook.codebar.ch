@@ -40,6 +40,8 @@ import IdCell from './components/atoms/IdCell.vue';
 import Input from './components/atoms/Input.vue';
 import InputNumber from './components/molecules/InputNumber.vue';
 import Kbd from './components/atoms/Kbd.vue';
+import KindLegend from './components/molecules/KindLegend.vue';
+import KindMark from './components/atoms/KindMark.vue';
 import KnowledgeSchemaPanel from './components/organisms/KnowledgeSchemaPanel.vue';
 import Label from './components/atoms/Label.vue';
 import LabeledCodeBlock from './components/molecules/LabeledCodeBlock.vue';
@@ -123,6 +125,8 @@ export {
     Input,
     InputNumber,
     Kbd,
+    KindLegend,
+    KindMark,
     KnowledgeSchemaPanel,
     Label,
     LabeledCodeBlock,
@@ -189,6 +193,8 @@ export { useListNavigation } from './composables/useListNavigation';
 export { useFormErrors } from './composables/useFormErrors';
 export { icons } from './icons';
 export type { IconName } from './icons';
+export { kindShapes } from './kindShapes';
+export type { KindShape } from './kindShapes';
 export { cx } from './helpers/cx';
 export { resolveTone, resolveCategory } from './helpers/tone';
 export type { Tone, LegacyTone, Category } from './helpers/tone';
@@ -203,6 +209,7 @@ export type { SelectOption } from './components/atoms/Select.vue';
 export type { Step } from './components/molecules/Stepper.vue';
 export type { BreadcrumbItem } from './components/molecules/Breadcrumbs.vue';
 export type { TabItem } from './components/molecules/Tabs.vue';
+export type { KindLegendItem } from './components/molecules/KindLegend.vue';
 export type { DataTableColumn } from './components/organisms/dataTable.types';
 
 /**
@@ -250,6 +257,8 @@ const components: Record<string, Component> = {
     Input,
     InputNumber,
     Kbd,
+    KindLegend,
+    KindMark,
     KnowledgeSchemaPanel,
     Label,
     LabeledCodeBlock,

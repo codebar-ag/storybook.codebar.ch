@@ -111,8 +111,15 @@ export function resolveTone(value: Tone | LegacyTone | undefined, fallback: Tone
  * red-green colour blindness, which is indistinguishable.
  *
  * So: three real categories, and `neutral` for "no category". More kinds than
- * that need a channel other than colour — an icon, or the label itself. This is
- * the honest ceiling, not a placeholder to grow later.
+ * that need a channel other than colour. This is the honest ceiling, not a
+ * placeholder to grow later.
+ *
+ * Since v1.16.0 the kit ships that other channel: `KindMark` carries the kind
+ * in a silhouette and a glyph, with one of these three colours (or neutral) as
+ * redundant reinforcement. Reach for it rather than for a fourth `Category`.
+ * Why it had to be geometry is measurable in these very tokens — desaturated,
+ * `cat-indigo` and `cat-magenta` are L* 40.7 and 40.6, the same grey. Colour
+ * does not survive greyscale; a silhouette cannot fail it.
  */
 export type Category = 'indigo' | 'purple' | 'magenta';
 

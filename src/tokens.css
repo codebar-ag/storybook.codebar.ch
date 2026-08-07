@@ -141,7 +141,12 @@
      What survives is a single ~60° arc, blue→magenta, and inside it exactly
      three mutually-separable steps. A fourth drops the worst pair to ΔE≈3.0
      under simulated red-green colour blindness — indistinguishable. Need more
-     kinds than three? Use a channel that is not colour (an icon, or the label).
+     kinds than three? Use a channel that is not colour. Since v1.16.0 that
+     channel is `KindMark`: it carries the distinction in a silhouette and a
+     glyph and demotes these tokens to redundant reinforcement. One number
+     settles why it had to exist — desaturated, cat-indigo and cat-magenta
+     measure L* 40.7 and 40.6. In greyscale they are the same grey, so nothing
+     decided in this block survives a black-and-white print.
 
      Measured, this set (lowest of the three text ratios noted per token):
        indigo  ↔ purple   ΔE 17.3 normal / 16.6 CVD

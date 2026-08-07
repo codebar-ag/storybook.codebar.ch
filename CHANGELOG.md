@@ -5,6 +5,207 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.16.0
+
+The non-colour channel v1.15.0 said would be needed. Additive and non-breaking:
+nothing existing changes shape, colour or markup — `Tone` is still five values,
+`Category` is still three, and no token moved.
+
+### Added
+
+- **`KindMark` — a kind label whose primary channel is geometry, not colour.**
+
+  v1.15.0 shipped three categorical colours and documented three as a *measured
+  ceiling*: inside the one arc of the hue wheel that clears AA-as-text on three
+  grounds, holds enough chroma to read as a hue, and stays clear of every
+  severity token, three is the largest mutually separable set. That conclusion
+  has held up. What it left open was what to do about an axis with more than
+  three members, and there was a real one waiting: a consuming app's flow-graph
+  diagram with **15 node kinds**, drawn on 12 raw Tailwind ramp hues because
+  there was nothing else to draw them with. Several of those hues sat on the
+  severity ramp — a node whose *kind* was "data source" rendered in the amber
+  the UI uses for "something is wrong". That was reported as a bug and it was
+  one.
+
+  It is not fixed by a fourth colour, and the proof is inside this kit's own
+  tokens rather than in an argument. Desaturated, `--color-cat-indigo` and
+  `--color-cat-magenta` measure **L\* 40.7 and 40.6**. They are the same grey.
+  Print the graph in black and white and the entire categorical vocabulary
+  collapses to one grey and one dark grey — so any design where colour is the
+  distinction has already failed a test nobody was running.
+
+  `KindMark` runs that test on purpose. It splits the distinction across three
+  channels of decreasing coarseness and increasing certainty:
+
+  | channel | values | needs | survives greyscale |
+  | --- | --- | --- | --- |
+  | silhouette | 4 | ≥12px | yes — it is geometry |
+  | glyph | the icon registry | ≥12px of glyph, so ≥32px of mark | yes |
+  | label | unbounded | reading | yes |
+
+  Colour rides on top of the silhouette — one colour per shape, so it is purely
+  redundant. Delete it and nothing is lost. That is the difference between a
+  reinforcement channel and a signalling one, and it is the whole design.
+
+  Props: `shape` and `label` required, `icon` and `category` optional, `size` of
+  `sm | md | lg`. **`label` cannot be suppressed.** Four silhouettes cannot name
+  fifteen kinds and the component is not allowed to imply otherwise; an omitted
+  `icon` renders the silhouette alone, which is a real state the legend uses.
+
+- **`KindLegend` — the four-row key, and only ever four rows.**
+
+  A silhouette means "this box is the same sort of thing as that one", which is
+  a claim about the set, not about any one mark — so no individual card can
+  convey it and it needs a legend. The glyph does not: every mark carries its
+  kind's name, so a reader can always just read it. The legend therefore lists
+  **families, not kinds**: four rows for fifteen kinds, and still four for
+  fifty. A legend that grew with the axis would be the concession that the
+  encoding had stopped working.
+
+- **Three icons — `database`, `chat`, `chip`.** Not decoration: the app above
+  had 15 kinds on 11 glyphs, so four pairs shared one — `code` for both node
+  and schema, `document` for both data source and prompt, `cloud` for both
+  provider and AI provider, `link` for both gateway and gateway endpoint. Each
+  of those pairs measures **DSSIM 0**, the only score that means "the same
+  picture". A design that promotes the glyph to a primary channel has to supply
+  enough glyphs for it to be one.
+
+### How the shape channel was measured
+
+Colour has ΔE. A shape channel needs its own measured equivalent or "it is
+distinguishable" is just an assertion, so: **DSSIM = (1 − SSIM) × 100**
+(structural similarity, Wang et al. 2004), greyscale, computed on real Chromium
+rasters of the real marks at real pixel sizes — antialiasing, stroke joins and
+all. SSIM's 11×11 Gaussian window is itself a coarse low-pass, which is a fair
+model of what "at a glance" means.
+
+The floor is **DSSIM ≥ 30**, and it is calibrated against controls rather than
+picked, because a number in a new metric means nothing on its own:
+
+| control | DSSIM | what it establishes |
+| --- | --- | --- |
+| `circle` ↔ regular octagon | 13.4 | at mark size an octagon *is* a circle |
+| `square` ↔ same square, bigger radius | 25.4 | a corner radius is not a shape |
+| `eye` ↔ `eye-slash` (this kit's registry) | 26.3 | a pair users demonstrably confuse |
+| any glyph ↔ itself | 0 | identity |
+
+Everything at or under ~26 is a pair we can independently confirm is confusable,
+so 30 is the first honest floor above them.
+
+One limitation, stated rather than hidden: DSSIM is structural, so it *over*-scores
+pairs that differ only by rotation — `chevron-up` ↔ `chevron-down` scores 81.2
+though people confuse them constantly. It is therefore a rejection gate, not a
+certificate: below the floor is proof of confusability, above it is not proof of
+distinctness, and glyph choices still need a human to look at them.
+
+**The four silhouettes** — worst pair `square` ↔ `circle`, **59.0** at 32px with
+a 1.5px stroke: better than twice the floor and 4.4× the octagon control. What
+was rejected and why:
+
+| rejected | DSSIM | why |
+| --- | --- | --- |
+| octagon | 13.4 vs `circle` | at mark sizes it is a circle |
+| squircle | 25.4 vs `square` | a corner radius is not a shape |
+| pentagon | 53.2 vs `hexagon` | clears the floor, but falls with size |
+| triangle | 59.0 | separable, and **still unusable** — its largest centred inscribed square is 30% of the mark box, so it cannot hold a glyph. A silhouette that cannot host the second channel is not a member of this set. |
+
+Interior fit is the constraint nobody expects: square 77%, circle 63%, hexagon
+54%, diamond 45%, triangle 30%. The diamond is the binding one and it is why the
+glyph is drawn at 12 of the mark's 32 units rather than larger.
+
+**Size.** The silhouette is the coarse channel and long outlives the glyph.
+Worst cross-shape pair, outline only:
+
+| mark | 40px | 32px | 24px | 16px | 12px | 8px |
+| --- | --- | --- | --- | --- | --- | --- |
+| DSSIM | 55.2 | 59.0 | 68.4 | 55.5 | 37.8 | 25.2 |
+
+So the family reads down to 12px and is gone by 8px, where it lands exactly on
+the squircle control. The glyph needs far more room, which is the point of
+having two channels: at low zoom a graph keeps telling you *what sort* of node
+each box is long after it has stopped telling you which one.
+
+**Glyph**, for the 15-kind set, at the glyph size each mark size produces —
+worst pair *within one family*, which is the binding case since the silhouette
+separates the rest:
+
+| size | mark | glyph | worst within-family pair | all 15 glyphs |
+| --- | --- | --- | --- | --- |
+| `lg` | 40px | 15px | 55.2 | 49.9 |
+| `md` | 32px | 12px | 49.6 | 47.9 |
+| `sm` | 24px | 9px | 34.8 | 34.8 |
+
+`sm` sits just above the floor; it is documented for dense rows where the label
+is carrying the load anyway.
+
+**Stroke weight** is a shape channel's version of "is this token dark enough",
+and it binds on contrast rather than on separation — separation barely moves
+between 0.75px and 2.5px. Measured on `--color-bg`, taking the darkest pixel the
+renderer actually paints:
+
+| stroke | `cat-indigo` | `accent` |
+| --- | --- | --- |
+| 0.5px | 2.17:1 — **under** WCAG 1.4.11's 3:1 non-text floor | 3.18:1 |
+| 0.75px | 3.46:1 | 6.94:1 |
+| 1px | 5.58:1 | 15.53:1 |
+| ≥1.25px | 5.87:1 — its nominal contrast | 16.55:1 |
+
+A sub-pixel stroke is rendered as partial coverage and composites toward the
+background, so it never reaches the colour it was specified in. **1.25px is the
+minimum**; the silhouette ships at 1.5px and the glyph at 1.4px, both held
+constant in *device* pixels across sizes rather than scaled, because the
+constraint is absolute rather than relative.
+
+**Colour, held to v1.15.0's gates.** All four family colours as text:
+
+| family colour | on white | on `bg` | on `surface-2` | on own soft |
+| --- | --- | --- | --- | --- |
+| `cat-indigo` `#4f46e5` | 6.29:1 | 5.87:1 | 5.67:1 | 5.62:1 |
+| `cat-purple` `#581c87` | 10.88:1 | 10.16:1 | 9.81:1 | 10.14:1 |
+| `cat-magenta` `#a21caf` | 6.32:1 | 5.91:1 | 5.71:1 | 5.89:1 |
+| `accent` `#18181b` | 17.72:1 | 16.55:1 | 15.99:1 | 15.99:1 |
+
+Distance to the severity ramp, OKLab ΔE×100, normal / worst under simulated
+protanopia and deuteranopia (Machado-Oliveira-Fernandes 2009, severity 1.0):
+indigo↔`success` 31.2 / 27.3, purple↔`success` 27.6 / 19.3, magenta↔`success`
+34.1 / 17.9, accent↔`danger` 28.4 / 16.1. Every pair clears ≥15 normal and ≥8
+CVD, so no kind mark can be read as a status. The `accent` family is not a
+fourth category — it is the *absence* of one, which is how four families fit
+inside a three-category vocabulary, and why the two ceilings coincide instead of
+fighting.
+
+### Where this stops scaling, stated rather than discovered later
+
+**Four families.** There is no fifth silhouette: the table above is the whole
+search, not a sample of it. A fifth family cannot be encoded, only spelled out
+in the label.
+
+Inside a family the glyph is the channel, and it is roomier than any real axis:
+a greedy max-min sweep of the whole 36-glyph registry at 16px keeps every pair
+above 70.0 out to a set of **17 glyphs**, and is still at 59.8 at 20. But that
+is not the honest limit either. The honest limit is what a reader has to *learn*
+— four silhouettes, taught by `KindLegend` — because the glyph never has to be
+learned at all: the kind's name is printed on the mark.
+
+And the number that keeps the design honest rather than flattering it: taking
+the complete marks for all 15 kinds in greyscale, the **worst** of the 105 pairs
+scores 6.7 (`ai_model` ↔ `mcp_server`) against a median of 82.6. Two kinds in
+the same family, differing only by their glyph, genuinely do look alike at a
+glance — that is what a family *is*. The mark alone does not separate fifteen
+kinds and never claimed to. The label is why it does not have to, and that is
+why `label` is required and cannot be turned off.
+
+### Notes
+
+- Not changed, but re-confirmed while measuring: `warning` and `danger` remain
+  ΔE 6.7 apart to normal vision and 2.9 under simulated red-green colour
+  blindness (v1.15.0's note). Both always carry text, so meaning is never
+  colour-alone, and separating them is still a major-release decision.
+- The consuming app's adoption is a separate change: `KindMark` replaces a
+  15-kind, 12-hue map that this release exists to retire. The comment in that
+  map naming the ceiling should be rewritten, not deleted — the ceiling moved
+  from three to four, it did not go away.
+
 ## v1.15.0
 
 A categorical (non-severity) colour vocabulary, added as a **parallel** set to
