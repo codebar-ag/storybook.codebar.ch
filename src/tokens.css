@@ -105,6 +105,61 @@
   --color-warning-dot:    #cc6a08; /* ≥3.4:1 on white / bg / warning-soft */
   --color-danger-dot:     #dc2626; /* ≥4.4:1 on white / bg / danger-soft  */
 
+  /* ---- Categorical tokens — IDENTITY, not severity ----
+     A vocabulary parallel to the status block above, for state that has no
+     severity: on/off, inherited/overridden, first/duplicate, draft/published,
+     and "which kind of thing is this". Those all used to borrow the severity
+     ramp — "enabled" rendered as `success`, "duplicate" as `info`, "older
+     version" as `warning` — which tells the user something is wrong when
+     nothing is. Same base/soft/line shape as the status block, so the two are
+     drop-in interchangeable at the call site (see Badge's `category` prop).
+
+     ┌───────────────────────────────────────────────────────────────────────┐
+     │ THREE IS A MEASURED CEILING, NOT A STARTING POINT. DO NOT ADD A 4TH.  │
+     └───────────────────────────────────────────────────────────────────────┘
+     A categorical hue must clear four gates simultaneously: AA as TEXT
+     (≥4.5:1) on white, on `--color-bg` and on its own `-soft`; OKLCH chroma
+     ≥0.10 (below that a hue reads as gray and stops doing identity work); and
+     OKLab ΔE×100 separation from BOTH the other categories and every severity
+     token — ≥15 to normal vision, ≥8 under protanopia/deuteranopia simulated
+     with Machado-Oliveira-Fernandes (2009) at severity 1.0.
+
+     Sweeping the whole Tailwind ramp against those gates rejects most of the
+     wheel, and the reasons are worth keeping because they are not guessable:
+
+       red / rose / pink   → collapse into `danger`  (ΔE 6.8 / 8.5 / 11.4)
+       orange/amber/yellow → collapse into `warning` (ΔE 9.6 / 8.5 / 9.1)
+       lime/green/emerald  → collapse into `success` (ΔE 10.0 / 8.4 / 6.6)
+       teal / cyan         → not a colour at text weight. Dark enough for AA,
+                             they measure chroma 0.059 / 0.066 — under the 0.10
+                             floor, i.e. they render as gray. Same trap as the
+                             bright amber that could not reach 3:1 on white at
+                             any lightness: some hues simply do not exist at the
+                             weight the contrast rule demands.
+       sky                 → collapses into `--color-muted` (ΔE 12.5)
+
+     What survives is a single ~60° arc, blue→magenta, and inside it exactly
+     three mutually-separable steps. A fourth drops the worst pair to ΔE≈3.0
+     under simulated red-green colour blindness — indistinguishable. Need more
+     kinds than three? Use a channel that is not colour (an icon, or the label).
+
+     Measured, this set (lowest of the three text ratios noted per token):
+       indigo  ↔ purple   ΔE 17.3 normal / 16.6 CVD
+       indigo  ↔ magenta  ΔE 18.2 normal /  9.5 CVD
+       purple  ↔ magenta  ΔE 16.3 normal /  9.6 CVD
+       nearest severity   ΔE 21.3 normal / 10.8 CVD  (magenta ↔ muted)
+     Soft/line are decorative tints, never a lone carrier of meaning — same
+     rule as the status block, and the badge always carries its text label. */
+  --color-cat-indigo:        #4f46e5; /* text: 6.29:1 white · 5.87:1 bg · 5.62:1 own soft */
+  --color-cat-indigo-soft:   #eef2ff;
+  --color-cat-indigo-line:   #c7d2fe;
+  --color-cat-purple:        #581c87; /* text: 10.88:1 white · 10.16:1 bg · 10.14:1 own soft */
+  --color-cat-purple-soft:   #faf5ff;
+  --color-cat-purple-line:   #e9d5ff;
+  --color-cat-magenta:       #a21caf; /* text: 6.32:1 white · 5.91:1 bg · 5.89:1 own soft */
+  --color-cat-magenta-soft:  #fdf4ff;
+  --color-cat-magenta-line:  #f5d0fe;
+
   /* Type scale — single source of truth (app is all-mono).
      Override Tailwind's defaults so text-* utilities map to app values. */
   --text-2xs:                0.6875rem;  /* 11px — badges, captions, breadcrumbs */

@@ -5,6 +5,110 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.15.0
+
+A categorical (non-severity) colour vocabulary, added as a **parallel** set to
+`Tone` rather than as more members on it. Additive and non-breaking: no existing
+prop, token or rendered output changes, and `Tone` is still exactly five values.
+
+### Added
+
+- **`Category` — a second colour vocabulary, for identity instead of severity.**
+  `Tone` is five points on a severity ramp: how bad is this. But a lot of state
+  has no severity at all — a feature is on or off, a setting is inherited or
+  overridden, a delivery is the first or a duplicate, a record is draft or
+  published, a graph node is one kind of thing rather than another. With only a
+  severity ramp available, all of those borrowed one: "enabled" rendered as
+  `success`, "duplicate" and "overridden" as `info`, "viewing an older version"
+  as `warning`. The UI then reports a problem where there is none.
+
+  The deprecated `purple` alias was the same story in miniature — it meant "seen
+  this before", was never a severity, and rode `info` only because there was
+  nowhere else to put it. There is somewhere now. `variant="purple"` still
+  resolves to `info` and still warns; `category="purple"` is what it meant.
+
+  `Category` is deliberately **not** more members on `Tone`. Widening `Tone`
+  would break every consumer holding its own exhaustive `Record<Tone, X>` map —
+  a semver-major change to ship an additive feature — and it would also be
+  wrong: severity is ordered and categories are not. A category means only
+  "different from the other one".
+
+- **`category` prop on `Badge` and `StatusBadge`**, a sibling of `variant` and
+  mutually exclusive with it. Pass one or the other; passing both warns once in
+  development (through `warnOnce`) and renders the category. Use
+  `variant="neutral"` for "no category". `resolveCategory()` is exported
+  alongside `resolveTone()` and warns once on an unknown value, for the same
+  reason `pick()` exists: consuming apps write plain-JS SFCs where the typed
+  union is erased, so a typo otherwise indexes the palette to `undefined` and
+  renders a badge with no colour classes at all.
+
+  Neither `variant` nor `category` carries a prop default any more. That is
+  load-bearing rather than cosmetic: with a default, an unset prop is
+  indistinguishable from an explicitly passed one, and the exclusivity check
+  cannot be made at all. The `neutral` fallback moved one level down into
+  `resolveTone()`, which already applied it — so **rendered output is unchanged**
+  for every existing call site.
+
+- **Nine categorical tokens**, in the same base/soft/line shape as the status
+  block so the two are interchangeable at the call site:
+  `--color-cat-indigo`, `--color-cat-purple` and `--color-cat-magenta`, each
+  with `-soft` and `-line`. They are namespaced `cat-` rather than named
+  `indigo`/`purple`/`magenta` so they cannot be confused with, or shadow,
+  Tailwind's own colour scales in a consuming app.
+
+  **Three is a measured ceiling, not a starting point.** A categorical hue has
+  to clear four gates at once: AA as *text* (≥4.5:1) on white, on `--color-bg`
+  and on its own `-soft` tint; OKLCH chroma ≥0.10, below which a hue reads as
+  gray and stops doing identity work; and OKLab ΔE separation from both the
+  other categories and every severity token — ≥15 to normal vision and ≥8 under
+  protanopia/deuteranopia (Machado-Oliveira-Fernandes 2009, severity 1.0).
+
+  Sweeping the whole Tailwind ramp against those gates rejects most of the
+  wheel, for reasons that are not guessable and are worth recording:
+
+  | rejected | why |
+  | --- | --- |
+  | red / rose / pink | collapse into `danger` — ΔE 6.8 / 8.5 / 11.4 |
+  | orange / amber / yellow | collapse into `warning` — ΔE 9.6 / 8.5 / 9.1 |
+  | lime / green / emerald | collapse into `success` — ΔE 10.0 / 8.4 / 6.6 |
+  | teal / cyan | not a colour at text weight — dark enough for AA, they measure chroma 0.059 / 0.066, under the 0.10 floor, i.e. they render gray |
+  | sky | collapses into `--color-muted` — ΔE 12.5 |
+
+  The teal/cyan result is the same trap as the bright amber that could not reach
+  3:1 on white at any lightness (v1.14.0): some hues simply do not exist at the
+  weight the contrast rule demands. What survives is a single ~60° blue→magenta
+  arc, with room for exactly three mutually separable steps. A fourth drops the
+  worst pair to ΔE≈3.0 under simulated red-green colour blindness — that is
+  indistinguishable, not "close". **More kinds than three need a channel that is
+  not colour: an icon, or the label itself.**
+
+  Measured for the shipped set:
+
+  | token | on white | on `--color-bg` | on own `-soft` |
+  | --- | --- | --- | --- |
+  | `--color-cat-indigo` `#4f46e5` | 6.29:1 | 5.87:1 | 5.62:1 |
+  | `--color-cat-purple` `#581c87` | 10.88:1 | 10.16:1 | 10.14:1 |
+  | `--color-cat-magenta` `#a21caf` | 6.32:1 | 5.91:1 | 5.89:1 |
+
+  Separation — indigo↔purple ΔE 17.3 normal / 16.6 CVD; indigo↔magenta 18.2 /
+  9.5; purple↔magenta 16.3 / 9.6; nearest severity pair 21.3 / 10.8
+  (magenta↔`muted`). `soft` and `line` stay decorative and are never the sole
+  carrier of meaning — the badge always carries its text label.
+
+- **Stories** for both components, including a before/after that puts the same
+  four non-severity states on the severity ramp and then on the categorical one,
+  and a grid of all three categories beside all five tones (the pairing the
+  tokens are measured against). The tokens are registered in `tokenCatalog.ts`,
+  so Foundations → Colors documents them rather than silently omitting them.
+
+### Notes
+
+- Not changed here, but found while measuring: the existing `warning` and
+  `danger` bases are themselves close — ΔE 6.7 to normal vision and 2.9 under
+  simulated red-green colour blindness. Both always carry a text label, so
+  meaning is never colour-alone, but separating them would change existing
+  rendered output and is a decision for a major release.
+
 ## v1.14.0
 
 Four additive changes, each one deleting a workaround a consuming app had to
