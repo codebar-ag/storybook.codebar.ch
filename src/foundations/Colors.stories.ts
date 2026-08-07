@@ -45,6 +45,16 @@ export const Palette: Story = {
                                 <span class="block text-sm font-medium text-ink">{{ t.token }}</span>
                                 <span class="block text-xs text-muted">{{ t.role }}</span>
                                 <span class="block text-2xs text-dim">{{ values[t.token] }}</span>
+                                <!-- A 40px swatch flatters a colour picked for an
+                                     8px shape, so the dot tier is also shown at
+                                     the size it is specified for. -->
+                                <span
+                                    v-if="group.dotPreview"
+                                    class="mt-1 flex items-center gap-1.5"
+                                >
+                                    <span :class="['size-2 shrink-0 rounded-full', t.swatchClass]" />
+                                    <span class="text-2xs text-dim">8px — the size it is for</span>
+                                </span>
                             </span>
                         </li>
                     </ul>

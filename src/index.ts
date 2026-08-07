@@ -195,6 +195,10 @@ export type { Tone, LegacyTone } from './helpers/tone';
 export { formControlClasses } from './helpers/formControlClasses';
 export { touchTargetClasses, touchTargetBoundsClasses, touchTargetLabelClasses } from './helpers/touchTarget';
 export { areaChartOptions, chartBaseOptions, cssToken } from './helpers/chartTheme';
+// The AuthLayout width map itself, so an app wrapping this layout types its own
+// `maxWidth` prop against the same keys instead of re-declaring the map.
+export { MAX_WIDTHS } from './components/layouts/AuthLayout.vue';
+export type { AuthLayoutMaxWidth } from './components/layouts/AuthLayout.vue';
 export type { SelectOption } from './components/atoms/Select.vue';
 export type { Step } from './components/molecules/Stepper.vue';
 export type { BreadcrumbItem } from './components/molecules/Breadcrumbs.vue';

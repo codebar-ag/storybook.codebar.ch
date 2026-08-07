@@ -14,6 +14,13 @@ export interface ColorGroup {
     title: string;
     description: string;
     tokens: ColorToken[];
+    /**
+     * Render an extra 8px dot beside each swatch. A 40px swatch flatters a
+     * colour chosen for 8px shapes, so the dot tier is shown at the size it is
+     * actually specified for — that is the only size at which the choice can
+     * be judged.
+     */
+    dotPreview?: boolean;
 }
 
 export const colorGroups: ColorGroup[] = [
@@ -46,6 +53,22 @@ export const colorGroups: ColorGroup[] = [
             { token: '--color-danger', swatchClass: 'bg-danger', role: 'Danger text' },
             { token: '--color-danger-soft', swatchClass: 'bg-danger-soft', role: 'Danger surface tint' },
             { token: '--color-danger-line', swatchClass: 'bg-danger-line', role: 'Danger border' },
+        ],
+    },
+    {
+        title: 'Status — dot tier',
+        description:
+            'A fourth step beside base/soft/line, for small decorative shapes only: status dots, '
+            + '8px indicators, sparkline points, timeline nodes. These clear WCAG 1.4.11 non-text '
+            + 'contrast (≥3:1) rather than the 4.5:1 text threshold — at 8px there is no text to '
+            + 'read, and holding them to the text ramp makes them read as near-black, brown and '
+            + 'wine. Never use them for text, icons-as-text or borders, and never as the only '
+            + 'carrier of meaning: a dot always sits next to a label.',
+        dotPreview: true,
+        tokens: [
+            { token: '--color-success-dot', swatchClass: 'bg-success-dot', role: 'Success dot (decorative, ≥3:1)' },
+            { token: '--color-warning-dot', swatchClass: 'bg-warning-dot', role: 'Warning dot (decorative, ≥3:1)' },
+            { token: '--color-danger-dot', swatchClass: 'bg-danger-dot', role: 'Danger dot (decorative, ≥3:1)' },
         ],
     },
     {
