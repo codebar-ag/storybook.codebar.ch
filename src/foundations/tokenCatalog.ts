@@ -72,6 +72,34 @@ export const colorGroups: ColorGroup[] = [
         ],
     },
     {
+        title: 'Categorical — identity, not severity',
+        description:
+            'A vocabulary parallel to Status, for state that carries no severity: on/off, '
+            + 'inherited/overridden, first/duplicate, draft/published, or a kind-of-thing label. '
+            + 'Without it those borrow the severity ramp — "enabled" rendered as success, '
+            + '"duplicate" as info — and the UI reports a problem where there is none. '
+            + 'Three is a MEASURED CEILING, not a starting point. A categorical hue has to clear '
+            + 'AA as text (≥4.5:1) on white, on bg and on its own soft tint; hold OKLCH chroma '
+            + '≥0.10 so it reads as a hue rather than as gray; and stay separated by OKLab ΔE from '
+            + 'both the other categories and every severity token. That rejects the warm half of '
+            + 'the wheel (red/orange/amber/lime/green all collapse into danger/warning/success) '
+            + 'and teal/cyan (chroma 0.06 at text weight — they render gray), leaving one ~60° '
+            + 'blue→magenta arc with room for exactly three. A fourth drops the worst pair to '
+            + 'ΔE≈3 under simulated red-green colour blindness. More kinds than three need a '
+            + 'channel that is not colour: an icon, or the label itself.',
+        tokens: [
+            { token: '--color-cat-indigo', swatchClass: 'bg-cat-indigo', role: 'Category text (6.29:1 on white)' },
+            { token: '--color-cat-indigo-soft', swatchClass: 'bg-cat-indigo-soft', role: 'Category surface tint' },
+            { token: '--color-cat-indigo-line', swatchClass: 'bg-cat-indigo-line', role: 'Category border' },
+            { token: '--color-cat-purple', swatchClass: 'bg-cat-purple', role: 'Category text (10.88:1 on white)' },
+            { token: '--color-cat-purple-soft', swatchClass: 'bg-cat-purple-soft', role: 'Category surface tint' },
+            { token: '--color-cat-purple-line', swatchClass: 'bg-cat-purple-line', role: 'Category border' },
+            { token: '--color-cat-magenta', swatchClass: 'bg-cat-magenta', role: 'Category text (6.32:1 on white)' },
+            { token: '--color-cat-magenta-soft', swatchClass: 'bg-cat-magenta-soft', role: 'Category surface tint' },
+            { token: '--color-cat-magenta-line', swatchClass: 'bg-cat-magenta-line', role: 'Category border' },
+        ],
+    },
+    {
         title: 'CTA',
         description: 'The one intentional color in the monochrome UI — reserved for the billing action.',
         tokens: [

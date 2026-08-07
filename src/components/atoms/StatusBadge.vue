@@ -1,22 +1,40 @@
 <script setup lang="ts">
 import Badge from './Badge.vue';
-import type { LegacyTone, Tone } from '../../helpers/tone';
+import type { Category, LegacyTone, Tone } from '../../helpers/tone';
 
-// Generic status badge: the consuming app maps its own enum → { variant, label }.
+// Generic status badge: the consuming app maps its own enum → { variant, label }
+// or → { category, label }.
 // `dot` renders the small leading status dot used by instance status badges.
+//
+// `variant` has no prop default here either: forwarding a defaulted 'neutral'
+// alongside a `category` would trip Badge's mutual-exclusivity warning on every
+// categorical StatusBadge. Badge applies the same 'neutral' fallback, so an
+// unset `variant` still renders exactly as before.
+/* eslint-disable vue/require-default-prop -- see Badge.vue: defaulting either
+   of these would forward a value Badge cannot distinguish from an unset one. */
 withDefaults(
     defineProps<{
-        /** Semantic tone; legacy color names are deprecated (see Badge). */
+        /** SEVERITY tone; legacy color names are deprecated (see Badge). */
         variant?: Tone | LegacyTone;
+        /**
+         * CATEGORICAL identity, for a state that is not a severity — enabled,
+         * overridden, duplicate, published, or a kind label. Mutually exclusive
+         * with `variant`.
+         */
+        category?: Category;
         label: string;
         dot?: boolean;
     }>(),
-    { variant: 'neutral', dot: false },
+    { dot: false },
 );
+/* eslint-enable vue/require-default-prop */
 </script>
 
 <template>
-  <Badge :variant="variant">
+  <Badge
+    :variant="variant"
+    :category="category"
+  >
     <span
       v-if="dot"
       aria-hidden="true"
