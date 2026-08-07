@@ -82,6 +82,29 @@
   --color-danger-soft:    #fef2f2;
   --color-danger-line:    #fecaca;
 
+  /* Dot tier — a FOURTH step beside base/soft/line, for small decorative shapes:
+     status dots, 8px indicators, sparkline points, timeline nodes.
+     ┌───────────────────────────────────────────────────────────────────────┐
+     │ THESE ARE DECORATIVE-ONLY AND ARE *NOT* A CONTRAST BUG. DO NOT DARKEN. │
+     └───────────────────────────────────────────────────────────────────────┘
+     The base tokens above are tuned for TEXT (WCAG 1.4.3, ≥4.5:1; they land
+     near 7:1). At 8px there is no text — a dot is a non-text graphical object,
+     so the governing rule is WCAG 1.4.11 Non-text Contrast at ≥3:1, not 4.5:1.
+     Held to the text threshold, an 8px dot has to be so dark that it stops
+     carrying its hue: `--color-success` reads as near-black, `--color-warning`
+     as dark brown, `--color-danger` as wine. The colour is the entire signal a
+     dot has, and at that size it was being spent on contrast nobody reads.
+
+     Each of these clears 3:1 on white, on `--color-bg` (#f7f7f8) AND on its own
+     `-soft` tint, with margin (lowest measured ratio noted per token). They are
+     never the sole carrier of meaning: a dot always accompanies a text label
+     (see StatusBadge), which is what keeps 1.4.1 Use of Color satisfied.
+
+     NOT for text, icons-as-text, or borders — use the base/line tokens there. */
+  --color-success-dot:    #059669; /* ≥3.4:1 on white / bg / success-soft */
+  --color-warning-dot:    #cc6a08; /* ≥3.4:1 on white / bg / warning-soft */
+  --color-danger-dot:     #dc2626; /* ≥4.4:1 on white / bg / danger-soft  */
+
   /* Type scale — single source of truth (app is all-mono).
      Override Tailwind's defaults so text-* utilities map to app values. */
   --text-2xs:                0.6875rem;  /* 11px — badges, captions, breadcrumbs */

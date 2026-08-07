@@ -5,6 +5,65 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.14.0
+
+Four additive changes, each one deleting a workaround a consuming app had to
+grow because the kit did not offer the seam. Nothing here changes existing
+rendered output: every new surface is opt-in and every default is what it was.
+
+### Added
+
+- **`Card` gained a `#title` slot.** It defaults to the `title` prop, so a card
+  that passes `title` renders exactly the markup it did before. The title line
+  is now a wrapping flex row (`flex flex-wrap items-center gap-x-3 gap-y-1`),
+  which is the point: a status badge belongs *beside* the thing it describes.
+  Until now the only place to put one was `#actions` — the far side of the
+  header, next to the buttons, where a badge reads as a control you can press.
+  Eight call sites had independently arrived at that workaround, each with
+  slightly different spacing. The header renders whenever a `title`,
+  `description`, `#title` or `#actions` is present.
+
+- **`MAX_WIDTHS` is exported from `AuthLayout`** (with the matching
+  `AuthLayoutMaxWidth` type), re-exported from the package root. The map and
+  the `maxWidth` prop already existed; only the `export` was missing, so an app
+  wrapping this layout had to re-declare the same four class strings to type
+  its own prop — a private copy that goes stale the first time a step is added
+  here. It lives in a plain `<script>` block because `<script setup>` can
+  export types but not values.
+
+- **`SidebarItem` forwards fallthrough attributes to the link**
+  (`inheritAttrs: false` + `useRootAttrs()`, the same pattern `Link` uses),
+  on both the `as`-component and plain `<a>` branches. Previously they landed
+  on the wrapping `<li>`, where they are inert: passing `prefetch` for a
+  client-side router, or a `data-*`/listener meant for the anchor, produced no
+  error and no warning — just a dead attribute in the DOM and a feature that
+  silently never engaged. A caller's `class` now merges through `cx()` instead
+  of colliding with the component's own classes.
+
+- **Dot-scale status tokens**: `--color-success-dot`, `--color-warning-dot`,
+  `--color-danger-dot`, a fourth tier beside `soft` and `line`.
+
+  The existing `--color-success`/`-warning`/`-danger` are tuned for **text**
+  (WCAG 1.4.3, ≥4.5:1; they land near 7:1). At 8px there is no text — a status
+  dot is a non-text graphical object, so the governing rule is **WCAG 1.4.11
+  Non-text Contrast at ≥3:1, not 4.5:1**. Held to the text threshold, an 8px
+  dot has to be dark enough that it stops carrying its hue: success reads as
+  near-black, warning as dark brown, danger as wine. Colour is the entire
+  signal a dot has, and it was being spent on contrast nobody reads. This is
+  why consumers had started escaping to raw `text-red-600` for small
+  indicators.
+
+  These are **decorative-only and deliberately lighter than the text ramp — not
+  a contrast bug, do not darken them.** Each clears 3:1 on white, on
+  `--color-bg` and on its own `-soft` tint. They are never the sole carrier of
+  meaning (a dot always accompanies a label), and they are not for text, icons
+  read as text, or borders — use the base and `line` tokens there. Documented
+  as their own group in *Foundations/Colors*, rendered at 8px as well as at
+  swatch size, because a 40px swatch flatters a colour picked for 8px.
+
+  `StatusBadge`'s own dot is **unchanged** — switching it would restyle every
+  existing badge, which is a visual change and not this release's business.
+
 ## v1.13.0
 
 ### Added

@@ -58,7 +58,7 @@ const rootClass = computed(() =>
 );
 
 const hasHeader = computed(
-    () => props.title !== null || props.description !== null || !!slots.actions,
+    () => props.title !== null || props.description !== null || !!slots.title || !!slots.actions,
 );
 </script>
 
@@ -72,11 +72,19 @@ const hasHeader = computed(
       :class="['flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 border-b border-line', headerPadding[size]]"
     >
       <div class="min-w-0">
+        <!-- `#title` overrides the `title` prop, which stays the fallback so
+             every existing caller renders byte-identical markup. The row is a
+             wrapping flex line rather than a plain heading so a status badge
+             can sit *beside* the title — the place a reader looks for the
+             state of the thing the card is about — instead of being exiled to
+             `#actions` on the far side of the header. -->
         <h2
-          v-if="title !== null"
-          :class="['font-semibold text-ink', titleSize[size]]"
+          v-if="title !== null || slots.title"
+          :class="['flex flex-wrap items-center gap-x-3 gap-y-1 font-semibold text-ink', titleSize[size]]"
         >
-          {{ title }}
+          <slot name="title">
+            {{ title }}
+          </slot>
         </h2>
         <p
           v-if="description !== null"
