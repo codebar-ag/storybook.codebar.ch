@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import type { Extension } from '@codemirror/state';
 import type { EditorView as EditorViewType } from '@codemirror/view';
 import { createCodeMirrorTheme } from '../../helpers/codeMirrorTheme';
+import { warnOnce } from '../../helpers/dev';
 import CopyButton from '../molecules/CopyButton.vue';
 
 // CodeMirror is an OPTIONAL peer dependency: it is imported lazily so apps
@@ -9,8 +11,15 @@ import CopyButton from '../molecules/CopyButton.vue';
 // CodePreview, this component's read-only sibling).
 
 export interface CodeEditorProps {
-    modelValue?: string;
-    language?: 'json' | 'markdown';
+    /**
+     * `null` is accepted and rendered as an empty document, which is what the
+     * runtime has always done (`?? ''` guards every read of it). The type said
+     * `string`, so every caller holding a nullable column — a description, a
+     * definition not compiled yet — coerced with `?? ''` at the call site for a
+     * default this component already applies.
+     */
+    modelValue?: string | null;
+    language?: 'json' | 'markdown' | 'yaml';
     readonly?: boolean;
     /** Empty-state text shown only while readonly and there's no value. No default — the caller's copy. */
     placeholder?: string | null;
@@ -58,13 +67,43 @@ function formatValue(raw: string): string {
 // not the raw (often single-line) `modelValue` handed in by the caller.
 const copyValue = computed(() => formatValue(props.modelValue ?? ''));
 
-async function loadLanguage(language: string) {
-    if (language === 'markdown') {
-        const { markdown, markdownLanguage } = await import('@codemirror/lang-markdown');
-        return markdown({ base: markdownLanguage });
-    }
+/**
+ * The grammar for `language`, or no grammar at all for a mode this component
+ * does not know.
+ *
+ * The fallback used to be JSON — chosen for anything that was not `markdown` —
+ * so an unknown mode was highlighted as JSON in silence. A consuming app
+ * rendered compiled YAML through this editor from the day the page was written
+ * and got JSON highlighting for all of it, with nothing anywhere saying so:
+ * YAML is loose enough that a JSON grammar produces plausible-looking colour
+ * rather than visible breakage. An editor that quietly picks the wrong grammar
+ * is worse than one that renders plain text and says why, so the default arm
+ * now highlights nothing and warns in development.
+ */
+async function loadLanguage(language: string): Promise<Extension> {
+    switch (language) {
+        case 'json':
+            return (await import('@codemirror/lang-json')).json();
 
-    return (await import('@codemirror/lang-json')).json();
+        case 'markdown': {
+            const { markdown, markdownLanguage } = await import('@codemirror/lang-markdown');
+
+            return markdown({ base: markdownLanguage });
+        }
+
+        case 'yaml':
+            return (await import('@codemirror/lang-yaml')).yaml();
+
+        default:
+            warnOnce(
+                `CodeEditor:language:${language}`,
+                `[flows] <CodeEditor language="${language}"> is not a language this editor knows, `
+                    + 'so the document is rendered without syntax highlighting. '
+                    + 'Supported: "json", "markdown", "yaml".',
+            );
+
+            return [];
+    }
 }
 
 async function mountEditor(): Promise<void> {

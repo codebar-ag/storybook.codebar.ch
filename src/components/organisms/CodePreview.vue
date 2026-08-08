@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import type { Extension } from '@codemirror/state';
 import type { EditorView as EditorViewType } from '@codemirror/view';
 import { createCodeMirrorTheme } from '../../helpers/codeMirrorTheme';
+import { warnOnce } from '../../helpers/dev';
 
 // CodeMirror is an OPTIONAL peer dependency: it is imported lazily so apps
 // that never render a code preview don't pay for the bundle.
 
 export interface CodePreviewProps {
     value?: string;
-    language?: 'text' | 'json' | 'markdown';
+    language?: 'text' | 'json' | 'markdown' | 'yaml';
     maxHeight?: string;
 }
 
@@ -40,16 +42,36 @@ function formatValue(raw: string, language: string): string {
     return raw;
 }
 
-async function loadLanguage(language: string) {
-    if (language === 'json') {
-        return (await import('@codemirror/lang-json')).json();
-    }
+/**
+ * Kept in step with CodeEditor's, minus the editing modes: a kit that can edit
+ * YAML but only preview it as plain text is a difference no caller can explain.
+ * `text` is a real mode here, so the no-grammar arm is reached deliberately as
+ * well as by accident — hence the warning on the unknown arm specifically.
+ */
+async function loadLanguage(language: string): Promise<Extension> {
+    switch (language) {
+        case 'text':
+            return [];
 
-    if (language === 'markdown') {
-        return (await import('@codemirror/lang-markdown')).markdown();
-    }
+        case 'json':
+            return (await import('@codemirror/lang-json')).json();
 
-    return [];
+        case 'markdown':
+            return (await import('@codemirror/lang-markdown')).markdown();
+
+        case 'yaml':
+            return (await import('@codemirror/lang-yaml')).yaml();
+
+        default:
+            warnOnce(
+                `CodePreview:language:${language}`,
+                `[flows] <CodePreview language="${language}"> is not a language this preview knows, `
+                    + 'so the document is rendered as plain text. '
+                    + 'Supported: "text", "json", "markdown", "yaml".',
+            );
+
+            return [];
+    }
 }
 
 async function mount(): Promise<void> {

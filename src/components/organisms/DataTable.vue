@@ -25,6 +25,7 @@ import Button from '../atoms/Button.vue';
 import EmptyState from '../molecules/EmptyState.vue';
 import Th from '../atoms/Th.vue';
 import { touchTargetBoundsClasses, touchTargetLabelClasses } from '../../helpers/touchTarget';
+import { warnOnce } from '../../helpers/dev';
 
 export interface DataTableProps<T extends Record<string, unknown>> {
     columns: readonly DataTableColumn<T>[];
@@ -88,10 +89,32 @@ function hasRowClick(): boolean {
     return Boolean(instance?.vnode.props?.onRowClick);
 }
 
+// `rowKey` is required and has no default, and until now nothing said so at
+// runtime. Vue's own "Missing required prop" warning cannot fire for ANY prop
+// in this package: the library is compiled with `isProd: true`, and
+// @vue/compiler-sfc emits `required`/`type` only for a development build —
+// dist/flows.js declares this prop as the bare `rowKey: {}`. So the check has
+// to be written out, the same way the tone deprecation had to be (helpers/dev.ts).
+//
+// The cost of the silence was total rather than cosmetic: nine call sites in
+// one consuming app omitted it, so every `:key` in those tables was `undefined`
+// and Vue could not tell any row from any other — patching, transitions and
+// selection all keyed on the same nothing.
 function keyOf(row: T): RowKey {
-    return typeof props.rowKey === 'function'
-        ? props.rowKey(row)
-        : (row[props.rowKey] as RowKey);
+    if (typeof props.rowKey === 'function') {
+        return props.rowKey(row);
+    }
+
+    if (props.rowKey === undefined) {
+        warnOnce(
+            'DataTable:rowKey',
+            '[flows] <DataTable> is missing the required `rowKey` prop, so every row is keyed '
+                + '`undefined` and Vue cannot tell the rows apart. Pass the name of a unique row '
+                + 'property (`row-key="id"`) or a function returning one (`:row-key="r => r.a + r.b"`).',
+        );
+    }
+
+    return row[props.rowKey] as RowKey;
 }
 
 const comparators = computed(() =>
