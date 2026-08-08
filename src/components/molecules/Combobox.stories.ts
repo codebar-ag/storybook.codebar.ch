@@ -12,13 +12,17 @@ const cabinets = [
     { value: 'b_review', label: 'b_review (basket)' },
 ];
 
-const meta: Meta<typeof Combobox> = {
+// Untyped Meta/StoryObj, same as DataTable: the component is generic over
+// its option value, which Storybook's Meta<typeof X> inference can't
+// represent. These stories drive the component from a template, not args,
+// so nothing is lost.
+const meta: Meta = {
     title: 'Molecules/Combobox',
-    component: Combobox,
+    component: Combobox as unknown as Meta['component'],
 };
 
 export default meta;
-type Story = StoryObj<typeof Combobox>;
+type Story = StoryObj;
 
 export const Default: Story = {
     render: () => ({

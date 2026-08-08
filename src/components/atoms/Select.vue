@@ -7,8 +7,18 @@ import { usePasswordManagerAttrs } from '../../composables/usePasswordManagerAtt
 import { useRootAttrs } from '../../composables/useRootAttrs';
 import Icon from './Icon.vue';
 
-export interface SelectOption {
-    value: string | number;
+/**
+ * An option's `value` type is a parameter so a caller whose values are all
+ * strings can say so — `SelectOption<string>[]` — and have that flow through
+ * SearchableSelect's and Combobox's payloads instead of coercing
+ * `string | number` back down at every call site.
+ *
+ * The default stays `string | number`, NOT `string`: narrowing it would
+ * silently break every existing `SelectOption[]` annotation carrying numeric
+ * ids, which this package supports on purpose.
+ */
+export interface SelectOption<T extends string | number = string | number> {
+    value: T;
     label: string;
 }
 
@@ -27,6 +37,11 @@ const props = withDefaults(
     { modelValue: null, name: null, options: () => [], placeholder: null, invalid: false },
 );
 
+// Deliberately NOT generic over the option value, unlike SearchableSelect and
+// Combobox. This is a native <select>: the change event carries
+// `HTMLSelectElement.value`, which the DOM has already stringified, so a
+// `SelectOption<number>` here would emit "1" and not 1. Typing the emit as `T`
+// would be a lie the compiler could not catch.
 defineEmits<{ 'update:modelValue': [value: string] }>();
 
 const { rootAttrs, classAttr } = useRootAttrs();
