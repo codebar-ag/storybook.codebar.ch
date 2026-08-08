@@ -141,6 +141,31 @@ git push --follow-tags   # Release workflow builds, tests, publishes
 The workflow refuses to run if the tag and `package.json` version disagree, and
 verifies the version resolves on the registry once published.
 
+### Checklist
+
+1. **Bump with `npm version`, never `git tag` by hand.** `npm version` derives
+   the tag name from the manifest, so the two cannot disagree. Writing the tag
+   yourself is the one step where they can.
+2. **Add the `## vX.Y.Z` section to [CHANGELOG.md](CHANGELOG.md) first** — the
+   Release workflow reads the release body out of it, and falls back to
+   commit-derived notes if the section is missing.
+3. **Push with `--follow-tags`**, then watch the Release run to green. A red
+   run does *not* mean nothing shipped; read it.
+4. **A version number is spent the moment its tag exists.** Never re-use or
+   re-point one. `npm run verify:version` enforces both halves of this and runs
+   on every PR: the manifest may not match an existing tag, and may not be
+   behind the highest one.
+
+> **A tag is a release, even when the release failed.** This package is
+> documented as a git dependency, so `#v1.17.0` resolves and installs straight
+> from the tag — the registry, the Release run and the GitHub Release are not in
+> that path at all. That is what made v1.17.0 a trap: `release/v1.16.1` was
+> bumped correctly to 1.16.1 and then tagged `v1.17.0` by hand, the Release run
+> failed at the mismatch guard so 1.16.1 never reached the registry, and
+> consuming apps pinned v1.17.0 and got a build whose `package.json` says
+> 1.16.1. Nothing was broken; nothing said so either. The number 1.17.0 is now
+> permanently unusable, which is why the next release is 1.18.0.
+
 ## Changelog
 
 Release notes, migration notes and upgrade warnings live in
