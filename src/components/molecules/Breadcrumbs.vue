@@ -5,7 +5,14 @@
 // static text, de-emphasized and marked aria-current="page".
 export interface BreadcrumbItem {
     label: string;
-    href?: string;
+    /**
+     * Omit — or pass null — for a crumb that is not a link. The template has
+     * always rendered a plain <span> for a falsy href (an ancestor with no
+     * page of its own, a label-only segment), so the type says so too:
+     * requiring `string` forced every caller building a trail from optional
+     * route data to assert or filter on the way in.
+     */
+    href?: string | null;
 }
 
 export interface BreadcrumbsProps {

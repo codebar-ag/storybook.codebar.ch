@@ -31,6 +31,20 @@ export const SingleItem: Story = {
     args: { items: [{ label: 'Dashboard' }] },
 };
 
+// An INTERIOR crumb without an href renders as plain text rather than a dead
+// link — an ancestor with no page of its own, or a trail assembled from route
+// data where some segments have no URL. `href` accepts null for exactly this,
+// so a caller can map optional data straight through.
+export const NonLinkCrumb: Story = {
+    args: {
+        items: [
+            { label: 'Instances', href: '#' },
+            { label: 'Archived', href: null },
+            { label: 'Mustermann AG' },
+        ],
+    },
+};
+
 export const LongTrail: Story = {
     args: {
         items: [
