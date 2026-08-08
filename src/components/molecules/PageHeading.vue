@@ -18,12 +18,14 @@ import Breadcrumbs, { type BreadcrumbItem } from './Breadcrumbs.vue';
 
 defineOptions({ inheritAttrs: false });
 
+export interface PageHeadingProps {
+    eyebrow?: string | null;
+    breadcrumbs?: BreadcrumbItem[];
+    breadcrumbAs?: string | object;
+}
+
 withDefaults(
-    defineProps<{
-        eyebrow?: string | null;
-        breadcrumbs?: BreadcrumbItem[];
-        breadcrumbAs?: string | object;
-    }>(),
+    defineProps<PageHeadingProps>(),
     { eyebrow: null, breadcrumbs: () => [], breadcrumbAs: 'a' },
 );
 

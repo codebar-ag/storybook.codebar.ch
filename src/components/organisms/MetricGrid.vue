@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { Comment, computed, Fragment, Text, useSlots, type VNode } from 'vue';
 
-const props = withDefaults(defineProps<{
+export interface MetricGridProps {
     columns?: 1 | 2 | 3 | 4;
-}>(), {
+}
+
+const props = withDefaults(defineProps<MetricGridProps>(), {
     columns: 4,
 });
 

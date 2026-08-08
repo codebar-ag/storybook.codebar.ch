@@ -3,10 +3,12 @@ import { computed } from 'vue';
 import CodePreview from './CodePreview.vue';
 import DescriptionItem from '../molecules/DescriptionItem.vue';
 
-const props = defineProps<{
+export interface ConfigValueProps {
     label: string;
     value?: string | null;
-}>();
+}
+
+const props = defineProps<ConfigValueProps>();
 
 type DisplayKind = 'empty' | 'text' | 'json' | 'markdown';
 

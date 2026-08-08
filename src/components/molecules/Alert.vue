@@ -7,12 +7,14 @@ import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
 
+export interface AlertProps {
+    /** Semantic tone. `error` is a deprecated alias for `danger`. */
+    variant?: Tone | LegacyTone;
+    title?: string | null;
+}
+
 const props = withDefaults(
-    defineProps<{
-        /** Semantic tone. `error` is a deprecated alias for `danger`. */
-        variant?: Tone | LegacyTone;
-        title?: string | null;
-    }>(),
+    defineProps<AlertProps>(),
     { variant: 'info', title: null },
 );
 

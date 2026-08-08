@@ -5,12 +5,14 @@ import { computed, ref } from 'vue';
 import Icon from '../atoms/Icon.vue';
 import Input from '../atoms/Input.vue';
 
+export interface PasswordInputProps {
+    modelValue?: string;
+    name?: string | null;
+    invalid?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string;
-        name?: string | null;
-        invalid?: boolean;
-    }>(),
+    defineProps<PasswordInputProps>(),
     { modelValue: '', name: null, invalid: false },
 );
 

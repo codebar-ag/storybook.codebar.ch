@@ -2,16 +2,18 @@
 import { computed } from 'vue';
 import { useFieldA11y } from '../../composables/useFieldA11y';
 
+export interface RadioProps {
+    modelValue?: string | number | boolean | null;
+    value: string | number | boolean;
+    name?: string | null;
+    label?: string | null;
+    description?: string | null;
+    invalid?: boolean;
+    disabled?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string | number | boolean | null;
-        value: string | number | boolean;
-        name?: string | null;
-        label?: string | null;
-        description?: string | null;
-        invalid?: boolean;
-        disabled?: boolean;
-    }>(),
+    defineProps<RadioProps>(),
     { modelValue: null, name: null, label: null, description: null, invalid: false, disabled: false },
 );
 

@@ -14,14 +14,16 @@ export interface SelectOption {
 
 defineOptions({ inheritAttrs: false });
 
+export interface SelectProps {
+    modelValue?: string | number | null;
+    name?: string | null;
+    options?: SelectOption[] | Record<string, string>;
+    placeholder?: string | null;
+    invalid?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string | number | null;
-        name?: string | null;
-        options?: SelectOption[] | Record<string, string>;
-        placeholder?: string | null;
-        invalid?: boolean;
-    }>(),
+    defineProps<SelectProps>(),
     { modelValue: null, name: null, options: () => [], placeholder: null, invalid: false },
 );
 

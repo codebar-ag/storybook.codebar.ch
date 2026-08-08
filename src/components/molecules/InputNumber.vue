@@ -8,16 +8,18 @@ import { formControlClasses } from '../../helpers/formControlClasses';
 import { useFieldA11y } from '../../composables/useFieldA11y';
 import Icon from '../atoms/Icon.vue';
 
+export interface InputNumberProps {
+    modelValue?: number | null;
+    name?: string | null;
+    min?: number | null;
+    max?: number | null;
+    step?: number;
+    invalid?: boolean;
+    disabled?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: number | null;
-        name?: string | null;
-        min?: number | null;
-        max?: number | null;
-        step?: number;
-        invalid?: boolean;
-        disabled?: boolean;
-    }>(),
+    defineProps<InputNumberProps>(),
     { modelValue: null, name: null, min: null, max: null, step: 1, invalid: false, disabled: false },
 );
 

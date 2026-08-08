@@ -12,11 +12,13 @@
 import { computed, ref, useId } from 'vue';
 import { pick } from '../../helpers/pick';
 
+export interface TooltipProps {
+    text: string;
+    placement?: 'top' | 'bottom' | 'left' | 'right';
+}
+
 const props = withDefaults(
-    defineProps<{
-        text: string;
-        placement?: 'top' | 'bottom' | 'left' | 'right';
-    }>(),
+    defineProps<TooltipProps>(),
     { placement: 'top' },
 );
 

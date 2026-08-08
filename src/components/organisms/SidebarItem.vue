@@ -15,13 +15,15 @@ import { useRootAttrs } from '../../composables/useRootAttrs';
 // and a feature that silently never engaged. Same pattern as Link.vue.
 defineOptions({ inheritAttrs: false });
 
+export interface SidebarItemProps {
+    href: string;
+    icon?: IconName | null;
+    active?: boolean;
+    as?: Component | null;
+}
+
 const props = withDefaults(
-    defineProps<{
-        href: string;
-        icon?: IconName | null;
-        active?: boolean;
-        as?: Component | null;
-    }>(),
+    defineProps<SidebarItemProps>(),
     { icon: null, active: false, as: null },
 );
 

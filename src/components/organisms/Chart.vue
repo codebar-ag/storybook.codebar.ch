@@ -2,15 +2,17 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { chartBaseOptions } from '../../helpers/chartTheme';
 
+export interface ChartProps {
+    type?: string;
+    series: unknown[];
+    options?: Record<string, unknown>;
+    height?: number | string;
+}
+
 // Thin ApexCharts wrapper. `apexcharts` is an OPTIONAL peer dependency: it is
 // imported lazily so apps that never render a chart don't pay for the bundle.
 const props = withDefaults(
-    defineProps<{
-        type?: string;
-        series: unknown[];
-        options?: Record<string, unknown>;
-        height?: number | string;
-    }>(),
+    defineProps<ChartProps>(),
     { type: 'line', options: () => ({}), height: 288 },
 );
 

@@ -4,14 +4,16 @@ import Icon from './Icon.vue';
 import type { IconName } from '../../icons';
 import { pick } from '../../helpers/pick';
 
+export interface IconBadgeProps {
+    icon?: IconName;
+    variant?: 'accent' | 'danger' | 'success' | 'warning' | 'neutral';
+    size?: 'sm' | 'md';
+    shape?: 'circle' | 'surface';
+}
+
 // Icon inside a tinted, bordered badge. size: sm = 40px tile, md = 48px disc.
 const props = withDefaults(
-    defineProps<{
-        icon?: IconName;
-        variant?: 'accent' | 'danger' | 'success' | 'warning' | 'neutral';
-        size?: 'sm' | 'md';
-        shape?: 'circle' | 'surface';
-    }>(),
+    defineProps<IconBadgeProps>(),
     { icon: 'check', variant: 'accent', size: 'md', shape: 'circle' },
 );
 

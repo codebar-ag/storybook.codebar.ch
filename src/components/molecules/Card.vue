@@ -6,19 +6,21 @@ import { pick } from '../../helpers/pick';
 
 defineOptions({ inheritAttrs: false });
 
+export interface CardProps {
+    title?: string | null;
+    description?: string | null;
+    padded?: boolean;
+    variant?: 'default' | 'danger';
+    hoverable?: boolean;
+    // 'lg' is for screens with a single, centered card as the focal point
+    // (e.g. auth screens) where the default density reads cramped. 'sm'
+    // is for cards nested inside another card/list — a denser container,
+    // not a different component.
+    size?: 'sm' | 'md' | 'lg';
+}
+
 const props = withDefaults(
-    defineProps<{
-        title?: string | null;
-        description?: string | null;
-        padded?: boolean;
-        variant?: 'default' | 'danger';
-        hoverable?: boolean;
-        // 'lg' is for screens with a single, centered card as the focal point
-        // (e.g. auth screens) where the default density reads cramped. 'sm'
-        // is for cards nested inside another card/list — a denser container,
-        // not a different component.
-        size?: 'sm' | 'md' | 'lg';
-    }>(),
+    defineProps<CardProps>(),
     { title: null, description: null, padded: true, variant: 'default', hoverable: false, size: 'md' },
 );
 

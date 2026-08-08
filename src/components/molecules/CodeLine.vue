@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import CopyButton from './CopyButton.vue';
 
+export interface CodeLineProps {
+    value?: string;
+    copyable?: boolean;
+}
+
 withDefaults(
-    defineProps<{
-        value?: string;
-        copyable?: boolean;
-    }>(),
+    defineProps<CodeLineProps>(),
     { value: '', copyable: true },
 );
 </script>

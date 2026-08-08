@@ -1,10 +1,12 @@
 <script setup lang="ts">
 // App navigation rail. Composes SidebarGroup/SidebarItem in the default slot;
 // brand and footer slots frame it. AppShell handles the responsive collapse.
+export interface SidebarProps {
+    label?: string;
+}
+
 withDefaults(
-    defineProps<{
-        label?: string;
-    }>(),
+    defineProps<SidebarProps>(),
     { label: 'Main navigation' },
 );
 </script>

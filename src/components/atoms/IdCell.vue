@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+export interface IdCellProps {
+    id: string | number;
+    uuid?: string | null;
+}
+
 const props = withDefaults(
-    defineProps<{
-        id: string | number;
-        uuid?: string | null;
-    }>(),
+    defineProps<IdCellProps>(),
     { uuid: null },
 );
 

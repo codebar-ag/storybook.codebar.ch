@@ -9,8 +9,10 @@ import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
 
+export interface TabProps { href: string; active?: boolean; as?: string | object }
+
 const props = withDefaults(
-    defineProps<{ href: string; active?: boolean; as?: string | object }>(),
+    defineProps<TabProps>(),
     { active: false, as: 'a' },
 );
 

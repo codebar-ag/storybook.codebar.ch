@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import CodeLine from './CodeLine.vue';
 
+export interface LabeledCodeBlockProps {
+    label: string;
+    value?: string;
+    copyable?: boolean;
+}
+
 // An uppercase caption over a copyable code line. Used for surfacing URLs,
 // endpoints, and one-time secrets.
 withDefaults(
-    defineProps<{
-        label: string;
-        value?: string;
-        copyable?: boolean;
-    }>(),
+    defineProps<LabeledCodeBlockProps>(),
     { value: '', copyable: true },
 );
 </script>

@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+export interface ProgressProps {
+    value?: number;
+    max?: number;
+    min?: number;
+}
+
 // A thin horizontal progress/proportion bar. The fill width is clamped to a
 // minimum so non-zero values stay visible.
 const props = withDefaults(
-    defineProps<{
-        value?: number;
-        max?: number;
-        min?: number;
-    }>(),
+    defineProps<ProgressProps>(),
     { value: 0, max: 100, min: 2 },
 );
 

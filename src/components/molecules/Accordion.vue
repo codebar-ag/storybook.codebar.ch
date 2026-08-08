@@ -6,11 +6,13 @@ import { provide } from 'vue';
 import { useControllable } from '../../composables/useControllable';
 import { accordionKey } from './accordionContext';
 
+export interface AccordionProps {
+    modelValue?: string[];
+    multiple?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string[];
-        multiple?: boolean;
-    }>(),
+    defineProps<AccordionProps>(),
     { modelValue: undefined, multiple: false },
 );
 

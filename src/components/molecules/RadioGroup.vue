@@ -1,5 +1,7 @@
 <script setup lang="ts">
-withDefaults(defineProps<{ label?: string | null }>(), { label: null });
+export interface RadioGroupProps { label?: string | null }
+
+withDefaults(defineProps<RadioGroupProps>(), { label: null });
 </script>
 
 <template>

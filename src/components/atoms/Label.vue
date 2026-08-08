@@ -1,9 +1,11 @@
 <script setup lang="ts">
+export interface LabelProps {
+    for?: string | null;
+    required?: boolean;
+}
+
 withDefaults(
-    defineProps<{
-        for?: string | null;
-        required?: boolean;
-    }>(),
+    defineProps<LabelProps>(),
     { for: null, required: false },
 );
 </script>

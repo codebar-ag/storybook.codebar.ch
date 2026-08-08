@@ -1,6 +1,8 @@
 <script setup lang="ts">
 // Labeled section inside a Sidebar.
-defineProps<{ label?: string }>();
+export interface SidebarGroupProps { label?: string }
+
+defineProps<SidebarGroupProps>();
 </script>
 
 <template>

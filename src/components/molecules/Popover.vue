@@ -7,14 +7,16 @@ import { useClickOutside } from '../../composables/useClickOutside';
 import { useControllable } from '../../composables/useControllable';
 import { useEscapeKey } from '../../composables/useEscapeKey';
 
+export interface PopoverProps {
+    align?: 'left' | 'right';
+    // Width utility class for the panel.
+    width?: string;
+    // Optional v-model:open; leave unbound for internal state.
+    open?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        align?: 'left' | 'right';
-        // Width utility class for the panel.
-        width?: string;
-        // Optional v-model:open; leave unbound for internal state.
-        open?: boolean;
-    }>(),
+    defineProps<PopoverProps>(),
     { align: 'left', width: 'w-72', open: undefined },
 );
 

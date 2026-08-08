@@ -8,13 +8,15 @@ import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
 
+export interface InputProps {
+    modelValue?: string | number | null;
+    type?: string;
+    name?: string | null;
+    invalid?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string | number | null;
-        type?: string;
-        name?: string | null;
-        invalid?: boolean;
-    }>(),
+    defineProps<InputProps>(),
     { modelValue: '', type: 'text', name: null, invalid: false },
 );
 

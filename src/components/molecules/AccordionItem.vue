@@ -5,12 +5,14 @@ import { computed, inject, ref, useId } from 'vue';
 import { accordionKey } from './accordionContext';
 import Icon from '../atoms/Icon.vue';
 
+export interface AccordionItemProps {
+    title: string;
+    // Key within the parent Accordion; defaults to the title.
+    value?: string | null;
+}
+
 const props = withDefaults(
-    defineProps<{
-        title: string;
-        // Key within the parent Accordion; defaults to the title.
-        value?: string | null;
-    }>(),
+    defineProps<AccordionItemProps>(),
     { value: null },
 );
 

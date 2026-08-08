@@ -5,30 +5,32 @@ import { useFocusTrap } from '../../composables/useFocusTrap';
 import { useScrollLock } from '../../composables/useScrollLock';
 import { touchTargetClasses } from '../../helpers/touchTarget';
 
+export interface ModalProps {
+    modelValue?: boolean;
+    title?: string | null;
+    description?: string | null;
+    closeOnBackdrop?: boolean;
+    // CSS selector (scoped to the panel) for the element to focus on open,
+    // e.g. 'input[name=email]'. Defaults to the first focusable element.
+    initialFocus?: string | null;
+    // 'md' is a reading-width dialog: a confirmation, a short form. 'lg'
+    // is the same dialog, wider — for content that is intrinsically wide
+    // (a table, a list of dotted key paths, side-by-side fields) but still
+    // short enough to size itself. 'full' stretches the panel to the
+    // viewport (minus the overlay inset) and scrolls the body slot instead
+    // of growing the dialog. The gap between 'md' and 'full' is why 'lg'
+    // exists: without it, anything too wide for max-w-lg had to go
+    // edge-to-edge, and a six-line picker in a full-screen panel reads as
+    // a broken page rather than a dialog.
+    size?: 'md' | 'lg' | 'full';
+}
+
 // Centered dialog with a scrim. Open state is v-model-driven so callers keep
 // ownership of visibility. Escape and backdrop clicks request a close. While
 // open, focus is trapped in the panel and page scrolling is locked; focus
 // returns to the previously focused element on close.
 const props = withDefaults(
-    defineProps<{
-        modelValue?: boolean;
-        title?: string | null;
-        description?: string | null;
-        closeOnBackdrop?: boolean;
-        // CSS selector (scoped to the panel) for the element to focus on open,
-        // e.g. 'input[name=email]'. Defaults to the first focusable element.
-        initialFocus?: string | null;
-        // 'md' is a reading-width dialog: a confirmation, a short form. 'lg'
-        // is the same dialog, wider — for content that is intrinsically wide
-        // (a table, a list of dotted key paths, side-by-side fields) but still
-        // short enough to size itself. 'full' stretches the panel to the
-        // viewport (minus the overlay inset) and scrolls the body slot instead
-        // of growing the dialog. The gap between 'md' and 'full' is why 'lg'
-        // exists: without it, anything too wide for max-w-lg had to go
-        // edge-to-edge, and a six-line picker in a full-screen panel reads as
-        // a broken page rather than a dialog.
-        size?: 'md' | 'lg' | 'full';
-    }>(),
+    defineProps<ModalProps>(),
     {
         modelValue: false,
         title: null,

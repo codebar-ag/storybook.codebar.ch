@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
+export interface ToggleProps {
+    modelValue?: boolean;
+    name?: string | null;
+    disabled?: boolean;
+    label?: string | null;
+    description?: string | null;
+}
+
 // An on/off switch. Mirrors the native-checkbox accessibility of Checkbox.vue
 // but renders the PlanetScale-style pill so boolean settings read as toggles.
 const props = withDefaults(
-    defineProps<{
-        modelValue?: boolean;
-        name?: string | null;
-        disabled?: boolean;
-        label?: string | null;
-        description?: string | null;
-    }>(),
+    defineProps<ToggleProps>(),
     { modelValue: false, name: null, disabled: false, label: null, description: null },
 );
 

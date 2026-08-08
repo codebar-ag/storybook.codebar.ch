@@ -7,13 +7,15 @@ import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
 
+export interface TextareaProps {
+    modelValue?: string | null;
+    name?: string | null;
+    rows?: number;
+    invalid?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string | null;
-        name?: string | null;
-        rows?: number;
-        invalid?: boolean;
-    }>(),
+    defineProps<TextareaProps>(),
     { modelValue: '', name: null, rows: 4, invalid: false },
 );
 

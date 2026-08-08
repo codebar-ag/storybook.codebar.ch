@@ -8,11 +8,13 @@ export interface BreadcrumbItem {
     href?: string;
 }
 
+export interface BreadcrumbsProps {
+    items?: BreadcrumbItem[];
+    as?: string | object;
+}
+
 withDefaults(
-    defineProps<{
-        items?: BreadcrumbItem[];
-        as?: string | object;
-    }>(),
+    defineProps<BreadcrumbsProps>(),
     { items: () => [], as: 'a' },
 );
 </script>

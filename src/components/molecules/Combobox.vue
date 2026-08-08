@@ -10,15 +10,17 @@ import { useFieldA11y } from '../../composables/useFieldA11y';
 import { useListNavigation } from '../../composables/useListNavigation';
 import type { SelectOption } from '../atoms/Select.vue';
 
+export interface ComboboxProps {
+    modelValue?: string;
+    options?: SelectOption[];
+    name?: string | null;
+    placeholder?: string | null;
+    invalid?: boolean;
+    emptyMessage?: string | null;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string;
-        options?: SelectOption[];
-        name?: string | null;
-        placeholder?: string | null;
-        invalid?: boolean;
-        emptyMessage?: string | null;
-    }>(),
+    defineProps<ComboboxProps>(),
     {
         modelValue: '',
         options: () => [],

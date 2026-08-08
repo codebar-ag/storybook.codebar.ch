@@ -3,12 +3,14 @@
 // sort button carrying aria-sort (used by DataTable, usable standalone).
 import Icon from './Icon.vue';
 
+export interface ThProps {
+    sortable?: boolean;
+    sortDir?: 'asc' | 'desc' | null;
+    align?: 'left' | 'right';
+}
+
 withDefaults(
-    defineProps<{
-        sortable?: boolean;
-        sortDir?: 'asc' | 'desc' | null;
-        align?: 'left' | 'right';
-    }>(),
+    defineProps<ThProps>(),
     { sortable: false, sortDir: null, align: 'left' },
 );
 

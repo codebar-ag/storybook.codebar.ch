@@ -8,20 +8,22 @@ import CopyButton from '../molecules/CopyButton.vue';
 // that never render an editor don't pay for the bundle (same convention as
 // CodePreview, this component's read-only sibling).
 
+export interface CodeEditorProps {
+    modelValue?: string;
+    language?: 'json' | 'markdown';
+    readonly?: boolean;
+    /** Empty-state text shown only while readonly and there's no value. No default — the caller's copy. */
+    placeholder?: string | null;
+    autoHeight?: boolean;
+    maxHeight?: string | null;
+    /** Pins a copy-to-clipboard button over the top-right of the editor. Opt-in, so existing surfaces keep their chrome. */
+    copyable?: boolean;
+    copyLabel?: string;
+    copiedMessage?: string;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string;
-        language?: 'json' | 'markdown';
-        readonly?: boolean;
-        /** Empty-state text shown only while readonly and there's no value. No default — the caller's copy. */
-        placeholder?: string | null;
-        autoHeight?: boolean;
-        maxHeight?: string | null;
-        /** Pins a copy-to-clipboard button over the top-right of the editor. Opt-in, so existing surfaces keep their chrome. */
-        copyable?: boolean;
-        copyLabel?: string;
-        copiedMessage?: string;
-    }>(),
+    defineProps<CodeEditorProps>(),
     {
         modelValue: '',
         language: 'json',

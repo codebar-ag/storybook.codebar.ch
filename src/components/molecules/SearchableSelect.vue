@@ -7,14 +7,16 @@ import Icon from '../atoms/Icon.vue';
 import Input from '../atoms/Input.vue';
 import type { SelectOption } from '../atoms/Select.vue';
 
+export interface SearchableSelectProps {
+    modelValue?: string | number | null;
+    options?: SelectOption[];
+    placeholder?: string;
+    searchPlaceholder?: string;
+    emptyMessage?: string;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string | number | null;
-        options?: SelectOption[];
-        placeholder?: string;
-        searchPlaceholder?: string;
-        emptyMessage?: string;
-    }>(),
+    defineProps<SearchableSelectProps>(),
     {
         modelValue: null,
         options: () => [],

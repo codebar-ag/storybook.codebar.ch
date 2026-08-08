@@ -11,28 +11,30 @@ import { warnOnce } from '../../helpers/dev';
    mutual-exclusivity check below has to tell those apart. The `neutral`
    fallback is applied one level down by `resolveTone()`, so the rendered
    result is unchanged. */
+export interface BadgeProps {
+    /**
+     * SEVERITY tone — how bad is this. The color names
+     * (gray/blue/green/amber/red) are deprecated aliases and will be
+     * removed in the next major release.
+     *
+     * Mutually exclusive with `category`. Defaults to `neutral` when
+     * neither is given.
+     */
+    variant?: Tone | LegacyTone;
+    /**
+     * CATEGORICAL identity — which kind is this, with no severity implied.
+     * For state that is not a status: on/off, inherited/overridden,
+     * first/duplicate, draft/published, or a kind-of-thing label.
+     *
+     * Mutually exclusive with `variant`; takes precedence if both are
+     * passed. Use `variant="neutral"` for "no category".
+     */
+    category?: Category;
+    size?: 'sm' | 'md';
+}
+
 const props = withDefaults(
-    defineProps<{
-        /**
-         * SEVERITY tone — how bad is this. The color names
-         * (gray/blue/green/amber/red) are deprecated aliases and will be
-         * removed in the next major release.
-         *
-         * Mutually exclusive with `category`. Defaults to `neutral` when
-         * neither is given.
-         */
-        variant?: Tone | LegacyTone;
-        /**
-         * CATEGORICAL identity — which kind is this, with no severity implied.
-         * For state that is not a status: on/off, inherited/overridden,
-         * first/duplicate, draft/published, or a kind-of-thing label.
-         *
-         * Mutually exclusive with `variant`; takes precedence if both are
-         * passed. Use `variant="neutral"` for "no category".
-         */
-        category?: Category;
-        size?: 'sm' | 'md';
-    }>(),
+    defineProps<BadgeProps>(),
     { size: 'md' },
 );
 /* eslint-enable vue/require-default-prop */

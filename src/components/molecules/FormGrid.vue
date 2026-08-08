@@ -2,13 +2,15 @@
 import { computed } from 'vue';
 import { pick } from '../../helpers/pick';
 
+export interface FormGridProps {
+    cols?: 1 | 2 | 3;
+}
+
 // Responsive form/field grid: single column on mobile, splitting at `sm`. Replaces
 // the ad-hoc `grid gap-4 sm:grid-cols-2` blocks repeated across forms. Class strings
 // are full literals (not interpolated) so Tailwind never purges them.
 const props = withDefaults(
-    defineProps<{
-        cols?: 1 | 2 | 3;
-    }>(),
+    defineProps<FormGridProps>(),
     { cols: 2 },
 );
 
