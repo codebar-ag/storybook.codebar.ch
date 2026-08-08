@@ -26,16 +26,18 @@ import { computed } from 'vue';
 import Card from '../molecules/Card.vue';
 import { pick } from '../../helpers/pick';
 
+export interface AuthLayoutProps {
+    title?: string | null;
+    description?: string | null;
+    maxWidth?: AuthLayoutMaxWidth;
+}
+
 // `maxWidth` defaults to md — the width this card was previously hardcoded to,
 // so existing callers render unchanged. The wider steps exist for auth-adjacent
 // screens that outgrow one column: onboarding with side-by-side billing fields,
 // consent screens showing a document alongside the form.
 const props = withDefaults(
-    defineProps<{
-        title?: string | null;
-        description?: string | null;
-        maxWidth?: AuthLayoutMaxWidth;
-    }>(),
+    defineProps<AuthLayoutProps>(),
     { title: null, description: null, maxWidth: 'md' },
 );
 

@@ -80,27 +80,29 @@ import { useRootAttrs } from '../../composables/useRootAttrs';
    a default glyph would make it unreachable. An absent `category` means "no
    category", which renders neutral; defaulting it would silently assign every
    unlabelled mark to a category it does not belong to. */
+export interface KindMarkProps {
+    /** Which family this kind belongs to. The primary, greyscale-safe channel. */
+    shape: KindShape;
+    /**
+     * The kind's name, always rendered. This is not an `aria-label` —
+     * it is visible text, and it is required because the mark alone does
+     * not separate an arbitrary number of kinds and should not pretend to.
+     * Override the rendering (not the presence) through the default slot.
+     */
+    label: string;
+    /** Separates kinds *within* a family. Omit for a silhouette-only mark. */
+    icon?: IconName;
+    /**
+     * Reinforcement only, one per family. Omit for the neutral family.
+     * Deliberately drawn from `Category` and `accent`, never from the
+     * severity ramp — a kind is not a status.
+     */
+    category?: Category;
+    size?: 'sm' | 'md' | 'lg';
+}
+
 const props = withDefaults(
-    defineProps<{
-        /** Which family this kind belongs to. The primary, greyscale-safe channel. */
-        shape: KindShape;
-        /**
-         * The kind's name, always rendered. This is not an `aria-label` —
-         * it is visible text, and it is required because the mark alone does
-         * not separate an arbitrary number of kinds and should not pretend to.
-         * Override the rendering (not the presence) through the default slot.
-         */
-        label: string;
-        /** Separates kinds *within* a family. Omit for a silhouette-only mark. */
-        icon?: IconName;
-        /**
-         * Reinforcement only, one per family. Omit for the neutral family.
-         * Deliberately drawn from `Category` and `accent`, never from the
-         * severity ramp — a kind is not a status.
-         */
-        category?: Category;
-        size?: 'sm' | 'md' | 'lg';
-    }>(),
+    defineProps<KindMarkProps>(),
     { size: 'md' },
 );
 /* eslint-enable vue/require-default-prop */

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends string | number = string | number">
 // Free-text input with filtered suggestions (ARIA combobox). Unlike
 // SearchableSelect — which picks from a closed set — the typed text IS the
 // value; suggestions are shortcuts. Built on the same useListNavigation core.
@@ -10,15 +10,23 @@ import { useFieldA11y } from '../../composables/useFieldA11y';
 import { useListNavigation } from '../../composables/useListNavigation';
 import type { SelectOption } from '../atoms/Select.vue';
 
+/**
+ * Generic over the option value. `modelValue` stays a plain string — here the
+ * TYPED TEXT is the value and suggestions are only shortcuts — but `@select`
+ * hands back the option that was picked, so its `value` should keep whatever
+ * type the caller's options carry.
+ */
+export interface ComboboxProps<T extends string | number = string | number> {
+    modelValue?: string;
+    options?: readonly SelectOption<T>[];
+    name?: string | null;
+    placeholder?: string | null;
+    invalid?: boolean;
+    emptyMessage?: string | null;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string;
-        options?: SelectOption[];
-        name?: string | null;
-        placeholder?: string | null;
-        invalid?: boolean;
-        emptyMessage?: string | null;
-    }>(),
+    defineProps<ComboboxProps<T>>(),
     {
         modelValue: '',
         options: () => [],
@@ -31,7 +39,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [value: string];
-    select: [option: SelectOption];
+    select: [option: SelectOption<T>];
 }>();
 
 const { describedBy } = useFieldA11y(props);
@@ -68,7 +76,7 @@ function close(): void {
     setActive(-1);
 }
 
-function selectOption(opt: SelectOption): void {
+function selectOption(opt: SelectOption<T>): void {
     emit('update:modelValue', opt.label);
     emit('select', opt);
     close();

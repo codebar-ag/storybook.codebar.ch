@@ -14,11 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Full history so the tags are present: the version check below needs
+          # to know which numbers are already spent.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
+
+      # Before the build, and before a tag exists — the only moment a version
+      # mistake is still cheap. Once a tag is pushed it is installable as a git
+      # dependency forever, whether or not its Release run went green, so the
+      # Release workflow's own tag/manifest guard fires too late to help.
+      - name: Version is ahead of every existing tag
+        run: npm run verify:version
 
       - run: npm ci
 

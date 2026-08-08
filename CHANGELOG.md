@@ -5,6 +5,146 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.18.0
+
+A types-only release, prompted by a consuming app that stood up a `vue-tsc`
+lane over 152 components for the first time and found out what this package
+does and does not let it say. **No component changes behaviour.** Not one
+template, class, token, prop default or emitted value differs; every call site
+that renders correctly today renders byte-identically after this. Everything
+below happens at the type boundary.
+
+There is no v1.17.0 — see the note at the end.
+
+### Added
+
+- **Every component now exports a named `<Name>Props` type.** 73 of them, one
+  per component, re-exported from the barrel.
+
+  The supporting types were all exported already — `Tone`, `Category`,
+  `SelectOption`, `DataTableColumn`, `BreadcrumbItem`, `TabItem`, `RowKey`,
+  `SortState`, `IconName` — which is what made the gap conspicuous rather than
+  merely absent. The props themselves reached `dist/index.d.ts` as **71
+  anonymous `__VLS_Props` interfaces**, the names `vue-tsc` generates for a
+  type literal passed inline to `defineProps`. Nothing can import those. A
+  consuming app wrapping an atom therefore re-declared the unions by hand, and
+  they drifted the moment either side moved: a `ConfirmDialog` over `Modal`
+  declaring `variant: String` compiles in the app and fails against
+  `'danger' | 'primary' | …` at the boundary.
+
+  So a wrapper can now say what it means:
+
+  ```ts
+  import type { ButtonProps, ModalProps } from '@codebar-ag/storybook';
+
+  defineProps<{
+      size?: ModalProps['size'];
+      variant?: ButtonProps['variant'];
+  }>();
+  ```
+
+  …or take the whole surface, which `@vue/compiler-sfc` resolves out of the
+  published `.d.ts` well enough to emit runtime props from:
+
+  ```ts
+  defineProps<ButtonProps>();
+  ```
+
+  `dist/index.d.ts` now carries 73 named prop interfaces and zero
+  `__VLS_Props`. A new `verify:props` build step keeps the three parts in
+  step — the SFC declares the interface, the barrel re-exports it, and
+  api-extractor carries it into the bundled declarations. Only the last is
+  observable to a consumer, and a type exported from source but dropped from
+  the rollup is invisible until an app tries to import it.
+
+- **`SelectOption` takes its value type as a parameter**, and the two controls
+  that hand an option's value back to the caller — `SearchableSelect` via
+  `update:modelValue`, `Combobox` via `@select` — are generic over it. A caller
+  whose values are all strings says so once, on the options, and stops
+  coercing with `String()` at every call site that writes into a string-typed
+  form field.
+
+  Both infer the parameter from `options` and `modelValue` together, so binding
+  a plain `string` model widens it rather than pinning it to the literal union
+  of an inline options array.
+
+  `Select` is deliberately **not** generic, and the source says why: it is a
+  native `<select>`, its change event carries `HTMLSelectElement.value`, and
+  the DOM has already stringified that. A `SelectOption<number>` there emits
+  `"1"` and not `1` — typing the emit as the parameter would be a lie the
+  compiler could not catch.
+
+### Changed
+
+- **`BreadcrumbItem.href` accepts `null`.** `Breadcrumbs` has always rendered a
+  plain `<span>` for a crumb whose `href` is falsy — an ancestor with no page
+  of its own, a label-only segment. The type just never said so, and every
+  caller assembling a trail from optional route data paid for the gap: typing
+  one wrapper's `breadcrumbs` prop as `BreadcrumbItem[]` in a consuming app
+  produced roughly 64 errors, all of them this one restated. The interior
+  non-link crumb is now also a story, since it was reachable but undocumented.
+
+- **Every array a component accepts is `readonly`.** `Accordion`,
+  `Breadcrumbs`, `Chart`, `Combobox`, `DataTable`, `FileInput`, `KindLegend`,
+  `PageHeading`, `ResourceList`, `SearchableSelect`, `Select`, `Stepper`,
+  `Tabs`.
+
+  Vue props cannot be mutated at runtime, so `options: SelectOption[]` was
+  never a promise the component kept — it only filtered out callers whose array
+  happened to be readonly, which generated translation types and `as const`
+  fixtures routinely are. Declaring the input readonly says what was already
+  true and accepts strictly more.
+
+  Readonly in, mutable out: the headless composables widen their *inputs*
+  (`useSort`'s rows, `usePagination`'s `sliceOf`, `useSelection`'s keys and
+  controlled selection) and keep handing back mutable arrays, copying once at
+  the boundary. `useSort`'s unsorted branch now copies instead of passing the
+  caller's array straight through, which it should have been doing anyway.
+  `verify:props` fails the build on a mutable array prop, because a stance like
+  this is only worth anything if it holds for all of them.
+
+- **`verify:version` runs on every pull request**, asserting that
+  `package.json` neither matches an existing tag nor sits behind the highest
+  one, and the README gains a release checklist. See below for what this is
+  for.
+
+### Upgrade notes
+
+Nothing here changes what a component *does*, so no template needs touching.
+Three of the changes can nonetheless fail an app's type-check, all in narrow
+positions:
+
+- **`BreadcrumbItem.href` is `string | null | undefined`.** Code that *reads*
+  a crumb's href into a `string` now needs a fallback. Code that *builds*
+  crumbs is strictly freer than before.
+- **Array props are `readonly T[]`.** Assigning one back out to a mutable array
+  type — `const steps: Step[] = props.steps` — needs a copy. Passing arrays
+  *in* is strictly freer.
+- **`SearchableSelect` and `Combobox` are generic components.** `typeof
+  SearchableSelect` is no longer a plain `DefineComponent`, so
+  `Meta<typeof SearchableSelect>` and similar type-level gymnastics need the
+  same untyped treatment `DataTable` has always needed. Templates are
+  unaffected.
+
+`SelectOption`'s parameter defaults to `string | number`, so every existing
+`SelectOption[]` annotation — including ones carrying numeric ids, which this
+package supports on purpose — means exactly what it did before.
+
+### A note on v1.17.0
+
+**There is no 1.17.0, and there never will be.** The tag `v1.17.0` exists and
+resolves, but the tree it points at is 1.16.1: `release/v1.16.1` was bumped
+correctly and then tagged by hand under the wrong name. The Release workflow
+caught the mismatch and refused to publish, so **1.16.1 never reached the
+registry and no GitHub Release was cut** — and none of that mattered, because
+this package is documented as a git dependency and `#v1.17.0` installs
+straight from the tag. Consuming apps pinned it and got a build whose
+`package.json` says 1.16.1. Nothing was broken; nothing said so either.
+
+A tag is a release even when the release failed, and a pushed tag is
+permanent. 1.17.0 is therefore spent, and this release skips it. If you are
+pinned to `v1.17.0` you are running 1.16.1 and should move to `v1.18.0`.
+
 ## v1.16.1
 
 One bug, found in a consuming app, and the two more the sweep for its shape

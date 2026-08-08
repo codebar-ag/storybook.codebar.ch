@@ -3,11 +3,13 @@ import { computed } from 'vue';
 import { icons, type IconName } from '../../icons';
 import { pick } from '../../helpers/pick';
 
+export interface IconProps {
+    name?: IconName;
+    size?: 'sm' | 'md' | 'lg';
+}
+
 const props = withDefaults(
-    defineProps<{
-        name?: IconName;
-        size?: 'sm' | 'md' | 'lg';
-    }>(),
+    defineProps<IconProps>(),
     { name: 'plus', size: 'md' },
 );
 

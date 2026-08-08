@@ -2,11 +2,13 @@
 import { computed } from 'vue';
 import { pick } from '../../helpers/pick';
 
+export interface FormActionsProps { align?: 'between' | 'end' | 'start' }
+
 // Form-footer action row. `between` puts the secondary action (Cancel) on the
 // left and the primary on the right; `end` right-aligns everything. The
 // `secondary` slot renders before the primary default slot. Pair with Button.
 const props = withDefaults(
-    defineProps<{ align?: 'between' | 'end' | 'start' }>(),
+    defineProps<FormActionsProps>(),
     { align: 'between' },
 );
 

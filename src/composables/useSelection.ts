@@ -6,7 +6,7 @@ export type RowKey = string | number;
 
 export interface UseSelectionOptions {
     /** Controlled selection (v-model:selected), or undefined for internal state. */
-    selected?: () => RowKey[] | undefined;
+    selected?: () => readonly RowKey[] | undefined;
     onChange?: (selected: RowKey[]) => void;
 }
 
@@ -15,7 +15,7 @@ export interface UseSelectionOptions {
  * a select-all that reports the indeterminate in-between state.
  */
 export function useSelection(
-    keys: () => RowKey[],
+    keys: () => readonly RowKey[],
     options: UseSelectionOptions = {},
 ): {
     selected: WritableComputedRef<RowKey[]>;
@@ -26,8 +26,14 @@ export function useSelection(
     allSelected: ComputedRef<boolean>;
     someSelected: ComputedRef<boolean>;
 } {
+    // The controlled selection is accepted as readonly and copied on the way
+    // in, so `selected` — which callers read, emit and store — stays a mutable
+    // array, and a write never mutates what the caller passed down.
     const selected = useControllable<RowKey[]>(
-        options.selected ?? (() => undefined),
+        () => {
+            const controlled = options.selected?.();
+            return controlled === undefined ? undefined : [...controlled];
+        },
         (value) => options.onChange?.(value),
         [],
     );

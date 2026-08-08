@@ -4,11 +4,13 @@
 import Icon from '../atoms/Icon.vue';
 import { touchTargetClasses } from '../../helpers/touchTarget';
 
+export interface NavbarProps {
+    // Hide the mobile menu button when the page has no sidebar.
+    menuButton?: boolean;
+}
+
 withDefaults(
-    defineProps<{
-        // Hide the mobile menu button when the page has no sidebar.
-        menuButton?: boolean;
-    }>(),
+    defineProps<NavbarProps>(),
     { menuButton: true },
 );
 

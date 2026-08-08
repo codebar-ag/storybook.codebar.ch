@@ -12,19 +12,21 @@ import type { Category, LegacyTone, Tone } from '../../helpers/tone';
 // unset `variant` still renders exactly as before.
 /* eslint-disable vue/require-default-prop -- see Badge.vue: defaulting either
    of these would forward a value Badge cannot distinguish from an unset one. */
+export interface StatusBadgeProps {
+    /** SEVERITY tone; legacy color names are deprecated (see Badge). */
+    variant?: Tone | LegacyTone;
+    /**
+     * CATEGORICAL identity, for a state that is not a severity — enabled,
+     * overridden, duplicate, published, or a kind label. Mutually exclusive
+     * with `variant`.
+     */
+    category?: Category;
+    label: string;
+    dot?: boolean;
+}
+
 withDefaults(
-    defineProps<{
-        /** SEVERITY tone; legacy color names are deprecated (see Badge). */
-        variant?: Tone | LegacyTone;
-        /**
-         * CATEGORICAL identity, for a state that is not a severity — enabled,
-         * overridden, duplicate, published, or a kind label. Mutually exclusive
-         * with `variant`.
-         */
-        category?: Category;
-        label: string;
-        dot?: boolean;
-    }>(),
+    defineProps<StatusBadgeProps>(),
     { dot: false },
 );
 /* eslint-enable vue/require-default-prop */

@@ -4,14 +4,16 @@ import type { IconName } from '../../icons';
 import Icon from '../atoms/Icon.vue';
 import { pick } from '../../helpers/pick';
 
+export interface ToasterProps {
+    // Cap on the toast stack width; raise it where messages run long
+    // (e.g. flash messages that echo user input back).
+    maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+}
+
 // Unified toast overlay. Mount once near the app root; producers call `push()`
 // from the useToast composable (copy buttons, Inertia flash bridging, etc.).
 const props = withDefaults(
-    defineProps<{
-        // Cap on the toast stack width; raise it where messages run long
-        // (e.g. flash messages that echo user input back).
-        maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-    }>(),
+    defineProps<ToasterProps>(),
     { maxWidth: 'sm' },
 );
 

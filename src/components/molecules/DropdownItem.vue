@@ -2,15 +2,17 @@
 import { computed } from 'vue';
 import type { Component } from 'vue';
 
+export interface DropdownItemProps {
+    href?: string | null;
+    active?: boolean;
+    // `submit` lets the item act as a form submit button (e.g. tenant switch).
+    type?: 'button' | 'submit';
+    // Link component (e.g. Inertia's Link) used instead of <a> when href is set.
+    as?: Component | null;
+}
+
 const props = withDefaults(
-    defineProps<{
-        href?: string | null;
-        active?: boolean;
-        // `submit` lets the item act as a form submit button (e.g. tenant switch).
-        type?: 'button' | 'submit';
-        // Link component (e.g. Inertia's Link) used instead of <a> when href is set.
-        as?: Component | null;
-    }>(),
+    defineProps<DropdownItemProps>(),
     { href: null, active: false, type: 'button', as: null },
 );
 

@@ -6,13 +6,15 @@ export interface Step {
     label: string;
 }
 
+export interface StepperProps {
+    steps: readonly Step[];
+    current?: number;
+}
+
 // Horizontal progress indicator for multi-step wizards. Purely presentational:
 // the parent owns the active index and navigation.
 const props = withDefaults(
-    defineProps<{
-        steps: Step[];
-        current?: number;
-    }>(),
+    defineProps<StepperProps>(),
     { current: 0 },
 );
 

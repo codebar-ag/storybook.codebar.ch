@@ -2,13 +2,15 @@
 import IconBadge from '../atoms/IconBadge.vue';
 import type { IconName } from '../../icons';
 
+export interface EmptyStateProps {
+    icon?: IconName;
+    variant?: 'accent' | 'danger' | 'success' | 'warning' | 'neutral';
+    title?: string | null;
+    description?: string | null;
+}
+
 withDefaults(
-    defineProps<{
-        icon?: IconName;
-        variant?: 'accent' | 'danger' | 'success' | 'warning' | 'neutral';
-        title?: string | null;
-        description?: string | null;
-    }>(),
+    defineProps<EmptyStateProps>(),
     { icon: 'sparkles', variant: 'neutral', title: null, description: null },
 );
 </script>

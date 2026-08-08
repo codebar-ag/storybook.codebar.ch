@@ -2,15 +2,17 @@
 import { computed } from 'vue';
 import { useFieldA11y } from '../../composables/useFieldA11y';
 
+export interface CheckboxProps {
+    modelValue?: boolean;
+    name?: string | null;
+    value?: string;
+    invalid?: boolean;
+    description?: string | null;
+    disabled?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: boolean;
-        name?: string | null;
-        value?: string;
-        invalid?: boolean;
-        description?: string | null;
-        disabled?: boolean;
-    }>(),
+    defineProps<CheckboxProps>(),
     { modelValue: false, name: null, value: '1', invalid: false, description: null, disabled: false },
 );
 

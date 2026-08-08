@@ -1,12 +1,14 @@
 <script setup lang="ts">
 // Full-page stage for error/system screens (404, 403, 500, maintenance):
 // status code eyebrow, headline, explanation and a primary action.
+export interface ErrorLayoutProps {
+    code?: string | null;
+    title: string;
+    description?: string | null;
+}
+
 withDefaults(
-    defineProps<{
-        code?: string | null;
-        title: string;
-        description?: string | null;
-    }>(),
+    defineProps<ErrorLayoutProps>(),
     { code: null, description: null },
 );
 </script>

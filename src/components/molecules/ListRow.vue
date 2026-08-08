@@ -2,13 +2,15 @@
 import { computed } from 'vue';
 import type { Component } from 'vue';
 
+export interface ListRowProps {
+    href?: string | null;
+    first?: boolean;
+    // Link component (e.g. Inertia's Link) used instead of <a> when href is set.
+    as?: Component | null;
+}
+
 const props = withDefaults(
-    defineProps<{
-        href?: string | null;
-        first?: boolean;
-        // Link component (e.g. Inertia's Link) used instead of <a> when href is set.
-        as?: Component | null;
-    }>(),
+    defineProps<ListRowProps>(),
     { href: null, first: false, as: null },
 );
 

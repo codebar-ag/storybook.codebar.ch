@@ -39,12 +39,14 @@ export interface KindLegendItem {
     icon?: IconName;
 }
 
+export interface KindLegendProps {
+    items: readonly KindLegendItem[];
+    /** Leading caption, e.g. "Kinds". Omitted when the context is obvious. */
+    label?: string;
+}
+
 withDefaults(
-    defineProps<{
-        items: KindLegendItem[];
-        /** Leading caption, e.g. "Kinds". Omitted when the context is obvious. */
-        label?: string;
-    }>(),
+    defineProps<KindLegendProps>(),
     { label: '' },
 );
 </script>

@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import Button from '../atoms/Button.vue';
 
+export interface PaginationProps {
+    prevHref?: string | null;
+    nextHref?: string | null;
+    prevLabel?: string;
+    nextLabel?: string;
+    onNavigate?: ((href: string) => void) | null;
+}
+
 // Prev/next pager for cursor/simple-paginated lists. Renders nothing when neither
 // link is present, so callers can drop it in unconditionally. Links are plain hrefs
 // by default (Inertia-agnostic) — under Inertia the `<a>` triggers a full page
@@ -8,13 +16,7 @@ import Button from '../atoms/Button.vue';
 // navigation yourself (e.g. Inertia's router.visit for a partial/preserve-state
 // reload) without making @inertiajs/vue3 a package dependency.
 const props = withDefaults(
-    defineProps<{
-        prevHref?: string | null;
-        nextHref?: string | null;
-        prevLabel?: string;
-        nextLabel?: string;
-        onNavigate?: ((href: string) => void) | null;
-    }>(),
+    defineProps<PaginationProps>(),
     { prevHref: null, nextHref: null, prevLabel: 'Previous', nextLabel: 'Next', onNavigate: null },
 );
 

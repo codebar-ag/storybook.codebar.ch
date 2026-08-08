@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import CodePreview from './CodePreview.vue';
 
+export interface KnowledgeSchemaPanelProps {
+    knowledge?: string | null;
+    schema?: string | Record<string, unknown> | null;
+    knowledgeLabel?: string;
+    schemaLabel?: string;
+    maxHeight?: string;
+}
+
 withDefaults(
-    defineProps<{
-        knowledge?: string | null;
-        schema?: string | Record<string, unknown> | null;
-        knowledgeLabel?: string;
-        schemaLabel?: string;
-        maxHeight?: string;
-    }>(),
+    defineProps<KnowledgeSchemaPanelProps>(),
     {
         knowledge: null,
         schema: null,

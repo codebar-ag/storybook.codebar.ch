@@ -15,11 +15,13 @@ export interface TabItem {
     disabled?: boolean;
 }
 
+export interface TabsProps {
+    tabs: readonly TabItem[];
+    modelValue?: string;
+}
+
 const props = withDefaults(
-    defineProps<{
-        tabs: TabItem[];
-        modelValue?: string;
-    }>(),
+    defineProps<TabsProps>(),
     { modelValue: undefined },
 );
 

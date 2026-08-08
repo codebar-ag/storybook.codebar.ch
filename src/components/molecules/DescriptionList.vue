@@ -2,6 +2,10 @@
 import { computed, provide } from 'vue';
 import { descriptionListKey } from './descriptionListContext';
 
+export interface DescriptionListProps {
+    layout?: 'gutter' | 'rows';
+}
+
 // Read-only metadata list: a stack of label → value rows. Pair with DescriptionItem.
 //
 // `layout` picks the row shape, and every item in the list follows it — the
@@ -16,9 +20,7 @@ import { descriptionListKey } from './descriptionListContext';
 // value to the far edge and rules a line under each pair, so one limit is one
 // line however long its label runs.
 const props = withDefaults(
-    defineProps<{
-        layout?: 'gutter' | 'rows';
-    }>(),
+    defineProps<DescriptionListProps>(),
     { layout: 'gutter' },
 );
 

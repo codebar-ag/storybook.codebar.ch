@@ -8,12 +8,14 @@ import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
 
+export interface AvatarProps {
+    name?: string;
+    src?: string | null;
+    size?: 'sm' | 'md' | 'lg';
+}
+
 const props = withDefaults(
-    defineProps<{
-        name?: string;
-        src?: string | null;
-        size?: 'sm' | 'md' | 'lg';
-    }>(),
+    defineProps<AvatarProps>(),
     { name: '', src: null, size: 'md' },
 );
 

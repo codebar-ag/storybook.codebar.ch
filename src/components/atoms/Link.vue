@@ -7,13 +7,15 @@ import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
 
+export interface LinkProps {
+    href?: string;
+    tone?: 'default' | 'muted' | 'accent';
+    // Link component (e.g. Inertia's Link) used instead of <a>.
+    as?: Component | null;
+}
+
 const props = withDefaults(
-    defineProps<{
-        href?: string;
-        tone?: 'default' | 'muted' | 'accent';
-        // Link component (e.g. Inertia's Link) used instead of <a>.
-        as?: Component | null;
-    }>(),
+    defineProps<LinkProps>(),
     { href: '#', tone: 'default', as: null },
 );
 

@@ -40,7 +40,7 @@ function defaultCompare(a: unknown, b: unknown): number {
  * `onChange` and ignore `sortedRows` — the state is all you need to emit.
  */
 export function useSort<T extends Record<string, unknown>>(
-    rows: () => T[],
+    rows: () => readonly T[],
     options: UseSortOptions<T> = {},
 ): {
     sort: WritableComputedRef<SortState | null>;
@@ -65,8 +65,11 @@ export function useSort<T extends Record<string, unknown>>(
 
     const sortedRows = computed(() => {
         const state = sort.value;
+        // Copied, not passed through: `rows` is accepted as readonly so a caller
+        // can hand over a frozen or ReadonlyArray source, while `sortedRows` stays
+        // a mutable array for whatever the caller does with it next.
         if (!state) {
-            return rows();
+            return [...rows()];
         }
         const comparator =
             options.comparators?.[state.key] ??

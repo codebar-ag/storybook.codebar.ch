@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import Label from '../atoms/Label.vue';
 
+export interface FieldProps {
+    label?: string | null;
+    name?: string | null;
+    hint?: string | null;
+    required?: boolean;
+    // In the Blade original this fell back to Laravel's $errors bag; under
+    // Inertia the consuming form passes the message in explicitly.
+    error?: string | null;
+}
+
 withDefaults(
-    defineProps<{
-        label?: string | null;
-        name?: string | null;
-        hint?: string | null;
-        required?: boolean;
-        // In the Blade original this fell back to Laravel's $errors bag; under
-        // Inertia the consuming form passes the message in explicitly.
-        error?: string | null;
-    }>(),
+    defineProps<FieldProps>(),
     { label: null, name: null, hint: null, required: false, error: null },
 );
 </script>

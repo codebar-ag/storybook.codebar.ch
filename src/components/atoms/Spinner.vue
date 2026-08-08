@@ -9,11 +9,13 @@ import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
 
+export interface SpinnerProps {
+    size?: 'sm' | 'md' | 'lg';
+    label?: string;
+}
+
 const props = withDefaults(
-    defineProps<{
-        size?: 'sm' | 'md' | 'lg';
-        label?: string;
-    }>(),
+    defineProps<SpinnerProps>(),
     { size: 'md', label: 'Loading…' },
 );
 

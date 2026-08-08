@@ -212,6 +212,88 @@ export type { TabItem } from './components/molecules/Tabs.vue';
 export type { KindLegendItem } from './components/molecules/KindLegend.vue';
 export type { DataTableColumn } from './components/organisms/dataTable.types';
 
+// Per-component prop types, so a consuming app can name the props of a
+// component it wraps instead of re-declaring the unions by hand:
+//
+//     import type { ButtonProps } from '@codebar-ag/storybook';
+//     defineProps<{ variant?: ButtonProps['variant'] }>();
+//
+// One line per component, kept in sync by the `verify:props-exports` build
+// step — a component whose props are not exported fails the build.
+export type { AccordionProps } from './components/molecules/Accordion.vue';
+export type { AccordionItemProps } from './components/molecules/AccordionItem.vue';
+export type { AlertProps } from './components/molecules/Alert.vue';
+export type { AuthLayoutProps } from './components/layouts/AuthLayout.vue';
+export type { AvatarProps } from './components/atoms/Avatar.vue';
+export type { BadgeProps } from './components/atoms/Badge.vue';
+export type { BreadcrumbsProps } from './components/molecules/Breadcrumbs.vue';
+export type { ButtonProps } from './components/atoms/Button.vue';
+export type { CardProps } from './components/molecules/Card.vue';
+export type { ChartProps } from './components/organisms/Chart.vue';
+export type { CheckboxProps } from './components/atoms/Checkbox.vue';
+export type { CodeEditorProps } from './components/organisms/CodeEditor.vue';
+export type { CodeLineProps } from './components/molecules/CodeLine.vue';
+export type { CodePreviewProps } from './components/organisms/CodePreview.vue';
+export type { ComboboxProps } from './components/molecules/Combobox.vue';
+export type { ConfigValueProps } from './components/organisms/ConfigValue.vue';
+export type { CopyButtonProps } from './components/molecules/CopyButton.vue';
+export type { DataTableProps } from './components/organisms/DataTable.vue';
+export type { DescriptionItemProps } from './components/molecules/DescriptionItem.vue';
+export type { DescriptionListProps } from './components/molecules/DescriptionList.vue';
+export type { DividerProps } from './components/atoms/Divider.vue';
+export type { DrawerProps } from './components/organisms/Drawer.vue';
+export type { DropdownProps } from './components/molecules/Dropdown.vue';
+export type { DropdownItemProps } from './components/molecules/DropdownItem.vue';
+export type { EmptyStateProps } from './components/molecules/EmptyState.vue';
+export type { ErrorLayoutProps } from './components/layouts/ErrorLayout.vue';
+export type { FieldProps } from './components/molecules/Field.vue';
+export type { FileInputProps } from './components/molecules/FileInput.vue';
+export type { FormActionsProps } from './components/molecules/FormActions.vue';
+export type { FormGridProps } from './components/molecules/FormGrid.vue';
+export type { IconProps } from './components/atoms/Icon.vue';
+export type { IconBadgeProps } from './components/atoms/IconBadge.vue';
+export type { IdCellProps } from './components/atoms/IdCell.vue';
+export type { InputProps } from './components/atoms/Input.vue';
+export type { InputNumberProps } from './components/molecules/InputNumber.vue';
+export type { KindLegendProps } from './components/molecules/KindLegend.vue';
+export type { KindMarkProps } from './components/atoms/KindMark.vue';
+export type { KnowledgeSchemaPanelProps } from './components/organisms/KnowledgeSchemaPanel.vue';
+export type { LabelProps } from './components/atoms/Label.vue';
+export type { LabeledCodeBlockProps } from './components/molecules/LabeledCodeBlock.vue';
+export type { LinkProps } from './components/atoms/Link.vue';
+export type { ListIconProps } from './components/atoms/ListIcon.vue';
+export type { ListRowProps } from './components/molecules/ListRow.vue';
+export type { MetricProps } from './components/atoms/Metric.vue';
+export type { MetricGridProps } from './components/organisms/MetricGrid.vue';
+export type { ModalProps } from './components/organisms/Modal.vue';
+export type { NavbarProps } from './components/organisms/Navbar.vue';
+export type { NumericCellProps } from './components/atoms/NumericCell.vue';
+export type { PageHeadingProps } from './components/molecules/PageHeading.vue';
+export type { PaginationProps } from './components/molecules/Pagination.vue';
+export type { PasswordInputProps } from './components/molecules/PasswordInput.vue';
+export type { PinInputProps } from './components/molecules/PinInput.vue';
+export type { PopoverProps } from './components/molecules/Popover.vue';
+export type { PrimarySubtitleCellProps } from './components/atoms/PrimarySubtitleCell.vue';
+export type { ProgressProps } from './components/atoms/Progress.vue';
+export type { RadioProps } from './components/atoms/Radio.vue';
+export type { RadioGroupProps } from './components/molecules/RadioGroup.vue';
+export type { ResourceListProps } from './components/organisms/ResourceList.vue';
+export type { SearchableSelectProps } from './components/molecules/SearchableSelect.vue';
+export type { SelectProps } from './components/atoms/Select.vue';
+export type { SidebarProps } from './components/organisms/Sidebar.vue';
+export type { SidebarGroupProps } from './components/organisms/SidebarGroup.vue';
+export type { SidebarItemProps } from './components/organisms/SidebarItem.vue';
+export type { SpinnerProps } from './components/atoms/Spinner.vue';
+export type { StatusBadgeProps } from './components/atoms/StatusBadge.vue';
+export type { StepperProps } from './components/molecules/Stepper.vue';
+export type { TabProps } from './components/atoms/Tab.vue';
+export type { TabsProps } from './components/molecules/Tabs.vue';
+export type { TextareaProps } from './components/atoms/Textarea.vue';
+export type { ThProps } from './components/atoms/Th.vue';
+export type { ToasterProps } from './components/organisms/Toaster.vue';
+export type { ToggleProps } from './components/atoms/Toggle.vue';
+export type { TooltipProps } from './components/molecules/Tooltip.vue';
+
 /**
  * Every atom keyed by the name it registers under globally. Names are used
  * verbatim in templates (e.g. `<Button>`, `<Card>`) when the plugin is installed.

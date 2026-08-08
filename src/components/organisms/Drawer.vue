@@ -9,16 +9,18 @@ import { useFocusTrap } from '../../composables/useFocusTrap';
 import { useScrollLock } from '../../composables/useScrollLock';
 import { touchTargetClasses } from '../../helpers/touchTarget';
 
+export interface DrawerProps {
+    modelValue?: boolean;
+    title?: string | null;
+    description?: string | null;
+    side?: 'right' | 'left';
+    // Width utility class for the panel.
+    width?: string;
+    closeOnBackdrop?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: boolean;
-        title?: string | null;
-        description?: string | null;
-        side?: 'right' | 'left';
-        // Width utility class for the panel.
-        width?: string;
-        closeOnBackdrop?: boolean;
-    }>(),
+    defineProps<DrawerProps>(),
     {
         modelValue: false,
         title: null,

@@ -26,28 +26,30 @@ import EmptyState from '../molecules/EmptyState.vue';
 import Th from '../atoms/Th.vue';
 import { touchTargetBoundsClasses, touchTargetLabelClasses } from '../../helpers/touchTarget';
 
+export interface DataTableProps<T extends Record<string, unknown>> {
+    columns: readonly DataTableColumn<T>[];
+    rows: readonly T[];
+    rowKey: keyof T | ((row: T) => RowKey);
+    loading?: boolean;
+    error?: string | null;
+    selectable?: boolean;
+    /** v-model:selected */
+    selected?: readonly RowKey[];
+    sortMode?: 'client' | 'server';
+    /** v-model:sort */
+    sort?: SortState | null;
+    paginationMode?: 'client' | 'server' | 'none';
+    /** v-model:page */
+    page?: number;
+    pageSize?: number;
+    /** Total row count in server mode (client mode derives it). */
+    total?: number | null;
+    stickyHeader?: boolean;
+    density?: 'comfortable' | 'compact';
+}
+
 const props = withDefaults(
-    defineProps<{
-        columns: DataTableColumn<T>[];
-        rows: T[];
-        rowKey: keyof T | ((row: T) => RowKey);
-        loading?: boolean;
-        error?: string | null;
-        selectable?: boolean;
-        /** v-model:selected */
-        selected?: RowKey[];
-        sortMode?: 'client' | 'server';
-        /** v-model:sort */
-        sort?: SortState | null;
-        paginationMode?: 'client' | 'server' | 'none';
-        /** v-model:page */
-        page?: number;
-        pageSize?: number;
-        /** Total row count in server mode (client mode derives it). */
-        total?: number | null;
-        stickyHeader?: boolean;
-        density?: 'comfortable' | 'compact';
-    }>(),
+    defineProps<DataTableProps<T>>(),
     {
         loading: false,
         error: null,

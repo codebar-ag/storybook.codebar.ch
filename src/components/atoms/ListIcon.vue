@@ -2,7 +2,9 @@
 import Icon from './Icon.vue';
 import type { IconName } from '../../icons';
 
-defineProps<{ name: IconName }>();
+export interface ListIconProps { name: IconName }
+
+defineProps<ListIconProps>();
 </script>
 
 <template>

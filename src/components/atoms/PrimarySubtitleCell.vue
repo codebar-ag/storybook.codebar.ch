@@ -1,10 +1,12 @@
 <script setup lang="ts">
+export interface PrimarySubtitleCellProps {
+    primary: string;
+    subtitle?: string;
+    subtitleMono?: boolean;
+}
+
 withDefaults(
-    defineProps<{
-        primary: string;
-        subtitle?: string;
-        subtitleMono?: boolean;
-    }>(),
+    defineProps<PrimarySubtitleCellProps>(),
     { subtitle: '', subtitleMono: false },
 );
 </script>

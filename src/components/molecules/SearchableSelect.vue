@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends string | number = string | number">
 import { computed, nextTick, ref, watch } from 'vue';
 import { formControlClasses } from '../../helpers/formControlClasses';
 import { useClickOutside } from '../../composables/useClickOutside';
@@ -7,14 +7,23 @@ import Icon from '../atoms/Icon.vue';
 import Input from '../atoms/Input.vue';
 import type { SelectOption } from '../atoms/Select.vue';
 
+/**
+ * Generic over the option value: this control picks from a CLOSED set and
+ * emits `option.value` verbatim, so whatever the caller's options carry is
+ * exactly what comes back. `T` is inferred from `options` and `modelValue`
+ * together, so binding a plain `string` model widens it rather than pinning
+ * it to the literal union of the options.
+ */
+export interface SearchableSelectProps<T extends string | number = string | number> {
+    modelValue?: T | null;
+    options?: readonly SelectOption<T>[];
+    placeholder?: string;
+    searchPlaceholder?: string;
+    emptyMessage?: string;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string | number | null;
-        options?: SelectOption[];
-        placeholder?: string;
-        searchPlaceholder?: string;
-        emptyMessage?: string;
-    }>(),
+    defineProps<SearchableSelectProps<T>>(),
     {
         modelValue: null,
         options: () => [],
@@ -24,7 +33,7 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{ 'update:modelValue': [value: string | number] }>();
+const emit = defineEmits<{ 'update:modelValue': [value: T] }>();
 
 const open = ref(false);
 const query = ref('');
@@ -77,7 +86,7 @@ function closeMenu() {
     setActive(-1);
 }
 
-function selectOption(opt: SelectOption) {
+function selectOption(opt: SelectOption<T>) {
     emit('update:modelValue', opt.value);
     closeMenu();
 }

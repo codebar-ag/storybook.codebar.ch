@@ -6,15 +6,17 @@ import { computed, ref } from 'vue';
 import { cx } from '../../helpers/cx';
 import { useFieldA11y } from '../../composables/useFieldA11y';
 
+export interface PinInputProps {
+    modelValue?: string;
+    length?: number;
+    name?: string | null;
+    invalid?: boolean;
+    disabled?: boolean;
+    label?: string;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string;
-        length?: number;
-        name?: string | null;
-        invalid?: boolean;
-        disabled?: boolean;
-        label?: string;
-    }>(),
+    defineProps<PinInputProps>(),
     {
         modelValue: '',
         length: 6,

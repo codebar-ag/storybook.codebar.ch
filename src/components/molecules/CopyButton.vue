@@ -3,16 +3,18 @@ import { push } from '../../composables/useToast';
 import { touchTargetClasses } from '../../helpers/touchTarget';
 import Icon from '../atoms/Icon.vue';
 
+export interface CopyButtonProps {
+    value?: string;
+    label?: string;
+    copiedMessage?: string;
+    iconSize?: string;
+}
+
 // Icon-only "copy to clipboard" button. Writes `value` to the clipboard and
 // pushes a success toast. Colour/ring/icon-size ride in via class so both app
 // chrome (theme tokens) and the DocuWare mirror (dw hex) reuse the behaviour.
 const props = withDefaults(
-    defineProps<{
-        value?: string;
-        label?: string;
-        copiedMessage?: string;
-        iconSize?: string;
-    }>(),
+    defineProps<CopyButtonProps>(),
     {
         value: '',
         label: 'Copy to clipboard',

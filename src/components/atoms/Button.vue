@@ -8,19 +8,21 @@ import Spinner from './Spinner.vue';
 
 defineOptions({ inheritAttrs: false });
 
+export interface ButtonProps {
+    variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'subtle' | 'cta';
+    size?: 'sm' | 'md' | 'lg';
+    type?: 'button' | 'submit' | 'reset';
+    // Pass a component (e.g. Inertia's Link) to keep navigation client-side
+    // while staying framework-agnostic — the package never imports Inertia.
+    as?: 'button' | 'a' | Component;
+    href?: string | null;
+    // Shows a centered spinner and blocks interaction; the label stays in
+    // the layout (hidden, not removed) so the button keeps its width.
+    loading?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'subtle' | 'cta';
-        size?: 'sm' | 'md' | 'lg';
-        type?: 'button' | 'submit' | 'reset';
-        // Pass a component (e.g. Inertia's Link) to keep navigation client-side
-        // while staying framework-agnostic — the package never imports Inertia.
-        as?: 'button' | 'a' | Component;
-        href?: string | null;
-        // Shows a centered spinner and blocks interaction; the label stays in
-        // the layout (hidden, not removed) so the button keeps its width.
-        loading?: boolean;
-    }>(),
+    defineProps<ButtonProps>(),
     { variant: 'primary', size: 'md', type: 'button', as: 'button', href: null, loading: false },
 );
 

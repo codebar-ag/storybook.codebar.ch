@@ -6,11 +6,13 @@ import { useRootAttrs } from '../../composables/useRootAttrs';
 
 defineOptions({ inheritAttrs: false });
 
+export interface DividerProps {
+    orientation?: 'horizontal' | 'vertical';
+    label?: string | null;
+}
+
 withDefaults(
-    defineProps<{
-        orientation?: 'horizontal' | 'vertical';
-        label?: string | null;
-    }>(),
+    defineProps<DividerProps>(),
     { orientation: 'horizontal', label: null },
 );
 

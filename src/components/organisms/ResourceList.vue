@@ -5,6 +5,19 @@ import ListRow from '../molecules/ListRow.vue';
 import ListIcon from '../atoms/ListIcon.vue';
 import type { IconName } from '../../icons';
 
+export interface ResourceListProps {
+    items: readonly Record<string, unknown>[];
+    hrefKey?: string;
+    rowKey?: string | null;
+    emptyIcon?: IconName;
+    emptyVariant?: 'accent' | 'danger' | 'success' | 'warning' | 'neutral';
+    emptyTitle?: string | null;
+    emptyDescription?: string | null;
+    addHref?: string | null;
+    addLabel?: string;
+    addIcon?: IconName;
+}
+
 // Card-framed list of rows with a built-in empty state and trailing "add" row — the
 // shell that every index/list page repeated. Callers own the per-row markup through
 // the scoped slots (`row`, plus optional `row-leading` / `row-trailing` that map onto
@@ -13,18 +26,7 @@ import type { IconName } from '../../icons';
 // Each item's link is read from `hrefKey` (default `href`); set it to make rows
 // clickable. The v-for `:key` comes from `rowKey`, falling back to the href, then index.
 const props = withDefaults(
-    defineProps<{
-        items: Array<Record<string, unknown>>;
-        hrefKey?: string;
-        rowKey?: string | null;
-        emptyIcon?: IconName;
-        emptyVariant?: 'accent' | 'danger' | 'success' | 'warning' | 'neutral';
-        emptyTitle?: string | null;
-        emptyDescription?: string | null;
-        addHref?: string | null;
-        addLabel?: string;
-        addIcon?: IconName;
-    }>(),
+    defineProps<ResourceListProps>(),
     {
         hrefKey: 'href',
         rowKey: null,

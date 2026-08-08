@@ -4,13 +4,17 @@ import { ref } from 'vue';
 import SearchableSelect from './SearchableSelect.vue';
 import Field from './Field.vue';
 
-const meta: Meta<typeof SearchableSelect> = {
+// Untyped Meta/StoryObj, same as DataTable: the component is generic over
+// its option value, which Storybook's Meta<typeof X> inference can't
+// represent. These stories drive the component from a template, not args,
+// so nothing is lost.
+const meta: Meta = {
     title: 'Molecules/SearchableSelect',
-    component: SearchableSelect,
+    component: SearchableSelect as unknown as Meta['component'],
 };
 
 export default meta;
-type Story = StoryObj<typeof SearchableSelect>;
+type Story = StoryObj;
 
 export const Default: Story = {
     render: () => ({

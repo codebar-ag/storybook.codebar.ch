@@ -6,12 +6,14 @@ import { createCodeMirrorTheme } from '../../helpers/codeMirrorTheme';
 // CodeMirror is an OPTIONAL peer dependency: it is imported lazily so apps
 // that never render a code preview don't pay for the bundle.
 
+export interface CodePreviewProps {
+    value?: string;
+    language?: 'text' | 'json' | 'markdown';
+    maxHeight?: string;
+}
+
 const props = withDefaults(
-    defineProps<{
-        value?: string;
-        language?: 'text' | 'json' | 'markdown';
-        maxHeight?: string;
-    }>(),
+    defineProps<CodePreviewProps>(),
     {
         value: '',
         language: 'text',

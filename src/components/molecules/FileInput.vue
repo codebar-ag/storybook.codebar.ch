@@ -4,14 +4,16 @@ import { cx } from '../../helpers/cx';
 import { formControlClasses } from '../../helpers/formControlClasses';
 import { useFieldA11y } from '../../composables/useFieldA11y';
 
+export interface FileInputProps {
+    // File inputs are write-only: the browser owns the selection, so the
+    // model only flows outward (input → caller), never back in.
+    modelValue?: readonly File[] | null;
+    name?: string | null;
+    invalid?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        // File inputs are write-only: the browser owns the selection, so the
-        // model only flows outward (input → caller), never back in.
-        modelValue?: File[] | null;
-        name?: string | null;
-        invalid?: boolean;
-    }>(),
+    defineProps<FileInputProps>(),
     { modelValue: null, name: null, invalid: false },
 );
 

@@ -2,13 +2,15 @@
 import { computed, inject } from 'vue';
 import { descriptionListKey } from './descriptionListContext';
 
+export interface DescriptionItemProps {
+    label: string;
+    tone?: 'ink' | 'muted';
+}
+
 // `tone` is a text-emphasis axis (ink = primary value, muted = secondary),
 // intentionally NOT `variant` (which app-wide denotes a status colour).
 const props = withDefaults(
-    defineProps<{
-        label: string;
-        tone?: 'ink' | 'muted';
-    }>(),
+    defineProps<DescriptionItemProps>(),
     { tone: 'ink' },
 );
 

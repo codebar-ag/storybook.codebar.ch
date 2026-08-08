@@ -7,24 +7,49 @@ import { usePasswordManagerAttrs } from '../../composables/usePasswordManagerAtt
 import { useRootAttrs } from '../../composables/useRootAttrs';
 import Icon from './Icon.vue';
 
-export interface SelectOption {
-    value: string | number;
+/**
+ * An option's `value` type is a parameter so a caller whose values are all
+ * strings can say so — `SelectOption<string>[]` — and have that flow through
+ * SearchableSelect's and Combobox's payloads instead of coercing
+ * `string | number` back down at every call site.
+ *
+ * The default stays `string | number`, NOT `string`: narrowing it would
+ * silently break every existing `SelectOption[]` annotation carrying numeric
+ * ids, which this package supports on purpose.
+ */
+export interface SelectOption<T extends string | number = string | number> {
+    value: T;
     label: string;
 }
 
 defineOptions({ inheritAttrs: false });
 
+export interface SelectProps {
+    modelValue?: string | number | null;
+    name?: string | null;
+    /**
+     * `ReadonlyArray<…>` rather than the `readonly …[]` spelling used
+     * everywhere else, and only because of this union: eslint-plugin-vue's
+     * own type inference does not see through `readonly X[] | Record<…>` and
+     * reports the `() => []` default as invalid for an object-typed prop. The
+     * compiler emits `type: [Array, Object]` either way — the two spellings
+     * are the same type.
+     */
+    options?: ReadonlyArray<SelectOption> | Record<string, string>;
+    placeholder?: string | null;
+    invalid?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        modelValue?: string | number | null;
-        name?: string | null;
-        options?: SelectOption[] | Record<string, string>;
-        placeholder?: string | null;
-        invalid?: boolean;
-    }>(),
+    defineProps<SelectProps>(),
     { modelValue: null, name: null, options: () => [], placeholder: null, invalid: false },
 );
 
+// Deliberately NOT generic over the option value, unlike SearchableSelect and
+// Combobox. This is a native <select>: the change event carries
+// `HTMLSelectElement.value`, which the DOM has already stringified, so a
+// `SelectOption<number>` here would emit "1" and not 1. Typing the emit as `T`
+// would be a lie the compiler could not catch.
 defineEmits<{ 'update:modelValue': [value: string] }>();
 
 const { rootAttrs, classAttr } = useRootAttrs();

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-defineProps<{
+export interface MetricProps {
     label: string | number;
     value: string | number;
-}>();
+}
+
+defineProps<MetricProps>();
 </script>
 
 <template>

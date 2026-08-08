@@ -13,14 +13,16 @@ import { useClickOutside } from '../../composables/useClickOutside';
 import { useControllable } from '../../composables/useControllable';
 import { useEscapeKey } from '../../composables/useEscapeKey';
 
+export interface DropdownProps {
+    align?: 'left' | 'right';
+    // Width utility class for the menu panel, e.g. `w-80` for wider menus.
+    width?: string;
+    // Optional v-model:open; leave unbound for internal state.
+    open?: boolean;
+}
+
 const props = withDefaults(
-    defineProps<{
-        align?: 'left' | 'right';
-        // Width utility class for the menu panel, e.g. `w-80` for wider menus.
-        width?: string;
-        // Optional v-model:open; leave unbound for internal state.
-        open?: boolean;
-    }>(),
+    defineProps<DropdownProps>(),
     { align: 'right', width: 'w-56', open: undefined },
 );
 
