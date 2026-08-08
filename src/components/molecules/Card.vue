@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots } from 'vue';
+import { computed } from 'vue';
 import { cx } from '../../helpers/cx';
 import { useRootAttrs } from '../../composables/useRootAttrs';
 import { pick } from '../../helpers/pick';
@@ -22,7 +22,6 @@ const props = withDefaults(
     { title: null, description: null, padded: true, variant: 'default', hoverable: false, size: 'md' },
 );
 
-const slots = useSlots();
 const { rootAttrs, classAttr } = useRootAttrs();
 
 const variants: Record<string, string> = { default: '', danger: 'border-danger-line/60' };
@@ -56,10 +55,6 @@ const rootClass = computed(() =>
         classAttr.value,
     ),
 );
-
-const hasHeader = computed(
-    () => props.title !== null || props.description !== null || !!slots.title || !!slots.actions,
-);
 </script>
 
 <template>
@@ -67,8 +62,14 @@ const hasHeader = computed(
     :class="rootClass"
     v-bind="rootAttrs"
   >
+    <!-- Read `$slots` here, in the render, and never through a `computed`. The
+         object `useSlots()` returns is built once and mutated in place, so it
+         is not a reactive dependency: a computed over it caches whatever was
+         true at mount. A card with no `title` and no `description` would then
+         cache "no header" forever, and a `#actions` that arrived later — the
+         normal shape for a form's Save button — could never appear. -->
     <header
-      v-if="hasHeader"
+      v-if="title !== null || description !== null || $slots.title || $slots.actions"
       :class="['flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 border-b border-line', headerPadding[size]]"
     >
       <div class="min-w-0">
@@ -79,7 +80,7 @@ const hasHeader = computed(
              state of the thing the card is about — instead of being exiled to
              `#actions` on the far side of the header. -->
         <h2
-          v-if="title !== null || slots.title"
+          v-if="title !== null || $slots.title"
           :class="['flex flex-wrap items-center gap-x-3 gap-y-1 font-semibold text-ink', titleSize[size]]"
         >
           <slot name="title">
@@ -94,7 +95,7 @@ const hasHeader = computed(
         </p>
       </div>
       <div
-        v-if="slots.actions"
+        v-if="$slots.actions"
         class="flex flex-wrap items-center gap-2 sm:shrink-0"
       >
         <slot name="actions" />
@@ -106,7 +107,7 @@ const hasHeader = computed(
     </div>
 
     <footer
-      v-if="slots.footer"
+      v-if="$slots.footer"
       :class="[footerPadding[size], 'bg-surface-2 border-t border-line text-xs text-muted rounded-b-surface']"
     >
       <slot name="footer" />

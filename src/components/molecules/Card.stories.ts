@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { ref } from 'vue';
 import Card from './Card.vue';
 import Button from '../atoms/Button.vue';
 import StatusBadge from '../atoms/StatusBadge.vue';
@@ -47,6 +49,77 @@ export const TitleSlot: Story = {
             <p class="text-sm text-muted">Body.</p>
         </Card>`,
     }),
+};
+
+// The header's existence is decided per render, not once at mount. A card with
+// no `title` and no `description` starts with no header at all; the moment a
+// conditional `#actions` template turns on, the header — and the actions it
+// contains — has to appear, and has to go again when it turns off. This is the
+// shape a form card takes: the Save button only exists once the form is
+// complete enough to submit, and the card carrying it has no title.
+export const ActionsAppearingAfterMount: Story = {
+    render: () => ({
+        components: { Card, Button },
+        setup: () => ({ ready: ref(false) }),
+        template: `<Card>
+            <template
+                v-if="ready"
+                #actions
+            ><Button size="sm">Save</Button></template>
+            <Button
+                size="sm"
+                variant="secondary"
+                @click="ready = !ready"
+            >{{ ready ? 'Reset' : 'Complete form' }}</Button>
+        </Card>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+
+        await expect(canvas.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument();
+
+        await userEvent.click(canvas.getByRole('button', { name: 'Complete form' }));
+        await waitFor(() => expect(canvas.getByRole('button', { name: 'Save' })).toBeVisible());
+
+        await userEvent.click(canvas.getByRole('button', { name: 'Reset' }));
+        await waitFor(() =>
+            expect(canvas.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument(),
+        );
+    },
+};
+
+// Same rule for `#title`: a card that gains a title after mount gains a header.
+export const TitleAppearingAfterMount: Story = {
+    render: () => ({
+        components: { Card, Button },
+        setup: () => ({ loaded: ref(false) }),
+        template: `<Card>
+            <template
+                v-if="loaded"
+                #title
+            >Nightly sync</template>
+            <Button
+                size="sm"
+                variant="secondary"
+                @click="loaded = !loaded"
+            >{{ loaded ? 'Unload' : 'Load' }}</Button>
+        </Card>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+
+        await expect(canvas.queryByRole('heading', { name: 'Nightly sync' })).not.toBeInTheDocument();
+
+        await userEvent.click(canvas.getByRole('button', { name: 'Load' }));
+        await waitFor(() =>
+            expect(canvas.getByRole('heading', { name: 'Nightly sync' })).toBeVisible(),
+        );
+
+        await userEvent.click(canvas.getByRole('button', { name: 'Unload' }));
+        await waitFor(() =>
+            expect(canvas.queryByRole('heading', { name: 'Nightly sync' })).not.toBeInTheDocument(),
+        );
+    },
 };
 
 export const Small: Story = {

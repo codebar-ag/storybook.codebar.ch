@@ -11,7 +11,7 @@
 // consuming app was otherwise re-pairing them by hand on every nested page.
 // Pass `breadcrumbAs` (e.g. Inertia's `Link`) for SPA navigation, exactly as
 // Breadcrumbs' own `as` prop expects.
-import { computed, useSlots } from 'vue';
+import { computed } from 'vue';
 import { cx } from '../../helpers/cx';
 import { useRootAttrs } from '../../composables/useRootAttrs';
 import Breadcrumbs, { type BreadcrumbItem } from './Breadcrumbs.vue';
@@ -27,7 +27,6 @@ withDefaults(
     { eyebrow: null, breadcrumbs: () => [], breadcrumbAs: 'a' },
 );
 
-const slots = useSlots();
 const { rootAttrs, classAttr } = useRootAttrs();
 
 const classes = computed(() => cx('text-xl font-semibold text-ink', classAttr.value));
@@ -61,14 +60,14 @@ const classes = computed(() => cx('text-xl font-semibold text-ink', classAttr.va
           <slot />
         </h1>
         <p
-          v-if="slots.description"
+          v-if="$slots.description"
           class="mt-1 text-sm text-muted"
         >
           <slot name="description" />
         </p>
       </div>
       <div
-        v-if="slots.actions"
+        v-if="$slots.actions"
         class="flex flex-wrap items-center gap-2 shrink-0"
       >
         <slot name="actions" />
