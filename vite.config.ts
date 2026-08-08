@@ -48,6 +48,7 @@ export default defineConfig({
                 '@codemirror/commands',
                 '@codemirror/lang-json',
                 '@codemirror/lang-markdown',
+                '@codemirror/lang-yaml',
             ],
             output: {
                 globals: { vue: 'Vue', apexcharts: 'ApexCharts' },

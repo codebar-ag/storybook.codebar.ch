@@ -5,6 +5,155 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.19.0
+
+Four findings from the app that adopted 1.18.0, three of them acted on and one
+declined. One is a rendering bug that had been shipping for the life of the
+component: `CodeEditor` had no `yaml` mode and highlighted YAML as JSON without
+saying so.
+
+**This release adds a peer dependency.** `@codemirror/lang-yaml` — see
+[Upgrade notes](#upgrade-notes). Nothing else here requires a change to a
+call site.
+
+### Added
+
+- **`CodeEditor` and `CodePreview` accept `language="yaml"`**, parsed by
+  `@codemirror/lang-yaml` and highlighted through the same shared theme as
+  every other code surface in the kit.
+
+  The editor previously loaded the JSON grammar for **anything that was not
+  `markdown`**, so a consuming app's compiled-flow-definition page had been
+  highlighting YAML through a JSON parser since the day it was written. The
+  reason nobody noticed is worth recording, because it is what makes this class
+  of bug expensive: the wrong grammar does not fail loudly on YAML. Run the
+  JSON parser over a typical flow definition and it still paints nine tokens —
+  every `:` as punctuation, every bare integer as a number — which reads as
+  syntax highlighting from across the room. What it cannot paint is `#`, a
+  comment in YAML and nothing at all in JSON. The `Yaml` story asserts on that
+  line specifically, and fails if the document is served the JSON grammar; a
+  "some token is coloured" assertion passes on the broken version.
+
+  `CodePreview` gains the mode too. A kit that can edit YAML but only preview
+  it as plain text is a difference no caller can explain.
+
+- **An unknown `language` now renders unhighlighted and says so**, instead of
+  silently falling back to JSON. Both components warn once per unknown value in
+  development, through the same `warnOnce` path as every other dev diagnostic
+  here. A component that quietly picks the wrong grammar is worse than one that
+  refuses the mode: the first is indistinguishable from working.
+
+  `language` is a typed union, so the only callers who can reach that arm are
+  untyped ones — which is exactly who has no compiler to tell them.
+
+- **`DataTable` warns in development when `rowKey` is missing.** It has always
+  been a required prop with no default, and until now nothing said so at
+  runtime: nine call sites in one consuming app shipped without it, so every
+  row in those tables was keyed `undefined` and Vue could not tell any row from
+  any other.
+
+  Vue's own "Missing required prop" warning cannot fire for **any** prop in
+  this package, which is why the years passed quietly. The library is compiled
+  with `isProd: true`, and `@vue/compiler-sfc` emits `type` and `required` only
+  for a development build — the published bundle declares the prop as the bare
+  `rowKey: {}`. Rendering `<DataTable>` with no `rowKey` against a development
+  build of Vue produces no Vue warning at all. This is the same shape as the
+  `import.meta.env.DEV` problem documented in `src/helpers/dev.ts`: a
+  diagnostic that reads as working and is compiled away before it reaches
+  anyone. The check is therefore written out by hand, like the tone
+  deprecation, and verified against the built bundle rather than against `src`.
+
+  Every other required prop in this kit is unvalidated at runtime for the same
+  reason. Only `rowKey` is covered here, because only `rowKey` has evidence
+  attached; a general fix means compiling the library in development mode, and
+  that is its own release.
+
+### Changed
+
+- **`CodeEditorProps.modelValue` is `string | null`.** The runtime has always
+  accepted null — `?? ''` guards every read of it, and an empty document is
+  what it renders — but the type said `string`, so callers holding a nullable
+  column (a definition that has not been compiled yet, an optional description)
+  coerced with `?? ''` at the call site for a default the component already
+  applies. Same shape as `BreadcrumbItem.href` in 1.18.0: the type was narrower
+  than the behaviour.
+
+  Deliberately **not** widened to `string | number | null`, which is what
+  `Input` takes. `Input` is a native `<input>` whose `value` the DOM stringifies
+  anyway; `CodeEditor` holds a *document*, and a number would have to be
+  silently stringified into one on the way in and handed back as a string on
+  the way out. `Textarea` — the multi-line text sibling, and the closer
+  analogue — is `string | null` for the same reason.
+
+### Not changed: `DataTableColumn.key`
+
+The fourth finding asked for `key: keyof T & string`, so the `#cell-<key>` slot
+could type `value` as `T[K]` instead of `unknown`. Declined, on three grounds.
+
+**It would forbid a column that is not a row property.** An action or computed
+column — `{ key: 'actions', label: '' }` rendered through `#cell-actions` — is
+a real and supported pattern, and the kit ships no other way to put one
+anywhere but the trailing `#row-actions` cell.
+
+**`SortState.key` is a free string on purpose.** It is emitted to the caller
+and, in server mode, straight on to an API. Sort keys naming a joined or
+computed column that is not in the row DTO are ordinary. Narrowing the column
+key without narrowing that leaves the two disagreeing.
+
+**And for most row types it would buy nothing at all.** `DataTable` is
+`<T extends Record<string, unknown>>`. An *interface* only satisfies that
+constraint by declaring the index signature — which is what this package's own
+`DataTable` story does, and what a consuming app's row types have to do — and
+once `[key: string]: unknown` is present, `keyof T & string` **is** `string` and
+`T[K]` **is** `unknown`. The proposed narrowing is the identity function on
+exactly the row shapes it was proposed for. It would only bite for rows
+declared as type aliases, which get an implicit index signature and keep their
+exact keys.
+
+That last point locates the real obstacle: it is the `Record<string, unknown>`
+constraint, not `key`. Relaxing it (to `T extends object`, with the internal
+indexing and the `useSort` signature adjusted to match) is what would make an
+exact `value` possible, and it is strictly more permissive, so it would break
+nobody. It is also a much larger change than a type narrowing, and it is not in
+this release.
+
+Eleven consumer bindings moved from `{ value }` to `{ row }` in the meantime,
+which is better code regardless: `row.name` is exact today, under both row
+shapes, with no change to this package.
+
+### Upgrade notes
+
+**Install `@codemirror/lang-yaml`.**
+
+```bash
+npm install --save-dev @codemirror/lang-yaml
+```
+
+It is declared optional in `peerDependenciesMeta`, in step with every other
+`@codemirror/*` grammar here, but "optional" describes the manifest and not
+what a bundler does. `dist/flows.js` is a single file that dynamic-imports
+every grammar by bare specifier, so a consuming build resolves all of them
+whether or not the app ever renders an editor — which is already true of
+`lang-json`, `lang-markdown`, `commands`, `language`, `state` and `view` today,
+and is why every existing consumer already has that set installed. This release
+adds one more package to it. An app that upgrades without installing it will
+fail to resolve the import at build time, not at runtime.
+
+Two smaller things can change behaviour, both only for code that was already
+outside the declared types:
+
+- **An unknown `language` no longer highlights as JSON.** If an untyped call
+  site was passing something the union does not contain and was, by accident,
+  getting the JSON grammar, it now gets no grammar and a development warning.
+  A call site that was passing `"yaml"` and getting JSON gets YAML.
+- **`CodeEditorProps['modelValue']` includes `null`.** Reading it out into a
+  `string` needs a fallback. Passing values *in* is strictly freer.
+
+`DataTable`'s new warning is development-only and fires once per page, but an
+app with tables missing `rowKey` will start seeing it immediately. It is
+reporting a real defect in those tables — the rows have no distinct keys — and
+not a new requirement.
+
 ## v1.18.0
 
 A types-only release, prompted by a consuming app that stood up a `vue-tsc`

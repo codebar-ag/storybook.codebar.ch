@@ -26,6 +26,14 @@ const sampleKnowledge = `# Invoice extraction
 
 Extract vendor name, invoice number, and line items from OCR text.`;
 
+const sampleYaml = `# Compiled flow definition
+name: invoice-intake
+version: 3
+steps:
+  - id: ocr
+    uses: mistral-document-ai
+`;
+
 // JSON is pretty-printed before rendering, even from a minified string.
 export const Json: Story = {
     render: () => ({
@@ -40,6 +48,16 @@ export const Markdown: Story = {
         components: { CodePreview },
         setup: () => ({ sampleKnowledge }),
         template: '<div class="max-w-xl"><CodePreview :value="sampleKnowledge" language="markdown" /></div>',
+    }),
+};
+
+// The read-only sibling of CodeEditor's `yaml` mode: a kit that can edit YAML
+// but only preview it as plain text is a difference no caller can explain.
+export const Yaml: Story = {
+    render: () => ({
+        components: { CodePreview },
+        setup: () => ({ sampleYaml }),
+        template: '<div class="max-w-xl"><CodePreview :value="sampleYaml" language="yaml" /></div>',
     }),
 };
 
