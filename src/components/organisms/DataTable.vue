@@ -73,8 +73,18 @@ const emit = defineEmits<{
 
 // `emits` listeners are stripped from $attrs, so detect a bound `row-click`
 // handler via the raw incoming vnode props instead.
+//
+// A function called from the template, deliberately NOT a `computed`:
+// `instance.vnode` is REPLACED on every parent re-render and the instance is a
+// plain object, so a computed over it answers for the vnode that existed at
+// mount and never for the current one. A caller whose handler is itself
+// conditional (`@row-click="editable ? open : undefined"`) would gain the
+// handler without gaining the affordance that says the row is clickable.
 const instance = getCurrentInstance();
-const hasRowClick = computed(() => Boolean(instance?.vnode.props?.onRowClick));
+
+function hasRowClick(): boolean {
+    return Boolean(instance?.vnode.props?.onRowClick);
+}
 
 function keyOf(row: T): RowKey {
     return typeof props.rowKey === 'function'
@@ -302,7 +312,7 @@ function onRowClick(row: T, event: MouseEvent): void {
               <tr
                 :class="[
                   isSelected(keyOf(row)) ? 'bg-surface-2/60' : 'hover:bg-surface-2/40',
-                  hasRowClick ? 'cursor-pointer' : '',
+                  hasRowClick() ? 'cursor-pointer' : '',
                 ]"
                 class="border-t border-line transition first:border-t-0"
                 @click="onRowClick(row, $event)"

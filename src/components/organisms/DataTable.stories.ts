@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ref } from 'vue';
 import DataTable from './DataTable.vue';
 import Dropdown from '../molecules/Dropdown.vue';
@@ -321,4 +321,57 @@ export const RowClick: Story = {
                 <p data-testid="opened-count">Opened: {{ opened.length }}</p>
             </div>`,
     }),
+};
+
+// The `cursor-pointer` affordance tracks whether a `row-click` handler is
+// actually bound — a fact about the CURRENT incoming vnode, not the one that
+// existed at mount. A caller may only make rows openable once the user has
+// permission, or once a `v-bind` object gains the handler.
+//
+// The intermediate sort click is not padding, it is the contract. Vue's
+// `hasPropsChanged` deliberately ignores declared emit listeners, so binding
+// `row-click` does not on its own cause this component to re-render — the
+// listener goes live (the click below fires it) while nothing asks the table
+// to redraw. Read per render, the affordance therefore corrects itself at the
+// next render for any other reason, which in a real table is immediate and
+// constant. Cached in a `computed`, it never corrects itself at all.
+const rowClickProbe = fn();
+
+export const RowClickBoundAfterMount: Story = {
+    render: () => ({
+        components: { DataTable },
+        setup: () => ({
+            documents,
+            columns,
+            editable: ref(false),
+            onRowClick: rowClickProbe,
+        }),
+        template: `
+            <div>
+                <button
+                    class="mb-3 text-sm underline"
+                    @click="editable = !editable"
+                >{{ editable ? 'Lock rows' : 'Unlock rows' }}</button>
+                <DataTable
+                    :columns="columns"
+                    :rows="documents"
+                    row-key="id"
+                    :onRowClick="editable ? onRowClick : undefined"
+                />
+            </div>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const firstRow = () => canvasElement.querySelectorAll('tbody tr')[0] as HTMLElement;
+
+        await expect(firstRow()).not.toHaveClass(/cursor-pointer/);
+
+        await userEvent.click(canvas.getByRole('button', { name: 'Unlock rows' }));
+        await userEvent.click(canvas.getByRole('button', { name: /Document/ }));
+        await waitFor(() => expect(firstRow()).toHaveClass(/cursor-pointer/));
+
+        await userEvent.click(canvas.getByRole('button', { name: 'Lock rows' }));
+        await userEvent.click(canvas.getByRole('button', { name: /Document/ }));
+        await waitFor(() => expect(firstRow()).not.toHaveClass(/cursor-pointer/));
+    },
 };

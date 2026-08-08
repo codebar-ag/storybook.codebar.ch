@@ -5,6 +5,141 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.16.1
+
+One bug, found in a consuming app, and the two more the sweep for its shape
+turned up. Nothing gains a prop, a slot, a token or a class; every call site
+that renders correctly today renders byte-identically after this.
+
+### Fixed
+
+- **`Card` rendered no header — and so no `#actions` — when its only slot
+  arrived after mount.** A card with neither `title` nor `description`, whose
+  `#actions` template sits behind a `v-if`, never grew a header when the
+  condition turned true. The consuming symptom was a page on which the Save
+  button did not exist: the form could only be submitted by pressing Enter in
+  its single text input, and implicit submission is the only reason that page
+  was not a hard block. Card's own inner `v-if="$slots.actions"` was correct the
+  whole time and simply unreachable, which is why reading the component does not
+  find this and only trying it does.
+
+  The header was decided by a `computed`:
+
+  ```js
+  const hasHeader = computed(
+      () => props.title !== null || props.description !== null || !!slots.title || !!slots.actions,
+  );
+  ```
+
+  **`useSlots()` does not return a reactive object.** Vue builds it once
+  (`instance.slots = createInternalObject()`) and `updateSlots` **mutates that
+  same object in place** on every parent render — the identity never changes and
+  no proxy is watching, so nothing invalidates a computed over it. With no
+  `title` and no `description` the expression evaluated `false` during mount and
+  cached that for the lifetime of the card. The card *did* re-render — a
+  conditional slot makes its slots non-stable, which forces the child to update
+  — but a cached computed does not care that a render happened.
+
+  The trap has a lid on it, and that is the part worth recording. Vue does track
+  `$slots`: reading it through the public instance proxy calls
+  `track(instance, 'get', '$slots')`, and in development `useSlots()` returns a
+  proxy that does the same. Grep the matching `trigger(instance, 'set',
+  '$slots')` in `@vue/runtime-core` 3.5 and there is **exactly one**, inside
+  `updateSlots`, behind `if (isHmrUpdating)`. A computed over slots is therefore
+  invalidated by hot module replacement and by nothing else: it recomputes while
+  you edit the file — precisely when you would be looking at it — and never once
+  in a built application. Switching the computed from `slots` to `$slots` would
+  have looked like the fix and would have shipped the same bug.
+
+  There is no version of this that is safe to cache, so the header is decided in
+  the render and only in the render:
+
+  ```html
+  <header v-if="title !== null || description !== null || $slots.title || $slots.actions">
+  ```
+
+  A template *is* a render function, so the read happens once per render, after
+  `updateSlots` has finished mutating the object — the only moment at which the
+  answer is knowable. It is also what fourteen other components in this kit
+  already do (`Modal`, `Drawer`, `Toggle`, `AppShell`, `Navbar`, …), so the fix
+  deletes an outlier rather than introducing a mechanism.
+
+  Two alternatives were rejected. **Mirroring the slot names into a `ref` from
+  an `onBeforeUpdate` hook** does work and keeps a computed — but it makes a
+  second copy of state Vue already owns, correct only for as long as the hook
+  stays wired to it, in exchange for caching a four-term boolean. **Rendering
+  the `<header>` unconditionally** and letting its contents collapse is the one
+  option here that would be breaking: every plain card would gain an empty
+  padded strip and a bottom border it does not have today.
+
+- **`MetricGrid` counted its caller's syntax instead of its caller's tiles.**
+  The filler tiles that stop the hairline-gap background showing through as a
+  stray solid block were sized from `slots.default().length` — the length of a
+  vnode array, which is not the number of tiles in either shape a real caller
+  writes. `v-for` collapses its whole run into a single Fragment, so **three
+  metrics read as one** and a nearly full row was padded with three fillers and
+  drawn as a quarter-full one. `v-if` leaves a Comment placeholder behind when
+  false, so **three metrics plus a hidden fourth read as four** and the filler
+  the gap actually needed was never drawn. Both counts are now taken after
+  flattening fragments and dropping comment and whitespace placeholders, and —
+  same rule as `Card` — in the render rather than in a `computed`, so a grid
+  whose tile count changes re-pads instead of keeping its first answer.
+
+  Grids written with literal children, which is every story and every static
+  call site, are unaffected: they counted correctly before and count correctly
+  now.
+
+- **`DataTable`'s `cursor-pointer` affordance answered for the vnode that
+  existed at mount.** `hasRowClick` was a `computed` over
+  `instance.vnode.props.onRowClick`, and `instance.vnode` is *replaced* on every
+  parent render while `instance` is a plain object — the same defect against a
+  different dependency. It is read per render now.
+
+  The honest scope, because the fix is real but smaller than it looks: written
+  as `@row-click` in an SFC the compiler emits a cached wrapper function, so the
+  key is always present and the affordance was never wrong for that spelling. It
+  is reachable by binding the handler as a value
+  (`:onRowClick="editable ? open : undefined"`), and even then only partly,
+  because Vue's `hasPropsChanged` deliberately skips declared emit listeners:
+  binding `row-click` makes the listener live without asking this component to
+  redraw at all. So the affordance now corrects itself at the next render for
+  any other reason — which in a table is constant — where before it never
+  corrected itself.
+
+### Changed
+
+- **`FormActions`, `PageHeading` and `Table` read `$slots` instead of a
+  `useSlots()` binding.** Behaviour is identical — the same property on the same
+  object, read at the same moment — and this is housekeeping with a point: the
+  hazard was never the read, it is having a `slots` identifier sitting in setup
+  scope where the next `computed` can close over it. `MetricGrid` is now the
+  only component that calls `useSlots()`, because it needs to invoke the slot
+  function rather than test for it.
+
+### Notes
+
+- Each of the three is pinned by a story whose play function fails on the
+  previous code and passes on this one: a slot arriving and leaving after mount,
+  a tile count from `v-for` and from `v-if`, a handler bound late. The suite is
+  242 tests, up from 237.
+- The `Card` defect predates the `#title` slot. The computed has read
+  `slots.actions` since the initial build-out; v1.14.0 only added a second slot
+  to an already-broken expression. Its note there — "the header renders whenever
+  a `title`, `description`, `#title` or `#actions` is present" — was true only
+  of slots present at mount, and is true as written from this release.
+- Adjacent, found by the same sweep and deliberately not changed: `DataTable`
+  passes `comparators.value` into `useSort()`, unwrapping a computed at setup
+  and freezing the per-column `sortFn` map, so a table that swaps its `columns`
+  after mount sorts with the old comparators. Same family — a value read once
+  where it should be read on demand — but the fix is a change to `useSort`'s
+  signature, and that belongs in a release that can look at the composable's API
+  rather than in a patch.
+- `useAttrs()` is **not** an instance of this, which is most of why the slots
+  version survived so long. It looks identical, but Vue backs attrs with a real
+  `track`/`trigger` pair that fires on every props update, so the computeds in
+  `useRootAttrs` and `usePasswordManagerAttrs` are correctly reactive. Slots are
+  the exception, not the rule.
+
 ## v1.16.0
 
 The non-colour channel v1.15.0 said would be needed. Additive and non-breaking:

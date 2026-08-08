@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots } from 'vue';
+import { computed } from 'vue';
 import { pick } from '../../helpers/pick';
 
 // Form-footer action row. `between` puts the secondary action (Cancel) on the
@@ -9,8 +9,6 @@ const props = withDefaults(
     defineProps<{ align?: 'between' | 'end' | 'start' }>(),
     { align: 'between' },
 );
-
-const slots = useSlots();
 
 const alignments: Record<string, string> = {
     between: 'justify-between',
@@ -24,7 +22,7 @@ const alignment = computed(() => pick(alignments, props.align, 'between', 'FormA
 <template>
   <div :class="['flex items-center gap-2 pt-2', alignment]">
     <slot
-      v-if="slots.secondary"
+      v-if="$slots.secondary"
       name="secondary"
     />
     <slot />
