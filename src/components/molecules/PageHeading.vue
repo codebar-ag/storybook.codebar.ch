@@ -20,7 +20,7 @@ defineOptions({ inheritAttrs: false });
 
 export interface PageHeadingProps {
     eyebrow?: string | null;
-    breadcrumbs?: BreadcrumbItem[];
+    breadcrumbs?: readonly BreadcrumbItem[];
     breadcrumbAs?: string | object;
 }
 

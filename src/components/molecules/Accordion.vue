@@ -7,7 +7,7 @@ import { useControllable } from '../../composables/useControllable';
 import { accordionKey } from './accordionContext';
 
 export interface AccordionProps {
-    modelValue?: string[];
+    modelValue?: readonly string[];
     multiple?: boolean;
 }
 
@@ -18,8 +18,10 @@ const props = withDefaults(
 
 const emit = defineEmits<{ 'update:modelValue': [keys: string[]] }>();
 
-const openKeys = useControllable(
-    () => props.modelValue,
+// `modelValue` is accepted as readonly and copied in, so a caller can bind a
+// ReadonlyArray of keys; what goes back out on update stays mutable.
+const openKeys = useControllable<string[]>(
+    () => (props.modelValue === undefined ? undefined : [...props.modelValue]),
     (value) => emit('update:modelValue', value),
     [],
 );

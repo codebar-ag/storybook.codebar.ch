@@ -40,7 +40,7 @@ export interface KindLegendItem {
 }
 
 export interface KindLegendProps {
-    items: KindLegendItem[];
+    items: readonly KindLegendItem[];
     /** Leading caption, e.g. "Kinds". Omitted when the context is obvious. */
     label?: string;
 }

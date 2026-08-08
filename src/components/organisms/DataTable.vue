@@ -27,14 +27,14 @@ import Th from '../atoms/Th.vue';
 import { touchTargetBoundsClasses, touchTargetLabelClasses } from '../../helpers/touchTarget';
 
 export interface DataTableProps<T extends Record<string, unknown>> {
-    columns: DataTableColumn<T>[];
-    rows: T[];
+    columns: readonly DataTableColumn<T>[];
+    rows: readonly T[];
     rowKey: keyof T | ((row: T) => RowKey);
     loading?: boolean;
     error?: string | null;
     selectable?: boolean;
     /** v-model:selected */
-    selected?: RowKey[];
+    selected?: readonly RowKey[];
     sortMode?: 'client' | 'server';
     /** v-model:sort */
     sort?: SortState | null;

@@ -16,7 +16,7 @@ export interface BreadcrumbItem {
 }
 
 export interface BreadcrumbsProps {
-    items?: BreadcrumbItem[];
+    items?: readonly BreadcrumbItem[];
     as?: string | object;
 }
 

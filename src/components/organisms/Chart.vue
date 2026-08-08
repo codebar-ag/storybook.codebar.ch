@@ -4,7 +4,7 @@ import { chartBaseOptions } from '../../helpers/chartTheme';
 
 export interface ChartProps {
     type?: string;
-    series: unknown[];
+    series: readonly unknown[];
     options?: Record<string, unknown>;
     height?: number | string;
 }

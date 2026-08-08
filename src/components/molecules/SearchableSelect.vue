@@ -16,7 +16,7 @@ import type { SelectOption } from '../atoms/Select.vue';
  */
 export interface SearchableSelectProps<T extends string | number = string | number> {
     modelValue?: T | null;
-    options?: SelectOption<T>[];
+    options?: readonly SelectOption<T>[];
     placeholder?: string;
     searchPlaceholder?: string;
     emptyMessage?: string;

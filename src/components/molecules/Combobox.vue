@@ -18,7 +18,7 @@ import type { SelectOption } from '../atoms/Select.vue';
  */
 export interface ComboboxProps<T extends string | number = string | number> {
     modelValue?: string;
-    options?: SelectOption<T>[];
+    options?: readonly SelectOption<T>[];
     name?: string | null;
     placeholder?: string | null;
     invalid?: boolean;

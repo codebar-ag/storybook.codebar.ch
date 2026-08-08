@@ -7,7 +7,7 @@ export interface Step {
 }
 
 export interface StepperProps {
-    steps: Step[];
+    steps: readonly Step[];
     current?: number;
 }
 

@@ -23,7 +23,7 @@ export function usePagination(
     canNext: ComputedRef<boolean>;
     prev: () => void;
     next: () => void;
-    sliceOf: <T>(rows: T[]) => T[];
+    sliceOf: <T>(rows: readonly T[]) => T[];
 } {
     const pageSize = computed(() => options.pageSize?.() ?? 10);
 
@@ -50,7 +50,7 @@ export function usePagination(
         }
     }
 
-    function sliceOf<T>(rows: T[]): T[] {
+    function sliceOf<T>(rows: readonly T[]): T[] {
         const start = (page.value - 1) * pageSize.value;
         return rows.slice(start, start + pageSize.value);
     }

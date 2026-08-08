@@ -13,6 +13,14 @@
 // actually matters to a consumer and the one nothing else checks — a type that
 // is exported from source but dropped from the rollup is invisible until an app
 // tries to import it.
+//
+// The second half of the file guards the array-prop stance: every array a
+// component ACCEPTS is `readonly`. Props are readonly at runtime anyway, so a
+// mutable array type is not a promise the component keeps — it is only a filter
+// on who may call it. One mutable prop is enough to break the rule, because the
+// value of the stance is that it holds for ALL of them: a caller holding a
+// ReadonlyArray (generated translation types, `as const` fixtures, anything
+// frozen) can then pass it to every component rather than remembering which.
 import { existsSync, globSync, readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 
@@ -62,6 +70,37 @@ if (existsSync('dist/index.d.ts')) {
             `dist/index.d.ts is missing: ${missing.join(', ')}.\n` +
                 'The barrel exports them but api-extractor did not carry them into the bundled ' +
                 'declarations, so no consumer can import them.',
+        );
+    }
+}
+
+// Array props must be readonly. Line-based on purpose: a props interface that
+// needs a multi-line union type is past the point where a component should be
+// taking that prop at all.
+const MUTABLE_ARRAY = /\w\s*\[\]|\bArray</;
+const READONLY = /\breadonly\b|\bReadonlyArray</;
+
+for (const file of components) {
+    const name = basename(file, '.vue');
+    const source = readFileSync(file, 'utf8');
+    const block = new RegExp(`export interface ${name}Props(?:<[^>]*>)? \\{\\n([\\s\\S]*?)\\n\\}`).exec(source);
+
+    if (!block) {
+        continue;
+    }
+
+    for (const line of block[1].split('\n')) {
+        const declaration = line.replace(/\/\*.*?\*\//g, '').replace(/\/\/.*$/, '');
+
+        if (!declaration.includes(':') || !MUTABLE_ARRAY.test(declaration) || READONLY.test(declaration)) {
+            continue;
+        }
+
+        errors.push(
+            `${file}: ${name}Props has a mutable array prop —\n    ${declaration.trim()}\n` +
+                'Accept `readonly T[]`. Props cannot be mutated at runtime, so a mutable type only ' +
+                'rejects callers holding a ReadonlyArray. Copy at the boundary if something inside ' +
+                'genuinely needs a mutable array.',
         );
     }
 }

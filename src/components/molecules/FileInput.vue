@@ -7,7 +7,7 @@ import { useFieldA11y } from '../../composables/useFieldA11y';
 export interface FileInputProps {
     // File inputs are write-only: the browser owns the selection, so the
     // model only flows outward (input → caller), never back in.
-    modelValue?: File[] | null;
+    modelValue?: readonly File[] | null;
     name?: string | null;
     invalid?: boolean;
 }

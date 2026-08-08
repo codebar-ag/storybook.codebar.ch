@@ -6,7 +6,7 @@ import ListIcon from '../atoms/ListIcon.vue';
 import type { IconName } from '../../icons';
 
 export interface ResourceListProps {
-    items: Array<Record<string, unknown>>;
+    items: readonly Record<string, unknown>[];
     hrefKey?: string;
     rowKey?: string | null;
     emptyIcon?: IconName;

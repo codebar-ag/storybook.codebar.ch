@@ -27,7 +27,15 @@ defineOptions({ inheritAttrs: false });
 export interface SelectProps {
     modelValue?: string | number | null;
     name?: string | null;
-    options?: SelectOption[] | Record<string, string>;
+    /**
+     * `ReadonlyArray<…>` rather than the `readonly …[]` spelling used
+     * everywhere else, and only because of this union: eslint-plugin-vue's
+     * own type inference does not see through `readonly X[] | Record<…>` and
+     * reports the `() => []` default as invalid for an object-typed prop. The
+     * compiler emits `type: [Array, Object]` either way — the two spellings
+     * are the same type.
+     */
+    options?: ReadonlyArray<SelectOption> | Record<string, string>;
     placeholder?: string | null;
     invalid?: boolean;
 }

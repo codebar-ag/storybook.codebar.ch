@@ -16,7 +16,7 @@ export interface TabItem {
 }
 
 export interface TabsProps {
-    tabs: TabItem[];
+    tabs: readonly TabItem[];
     modelValue?: string;
 }
 
