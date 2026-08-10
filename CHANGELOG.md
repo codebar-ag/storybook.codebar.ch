@@ -5,6 +5,33 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.19.1
+
+### Fixed
+
+- **`Combobox` opens on focus even when its options have not arrived yet.**
+  The focus handler was `open = filtered.length > 0`, so a click into the
+  field opened the list only if options were already present — and nothing
+  reopened it when they arrived later. For a static list that is invisible;
+  for the remote-search shape, where a consumer replaces `options` with each
+  debounced response, it is a race between the click and the first response.
+  The user who loses it clicks into the field, sees nothing, and only typing
+  or ArrowDown recovers.
+
+  Found the expensive way: the consuming app's impersonation picker passed
+  its browser test locally on every run (the response wins by milliseconds)
+  and failed all three CI retries (the runner is slow enough that the click
+  wins). Focus now sets the open flag unconditionally; the listbox itself is
+  still gated on having options or an `empty-message` to show, so an open
+  flag over a truly empty list renders nothing. The `RemoteOptions` story
+  pins the sequence — focus first, options later, no typing — and fails on
+  the previous handler.
+
+  One visible behavior change besides the fix: a combobox whose options are
+  present now also shows an `empty-message` on focus when the typed text
+  filters everything out, where before that message only appeared after
+  typing. No call site in the consuming app depended on the old behavior.
+
 ## v1.19.0
 
 Four findings from the app that adopted 1.18.0, three of them acted on and one

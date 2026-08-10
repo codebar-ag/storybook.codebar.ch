@@ -45,6 +45,17 @@ const emit = defineEmits<{
 const { describedBy } = useFieldA11y(props);
 
 const root = ref<HTMLElement | null>(null);
+
+// Focus opens UNCONDITIONALLY (`@focus="open = true"` below), not only when
+// options are already present. The list itself stays gated on having something
+// to show (see the `v-if` on the listbox), so an open flag over an empty,
+// message-less list renders nothing — but it is what lets options that arrive
+// AFTER focus appear at all. With `open = filtered.length > 0` on focus, a
+// consumer feeding options from a remote search lost that race whenever the
+// response landed after the click, and the closed list never reopened: the
+// user clicked into the field, saw nothing, and only typing or ArrowDown
+// would recover. Measured in the consuming app's CI, where the runner is slow
+// enough that the click reliably beat the response.
 const open = ref(false);
 const listId = `${props.name ?? 'combobox'}-listbox`;
 
@@ -125,7 +136,7 @@ useClickOutside(root, close, open);
       :class="classes"
       @input="onInput"
       @keydown="onKeydown"
-      @focus="open = filtered.length > 0"
+      @focus="open = true"
     >
 
     <ul
