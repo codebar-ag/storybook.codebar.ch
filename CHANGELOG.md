@@ -5,6 +5,45 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.21.0
+
+### Added
+
+- **`SearchableSelect` accepts `clearable`** (plus `clear-label` for the ✕'s
+  accessible name, default "Clear selection"). While something is selected, an
+  ✕ appears between the label and the chevron; pressing it emits
+  `update:modelValue` with `''` and hands focus back to the trigger.
+
+  Without it the control is a trap for OPTIONAL values: it picks from a closed
+  set and only ever emits `option.value`, so once anything is picked there is
+  no gesture that returns to "nothing chosen". The consuming app hit this on
+  its data-source form — the store-dialog field is nullable all the way down
+  (`'nullable'` in the FormRequest, `?? null` on submit), but a user who
+  selected a dialog could never unselect it short of reloading the page. Its
+  sibling controls both already had an exit: the native `Select` renders a
+  selectable placeholder `<option value="">`, and `Combobox` is free text that
+  can be erased. This closes the gap for the third sibling; `required` fields
+  simply don't pass the prop.
+
+  Two deliberate choices, so call sites don't pay for what they don't use:
+
+  - Clearing emits **`''`, not `null`** — the same "nothing chosen" payload
+    the native `Select` produces when its placeholder is picked. Emitting
+    `null` would widen the payload type to `T | null` for every consumer,
+    forcing null-handling onto the majority of call sites whose select is not
+    clearable and can never receive it. (For a `T = string` site, `T | ''`
+    collapses to `string`: existing handlers type-check unchanged.)
+  - The ✕ is a **sibling of the trigger, not a child** — the trigger is
+    itself a `<button>`, and a button inside a button is invalid HTML that
+    browsers "repair" by splitting the elements apart. It is absolutely
+    positioned into the trigger's right end at the control's full height, and
+    only rendered while a selected option's label is actually on screen (a
+    `modelValue` whose options have not arrived yet shows the placeholder, and
+    there is nothing visible to clear).
+
+  The `Clearable` story pins the loop: clear → model `''`, placeholder back,
+  menu closed, focus on the trigger, ✕ gone; re-pick → ✕ back.
+
 ## v1.19.1
 
 ### Fixed
