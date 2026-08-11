@@ -20,6 +20,14 @@ export interface SearchableSelectProps<T extends string | number = string | numb
     placeholder?: string;
     searchPlaceholder?: string;
     emptyMessage?: string;
+    /**
+     * Show an ✕ next to the chevron while something is selected, so an
+     * OPTIONAL selection can be undone. Without it the control is a trap:
+     * the set is closed, so once any option is picked there is no gesture
+     * that returns to "nothing chosen".
+     */
+    clearable?: boolean;
+    clearLabel?: string;
 }
 
 const props = withDefaults(
@@ -30,19 +38,31 @@ const props = withDefaults(
         placeholder: 'Choose…',
         searchPlaceholder: 'Search…',
         emptyMessage: 'No results',
+        clearable: false,
+        clearLabel: 'Clear selection',
     },
 );
 
-const emit = defineEmits<{ 'update:modelValue': [value: T] }>();
+// Clearing emits `''`, not `null` — the same "nothing chosen" payload the
+// native Select atom produces when its placeholder option is picked. Emitting
+// null instead would widen the payload type for every consumer, forcing null
+// handling onto call sites whose select is not clearable and can never
+// receive it.
+const emit = defineEmits<{ 'update:modelValue': [value: T | ''] }>();
 
 const open = ref(false);
 const query = ref('');
 const root = ref<HTMLElement | null>(null);
+const trigger = ref<HTMLButtonElement | null>(null);
 
 const selectedLabel = computed(() => {
     const match = props.options.find((opt) => String(opt.value) === String(props.modelValue));
     return match?.label ?? null;
 });
+
+// Gated on a resolved label, not on `modelValue` alone: while options are
+// still loading there is nothing on screen that says what would be cleared.
+const showClear = computed(() => props.clearable && selectedLabel.value !== null);
 
 const filtered = computed(() => {
     const q = query.value.trim().toLowerCase();
@@ -55,6 +75,14 @@ const filtered = computed(() => {
 const triggerClasses = computed(() =>
     formControlClasses(false, 'flex items-center justify-between gap-2 px-3 min-h-9 text-sm font-medium text-left cursor-pointer hover:border-line-2'),
 );
+
+function clearSelection() {
+    emit('update:modelValue', '');
+    closeMenu();
+    // The ✕ unmounts with the selection it cleared; without a handoff, focus
+    // falls to <body> and a keyboard user starts over from the page top.
+    trigger.value?.focus();
+}
 
 // Keyboard core shared with Combobox: Arrow/Home/End/Enter/Escape over the
 // filtered list.
@@ -113,6 +141,7 @@ watch(query, () => {
     class="relative w-full"
   >
     <button
+      ref="trigger"
       type="button"
       role="combobox"
       :aria-expanded="open"
@@ -123,12 +152,30 @@ watch(query, () => {
     >
       <span
         class="truncate"
-        :class="selectedLabel ? 'text-ink' : 'text-muted'"
+        :class="[selectedLabel ? 'text-ink' : 'text-muted', showClear ? 'pr-6' : '']"
       >{{ selectedLabel ?? placeholder }}</span>
       <Icon
         name="chevron-down"
         size="sm"
         class="size-3.5 shrink-0 text-muted"
+      />
+    </button>
+
+    <!-- Sibling of the trigger, not a child: the trigger is itself a <button>,
+         and a button inside a button is invalid HTML that browsers "repair" by
+         splitting the elements apart. Absolutely positioned into the trigger's
+         right end, full control height, so the hit area is 28px × the control. -->
+    <button
+      v-if="showClear"
+      type="button"
+      :aria-label="clearLabel"
+      class="absolute inset-y-0 right-7 flex w-7 items-center justify-center text-muted transition hover:text-ink"
+      @click="clearSelection"
+    >
+      <Icon
+        name="x"
+        size="sm"
+        class="size-3.5 shrink-0"
       />
     </button>
 
