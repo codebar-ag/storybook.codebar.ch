@@ -56,6 +56,42 @@ export const Default: Story = {
     },
 };
 
+export const Clearable: Story = {
+    render: () => ({
+        components: { Combobox, Field },
+        setup: () => ({ value: ref('e_invoices'), cabinets }),
+        template: `
+            <div class="w-80 pb-48">
+                <Field label="File cabinet" name="cabinet" hint="Optional — leave empty to search every cabinet.">
+                    <Combobox v-model="value" name="cabinet" :options="cabinets" placeholder="Every cabinet" clearable clear-label="Clear file cabinet" />
+                </Field>
+                <p data-testid="value">value: {{ value === '' ? '(empty)' : value }}</p>
+            </div>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const input = canvas.getByRole('combobox');
+        await expect(input).toHaveValue('e_invoices');
+
+        // Clearing empties the model, restores the placeholder, and hands
+        // focus to the field the ✕ it was on has just unmounted beside.
+        await userEvent.click(canvas.getByRole('button', { name: 'Clear file cabinet' }));
+        await expect(canvas.getByTestId('value')).toHaveTextContent('value: (empty)');
+        await expect(input).toHaveValue('');
+        await expect(canvas.queryByRole('button', { name: 'Clear file cabinet' })).not.toBeInTheDocument();
+        await waitFor(() => expect(input).toHaveFocus());
+
+        // An empty field filters nothing, so clearing leaves the whole list
+        // open to pick from — clearing is a step towards another value.
+        const listbox = await canvas.findByRole('listbox');
+        await expect(within(listbox).getAllByRole('option')).toHaveLength(5);
+
+        // Free text brings the ✕ back, not only a picked suggestion.
+        await userEvent.type(input, 'e_brand_new');
+        await expect(canvas.getByRole('button', { name: 'Clear file cabinet' })).toBeInTheDocument();
+    },
+};
+
 /**
  * Options that arrive AFTER the field is focused — the remote-search shape,
  * where a consumer replaces `options` with each debounced response.

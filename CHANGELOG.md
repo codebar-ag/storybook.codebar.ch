@@ -5,6 +5,43 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.22.0
+
+### Added
+
+- **`Combobox` accepts `clearable`** (plus `clear-label`, default "Clear
+  value"), matching the prop `SearchableSelect` gained in v1.21.0. While the
+  field holds anything, an ✕ sits at its right end; pressing it emits
+  `update:modelValue` with `''`, focuses the field and leaves the suggestion
+  list open.
+
+  v1.21.0's entry below argued this sibling did not need one, because
+  "`Combobox` is free text that can be erased". True, but not in one gesture:
+  erasing means selecting the field's contents by hand and deleting them, and
+  the amount to erase is unbounded because picking a suggestion **overwrites
+  the text wholesale**. The consuming app made that concrete — a field where
+  one option inserts a placeholder token and everything else is typed prose, so
+  the two gestures a user alternates between are "pick" and "start over". A
+  select and its searchable sibling both offer a one-press exit; the third
+  control being the odd one out is the inconsistency, not the fix.
+
+  Three details differ from `SearchableSelect`'s, all forced by the trigger
+  being an `<input>` rather than a `<button>`:
+
+  - The ✕ sits at `right-0`, not `right-7`: a `Combobox` has no chevron to
+    sit beside.
+  - Visibility is gated on **`modelValue` alone**, not on an option's label
+    resolving. Here the typed text *is* the value, so there is never a state
+    where something is stored and nothing is on screen — the gate that
+    `SearchableSelect` needs for options still in flight has no meaning.
+  - The ✕ prevents its own `mousedown`. Without it the press blurs the field
+    before the click lands, and the blur races the focus handoff that follows.
+
+  Padding is `pr-10` only while the ✕ is rendered, so a `Combobox` without the
+  prop keeps aligning with the `Input` atom beside it. The `Clearable` story
+  pins the loop: clear → model `''`, field empty and focused, ✕ gone, full list
+  open; type again → ✕ back.
+
 ## v1.21.0
 
 ### Added

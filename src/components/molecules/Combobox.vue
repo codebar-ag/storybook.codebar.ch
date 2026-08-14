@@ -8,6 +8,7 @@ import { formControlClasses } from '../../helpers/formControlClasses';
 import { useClickOutside } from '../../composables/useClickOutside';
 import { useFieldA11y } from '../../composables/useFieldA11y';
 import { useListNavigation } from '../../composables/useListNavigation';
+import Icon from '../atoms/Icon.vue';
 import type { SelectOption } from '../atoms/Select.vue';
 
 /**
@@ -23,6 +24,14 @@ export interface ComboboxProps<T extends string | number = string | number> {
     placeholder?: string | null;
     invalid?: boolean;
     emptyMessage?: string | null;
+    /**
+     * Show an ✕ at the right end while the field holds anything, so a value
+     * can be emptied in one gesture. Selecting a suggestion overwrites the
+     * text wholesale, so without it the only way back to empty is to select
+     * the field's contents by hand and delete them.
+     */
+    clearable?: boolean;
+    clearLabel?: string;
 }
 
 const props = withDefaults(
@@ -34,6 +43,8 @@ const props = withDefaults(
         placeholder: null,
         invalid: false,
         emptyMessage: null,
+        clearable: false,
+        clearLabel: 'Clear value',
     },
 );
 
@@ -45,6 +56,7 @@ const emit = defineEmits<{
 const { describedBy } = useFieldA11y(props);
 
 const root = ref<HTMLElement | null>(null);
+const field = ref<HTMLInputElement | null>(null);
 
 // Focus opens UNCONDITIONALLY (`@focus="open = true"` below), not only when
 // options are already present. The list itself stays gated on having something
@@ -80,11 +92,28 @@ const { activeIndex, setActive, onKeydown: onListKeydown } = useListNavigation(
     },
 );
 
-const classes = computed(() => cx(formControlClasses(props.invalid, 'px-3.5 h-11')));
+const showClear = computed(() => props.clearable && props.modelValue !== '');
+
+// `pr-10` only while the ✕ is there: padding held unconditionally would
+// indent every non-clearable Combobox against the Input atom it sits beside.
+const classes = computed(() =>
+    cx(formControlClasses(props.invalid, showClear.value ? 'pl-3.5 pr-10 h-11' : 'px-3.5 h-11')),
+);
 
 function close(): void {
     open.value = false;
     setActive(-1);
+}
+
+function clearValue(): void {
+    emit('update:modelValue', '');
+    setActive(-1);
+    // The ✕ unmounts with the value it cleared; without a handoff, focus falls
+    // to <body> and a keyboard user starts over from the page top. Focusing the
+    // field also matches what clearing is FOR — entering something else — and
+    // leaves the list open, which is what focus does here anyway.
+    field.value?.focus();
+    open.value = true;
 }
 
 function selectOption(opt: SelectOption<T>): void {
@@ -119,6 +148,7 @@ useClickOutside(root, close, open);
   >
     <input
       :id="name ?? undefined"
+      ref="field"
       type="text"
       role="combobox"
       aria-autocomplete="list"
@@ -138,6 +168,27 @@ useClickOutside(root, close, open);
       @keydown="onKeydown"
       @focus="open = true"
     >
+
+    <!-- Sibling of the field, not a child: an <input> is void and cannot
+         contain anything. Absolutely positioned into its right end, full
+         control height, so the hit area is 28px × the control. `mousedown` is
+         prevented so the click does not blur the field on its way in — the
+         blur would land before the click and the handoff below would fight
+         it. -->
+    <button
+      v-if="showClear"
+      type="button"
+      :aria-label="clearLabel"
+      class="absolute inset-y-0 right-0 flex w-9 items-center justify-center text-muted transition hover:text-ink"
+      @mousedown.prevent
+      @click="clearValue"
+    >
+      <Icon
+        name="x"
+        size="sm"
+        class="size-3.5 shrink-0"
+      />
+    </button>
 
     <ul
       v-if="open && (filtered.length > 0 || emptyMessage !== null)"
