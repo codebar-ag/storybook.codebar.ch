@@ -7,6 +7,7 @@ import DropdownItem from '../molecules/DropdownItem.vue';
 import Button from '../atoms/Button.vue';
 import StatusBadge from '../atoms/StatusBadge.vue';
 import Icon from '../atoms/Icon.vue';
+import Card from '../molecules/Card.vue';
 import type { DataTableColumn } from './dataTable.types';
 
 interface DocumentRow extends Record<string, unknown> {
@@ -162,6 +163,83 @@ export const ServerMode: Story = {
         await expect(canvas.getByText('Page 1 of 14')).toBeVisible();
         await userEvent.click(canvas.getByRole('button', { name: 'Next' }));
         await expect(spies['onUpdate:page']).toHaveBeenCalledWith(2);
+    },
+};
+
+// The client pager inside a Card, both ways a card is used for a list: flush
+// (`:padded="false"`, the table runs edge to edge) and padded. The pager is a
+// row of the table's frame — a top rule, the cells' own `px-4` — so in both
+// cards its label lines up with the first column's text and neither the label
+// nor the buttons touch the card's edges.
+export const PaginatedInCard: Story = {
+    render: () => ({
+        components: { DataTable, Card },
+        setup: () => ({ documents, columns }),
+        template: `
+            <div class="flex flex-col gap-6">
+                <Card title="Documents" description="Unpadded card" :padded="false" data-testid="unpadded">
+                    <DataTable :columns="columns" :rows="documents" row-key="id" pagination-mode="client" :page-size="2" />
+                </Card>
+                <Card title="Documents" description="Padded card" data-testid="padded">
+                    <DataTable :columns="columns" :rows="documents" row-key="id" pagination-mode="client" :page-size="2" />
+                </Card>
+            </div>`,
+    }),
+    play: async ({ canvasElement }) => {
+        for (const id of ['unpadded', 'padded']) {
+            const card = within(canvasElement).getByTestId(id);
+            const scope = within(card);
+
+            const label = scope.getByText('Page 1 of 3');
+            const footer = label.parentElement!;
+            const firstCell = card.querySelector('tbody td')!;
+            const next = scope.getByRole('button', { name: 'Next' });
+
+            // Separated from the last row by a rule, not floating below it.
+            await expect(footer).toHaveClass(/border-t/);
+
+            // The label starts where the first column's text starts.
+            const labelLeft = label.getBoundingClientRect().left;
+            const cellTextLeft = firstCell.getBoundingClientRect().left
+                + parseFloat(getComputedStyle(firstCell).paddingLeft);
+            await expect(Math.abs(labelLeft - cellTextLeft)).toBeLessThanOrEqual(1);
+
+            // Nothing sits on the card's edges.
+            const cardBox = card.getBoundingClientRect();
+            const nextBox = next.getBoundingClientRect();
+            await expect(labelLeft - cardBox.left).toBeGreaterThanOrEqual(16);
+            await expect(cardBox.right - nextBox.right).toBeGreaterThanOrEqual(16);
+            await expect(cardBox.bottom - nextBox.bottom).toBeGreaterThanOrEqual(8);
+
+            // Compact buttons, vertically centred on the label.
+            await expect(nextBox.height).toBe(32);
+            const labelBox = label.getBoundingClientRect();
+            const labelMid = labelBox.top + labelBox.height / 2;
+            await expect(Math.abs(labelMid - (nextBox.top + nextBox.height / 2))).toBeLessThanOrEqual(1);
+
+            await userEvent.click(next);
+            await expect(scope.getByText('Page 2 of 3')).toBeVisible();
+        }
+    },
+};
+
+// Every row fits on one page: there is nothing to page through, so the pager is
+// not rendered at all rather than showing "Page 1 of 1" and two dead buttons.
+export const SinglePage: Story = {
+    render: () => ({
+        components: { DataTable, Card },
+        setup: () => ({ documents, columns }),
+        template: `
+            <Card title="Documents" :padded="false">
+                <DataTable :columns="columns" :rows="documents" row-key="id" pagination-mode="client" :page-size="10" />
+            </Card>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+
+        await expect(canvas.getByText('Invoice 2026-0142')).toBeVisible();
+        await expect(canvas.queryByText(/Page \d+ of/)).not.toBeInTheDocument();
+        await expect(canvas.queryByRole('button', { name: 'Next' })).not.toBeInTheDocument();
     },
 };
 

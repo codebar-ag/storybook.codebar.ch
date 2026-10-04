@@ -5,6 +5,32 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.22.1
+
+### Fixed
+
+- **`DataTable`'s client/server pager is a row of the table, not a block
+  beneath it.** The built-in footer was `mt-3 flex justify-between` with no
+  padding of its own, so inside a `Card` with `:padded="false"` the "Page 1 of
+  N" label sat flush against the card's left edge, the Previous/Next buttons
+  against its right and bottom edges, and nothing separated the pager from the
+  last row. It is now `border-t border-line px-4 py-2`: a top rule closes the
+  last row the way the header's rule opens the first, and `px-4` is the cells'
+  own padding, so the label lines up with the first column's text in a padded
+  and an unpadded card alike.
+
+- **The pager's buttons are compact.** Next to a `text-xs` label the kit-wide
+  `h-11` button out-weighed what it pages. They are drawn at `h-8 px-2.5` and
+  keep a 44px hit area through `touchTargetClasses`, the same technique the
+  kit's other small controls use.
+
+- **A single page renders no pager.** "Page 1 of 1" with two disabled buttons
+  said nothing; the footer is now omitted whenever there is only one page
+  (including an empty table). A `#footer` slot is unaffected.
+
+  New stories `PaginatedInCard` (unpadded and padded `Card`, geometry asserted
+  in the play function) and `SinglePage`, plus a phone-width Playwright check.
+
 ## v1.22.0
 
 ### Added

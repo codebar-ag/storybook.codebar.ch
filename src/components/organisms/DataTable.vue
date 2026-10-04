@@ -24,7 +24,7 @@ import Alert from '../molecules/Alert.vue';
 import Button from '../atoms/Button.vue';
 import EmptyState from '../molecules/EmptyState.vue';
 import Th from '../atoms/Th.vue';
-import { touchTargetBoundsClasses, touchTargetLabelClasses } from '../../helpers/touchTarget';
+import { touchTargetBoundsClasses, touchTargetClasses, touchTargetLabelClasses } from '../../helpers/touchTarget';
 import { warnOnce } from '../../helpers/dev';
 
 export interface DataTableProps<T extends Record<string, unknown>> {
@@ -171,6 +171,10 @@ const cellPadding = computed(() => (props.density === 'compact' ? 'px-4 py-1.5' 
 // carries the target. See helpers/touchTarget.ts.
 const checkboxClasses =
     'size-4 shrink-0 rounded accent-ink cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
+
+// Compact pager buttons: an `h-8` box with a 44px hit area (see the footer).
+// Merged over Button's own `h-11 px-3` by its tailwind-merge class handling.
+const pagerButtonClasses = `h-8 px-2.5 ${touchTargetClasses}`;
 
 function sortDirFor(col: DataTableColumn<T>): 'asc' | 'desc' | null {
     return sort.value?.key === col.key ? sort.value.dir : null;
@@ -401,17 +405,37 @@ function onRowClick(row: T, event: MouseEvent): void {
       </table>
     </div>
 
-    <!-- Footer: custom slot or the built-in pager. -->
+    <!-- Footer: custom slot or the built-in pager.
+
+         The pager is a row of the table's own frame, not a block floating
+         beneath it: a top rule closes the last data row (the way the header's
+         bottom rule opens the first), and `px-4` is the cell padding, so
+         "Page 2 of 5" lines up with the first column's text whether the table
+         sits in a padded Card or flush in an unpadded one. The previous
+         `mt-3` row had no padding of its own, which inside `:padded="false"`
+         put the label against the card's left edge and the buttons against
+         its right and bottom edges.
+
+         The buttons are drawn at `h-8`, not the kit-wide `h-11`: next to a
+         `text-xs` label a 44px box out-weighs the thing it pages. The 44px
+         *target* is kept through touchTargetClasses (see helpers/touchTarget),
+         which grows the hit area without growing the box. The two targets
+         cannot overlap: each is 44px wide and centred on a button wider
+         than that.
+
+         A single page has nothing to page through, so the row is not
+         rendered at all — "Page 1 of 1" and two disabled buttons are noise. -->
     <slot name="footer">
       <div
-        v-if="paginationMode !== 'none' && !loading && error === null"
-        class="mt-3 flex items-center justify-between gap-2"
+        v-if="paginationMode !== 'none' && !loading && error === null && pageCount > 1"
+        class="flex items-center justify-between gap-3 border-t border-line px-4 py-2"
       >
         <span class="text-xs text-muted tabular-nums">Page {{ page }} of {{ pageCount }}</span>
-        <div class="flex items-center gap-2">
+        <div class="flex shrink-0 items-center gap-2">
           <Button
             variant="ghost"
             size="sm"
+            :class="pagerButtonClasses"
             :disabled="!canPrev"
             @click="prev"
           >
@@ -420,6 +444,7 @@ function onRowClick(row: T, event: MouseEvent): void {
           <Button
             variant="ghost"
             size="sm"
+            :class="pagerButtonClasses"
             :disabled="!canNext"
             @click="next"
           >
