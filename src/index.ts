@@ -66,14 +66,17 @@ import RadioGroup from './components/molecules/RadioGroup.vue';
 import ResourceList from './components/organisms/ResourceList.vue';
 import SearchableSelect from './components/molecules/SearchableSelect.vue';
 import Select from './components/atoms/Select.vue';
+import SettingsSection from './components/organisms/SettingsSection.vue';
 import Sidebar from './components/organisms/Sidebar.vue';
 import SidebarGroup from './components/organisms/SidebarGroup.vue';
 import SidebarItem from './components/organisms/SidebarItem.vue';
 import Skeleton from './components/atoms/Skeleton.vue';
 import Spinner from './components/atoms/Spinner.vue';
+import StackedList from './components/molecules/StackedList.vue';
 import StatusBadge from './components/atoms/StatusBadge.vue';
 import Stepper from './components/molecules/Stepper.vue';
 import Tab from './components/atoms/Tab.vue';
+import TabGroup from './components/molecules/TabGroup.vue';
 import Tabs from './components/molecules/Tabs.vue';
 import Table from './components/organisms/Table.vue';
 import TableRow from './components/molecules/TableRow.vue';
@@ -151,14 +154,17 @@ export {
     ResourceList,
     SearchableSelect,
     Select,
+    SettingsSection,
     Sidebar,
     SidebarGroup,
     SidebarItem,
     Skeleton,
     Spinner,
+    StackedList,
     StatusBadge,
     Stepper,
     Tab,
+    TabGroup,
     Table,
     TableRow,
     Tabs,
@@ -223,6 +229,7 @@ export type { DataTableColumn } from './components/organisms/dataTable.types';
 export type { AccordionProps } from './components/molecules/Accordion.vue';
 export type { AccordionItemProps } from './components/molecules/AccordionItem.vue';
 export type { AlertProps } from './components/molecules/Alert.vue';
+export type { AppShellProps } from './components/layouts/AppShell.vue';
 export type { AuthLayoutProps } from './components/layouts/AuthLayout.vue';
 export type { AvatarProps } from './components/atoms/Avatar.vue';
 export type { BadgeProps } from './components/atoms/Badge.vue';
@@ -280,13 +287,16 @@ export type { RadioGroupProps } from './components/molecules/RadioGroup.vue';
 export type { ResourceListProps } from './components/organisms/ResourceList.vue';
 export type { SearchableSelectProps } from './components/molecules/SearchableSelect.vue';
 export type { SelectProps } from './components/atoms/Select.vue';
+export type { SettingsSectionProps } from './components/organisms/SettingsSection.vue';
 export type { SidebarProps } from './components/organisms/Sidebar.vue';
 export type { SidebarGroupProps } from './components/organisms/SidebarGroup.vue';
 export type { SidebarItemProps } from './components/organisms/SidebarItem.vue';
 export type { SpinnerProps } from './components/atoms/Spinner.vue';
+export type { StackedListProps } from './components/molecules/StackedList.vue';
 export type { StatusBadgeProps } from './components/atoms/StatusBadge.vue';
 export type { StepperProps } from './components/molecules/Stepper.vue';
 export type { TabProps } from './components/atoms/Tab.vue';
+export type { TabGroupProps } from './components/molecules/TabGroup.vue';
 export type { TabsProps } from './components/molecules/Tabs.vue';
 export type { TextareaProps } from './components/atoms/Textarea.vue';
 export type { ThProps } from './components/atoms/Th.vue';
@@ -365,14 +375,17 @@ const components: Record<string, Component> = {
     ResourceList,
     SearchableSelect,
     Select,
+    SettingsSection,
     Sidebar,
     SidebarGroup,
     SidebarItem,
     Skeleton,
     Spinner,
+    StackedList,
     StatusBadge,
     Stepper,
     Tab,
+    TabGroup,
     Table,
     TableRow,
     Tabs,

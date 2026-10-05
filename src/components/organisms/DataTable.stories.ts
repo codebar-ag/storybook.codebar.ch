@@ -8,6 +8,7 @@ import Button from '../atoms/Button.vue';
 import StatusBadge from '../atoms/StatusBadge.vue';
 import Icon from '../atoms/Icon.vue';
 import Card from '../molecules/Card.vue';
+import ListRow from '../molecules/ListRow.vue';
 import type { DataTableColumn } from './dataTable.types';
 
 interface DocumentRow extends Record<string, unknown> {
@@ -451,5 +452,40 @@ export const RowClickBoundAfterMount: Story = {
         await userEvent.click(canvas.getByRole('button', { name: 'Lock rows' }));
         await userEvent.click(canvas.getByRole('button', { name: /Document/ }));
         await waitFor(() => expect(firstRow()).not.toHaveClass(/cursor-pointer/));
+    },
+};
+
+// `stack-below` + #stacked-row: columns in a wide box, a stacked list in a
+// narrow one. A container query, so the two cards below differ although the
+// viewport is the same.
+export const StackedWhenNarrow: Story = {
+    render: () => ({
+        components: { DataTable, Card, ListRow, StatusBadge },
+        setup: () => ({ documents, columns, trustTone }),
+        template: `
+            <div class="space-y-6">
+                <Card v-for="width in ['max-w-sm', 'max-w-4xl']" :key="width" :padded="false" :class="width" :data-width="width">
+                    <DataTable :columns="columns" :rows="documents" row-key="id" stack-below="md">
+                        <template #cell-trust="{ value }">
+                            <StatusBadge :variant="trustTone[value]" :label="String(value)" />
+                        </template>
+                        <template #stacked-row="{ row }">
+                            <ListRow :title="row.title" :description="row.cabinet">
+                                <template #badge><StatusBadge :variant="trustTone[row.trust]" :label="row.trust" /></template>
+                            </ListRow>
+                        </template>
+                    </DataTable>
+                </Card>
+            </div>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const narrow = canvasElement.querySelector('[data-width="max-w-sm"]') as HTMLElement;
+        const wide = canvasElement.querySelector('[data-width="max-w-4xl"]') as HTMLElement;
+
+        // Both renderings are in the DOM; the container query shows one.
+        await expect(narrow.querySelector('ul')).toBeVisible();
+        await expect(narrow.querySelector('table')).not.toBeVisible();
+        await expect(wide.querySelector('table')).toBeVisible();
+        await expect(wide.querySelector('ul')).not.toBeVisible();
     },
 };

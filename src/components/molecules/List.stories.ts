@@ -27,6 +27,7 @@ export const Bullets: Story = {
 
 // ListRow stacks link rows with leading icon and trailing badge slots; the
 // wrapper provides the surface and border, `first` suppresses the top divider.
+// Prefer `StackedList` as the wrapper: it gives the rows list semantics.
 export const StackedList: Story = {
     render: () => ({
         components: { ListRow, ListIcon, Badge },

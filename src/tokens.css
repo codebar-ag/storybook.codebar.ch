@@ -30,15 +30,10 @@
    because mono faux-bold is conspicuously bad, so a stray `font-bold` in a
    consuming app should hit a real cut rather than a synthesised one. Add
    `latin-ext-*` here if a consumer ever needs Central/Eastern European glyphs. */
-/* Open Sans — used only by the DocuWare App Registration mirror (.dw-screen) to
-   match DocuWare's own UI. Still CDN-loaded: it is a deliberate visual mirror of
-   DocuWare's own chrome, shown on one screen, and is not the app font. Must stay
-   ahead of the @fontsource imports below: bundlers inline local @import rules as
-   real CSS content in place, but leave this remote @import literal, so if it sat
-   after the local imports it would end up after real rules post-build — invalid
-   per spec ("@import rules must precede all rules"). */
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
-
+/* Open Sans (the DocuWare mirror font, `--font-dw`) is NOT loaded here any
+   more: it came from Google Fonts, so every consumer sent every visitor's IP to
+   Google on first paint for a font only one DocuWare screen uses. An app that
+   renders `.dw-screen` imports `@codebar-ag/storybook/docuware.css` first. */
 @import "@fontsource/jetbrains-mono/latin-400.css";
 @import "@fontsource/jetbrains-mono/latin-500.css";
 @import "@fontsource/jetbrains-mono/latin-600.css";
@@ -179,6 +174,11 @@
   --text-lg--line-height:    1.5rem;
   --text-xl:                 1.25rem;     /* 20px — page H1 (PageHeading), auth/section headers */
   --text-xl--line-height:    1.75rem;
+  /* Form-control text: 16px below `sm`, so iOS Safari does not zoom the page
+     when a field takes focus (it does for anything under 16px). From `sm` up,
+     controls use `text-base` (14px) like the rest of the UI. */
+  --text-control:            1rem;
+  --text-control--line-height: 1.25rem;
   --text-2xl:                1.5rem;      /* 24px — error-page headline (ErrorLayout), display figures */
   --text-2xl--line-height:   2rem;
 
