@@ -46,3 +46,17 @@ export const Alignments: Story = {
             </div>`,
     }),
 };
+
+// Closing a long form: a rule above the row and a short hint before Save.
+export const DividedWithHint: Story = {
+    render: () => ({
+        components: { FormActions, Button },
+        template: `
+            <div class="max-w-xl">
+                <FormActions align="end" divided>
+                    <template #hint>Saving checks the connection with Odoo first.</template>
+                    <Button type="submit">Save</Button>
+                </FormActions>
+            </div>`,
+    }),
+};

@@ -8,13 +8,15 @@ export interface ToasterProps {
     // Cap on the toast stack width; raise it where messages run long
     // (e.g. flash messages that echo user input back).
     maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+    /** Where the stack sits: centred at the bottom (default) or the top. */
+    position?: 'top' | 'bottom';
 }
 
 // Unified toast overlay. Mount once near the app root; producers call `push()`
 // from the useToast composable (copy buttons, Inertia flash bridging, etc.).
 const props = withDefaults(
     defineProps<ToasterProps>(),
-    { maxWidth: 'sm' },
+    { maxWidth: 'sm', position: 'bottom' },
 );
 
 const { toasts, dismiss, pause, resume } = useToast();
@@ -25,6 +27,11 @@ const widths: Record<string, string> = {
     lg: 'max-w-lg',
     xl: 'max-w-xl',
     '2xl': 'max-w-2xl',
+};
+
+const positions: Record<string, string> = {
+    top: 'top-4',
+    bottom: 'bottom-6',
 };
 
 const iconFor: Record<ToastType, IconName> = {
@@ -47,7 +54,8 @@ const styleFor: Record<ToastType, string> = {
     aria-live="polite"
     aria-atomic="true"
     :class="[
-      'fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 w-full px-4 pointer-events-none',
+      'fixed left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 w-full px-4 pointer-events-none',
+      pick(positions, props.position, 'bottom', 'Toaster.position'),
       pick(widths, props.maxWidth, 'sm', 'Toaster.maxWidth'),
     ]"
   >
@@ -64,10 +72,11 @@ const styleFor: Record<ToastType, string> = {
         v-show="t.show"
         :key="t.id"
         :class="[
-          'pointer-events-auto w-full flex items-center gap-2.5 rounded-control border px-3.5 py-2.5 text-sm shadow-lg',
+          t.title ? 'items-start' : 'items-center',
+          'pointer-events-auto w-full flex gap-2.5 rounded-control border px-3.5 py-2.5 text-sm shadow-lg',
           styleFor[t.type],
         ]"
-        role="status"
+        :role="t.type === 'error' ? 'alert' : 'status'"
         @mouseenter="pause(t)"
         @mouseleave="resume(t)"
       >
@@ -75,7 +84,13 @@ const styleFor: Record<ToastType, string> = {
           :name="iconFor[t.type]"
           size="sm"
         /></span>
-        <span class="flex-1 break-words">{{ t.message }}</span>
+        <span class="flex-1 break-words">
+          <span
+            v-if="t.title"
+            class="block font-semibold"
+          >{{ t.title }}</span>
+          {{ t.message }}
+        </span>
         <button
           type="button"
           class="shrink-0 -mr-2 -my-1.5 flex items-center justify-center min-h-11 min-w-11 leading-none opacity-50 hover:opacity-100 transition"

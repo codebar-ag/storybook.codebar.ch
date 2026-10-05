@@ -62,6 +62,10 @@ npm install @codebar-ag/storybook
 The `@source` line is required: Tailwind must scan the compiled atoms so their
 utility classes are generated in your app's stylesheet.
 
+Only an app that renders a DocuWare mirror screen (`.dw-screen`, `font-dw`)
+also imports `@codebar-ag/storybook/docuware.css` (Open Sans, from Google
+Fonts) ahead of `tokens.css`. Every other app loads no third-party font.
+
 **2. Register the atoms** — in your Vue entry:
 
 ```ts
@@ -80,6 +84,7 @@ import { Button, Card, useToast } from '@codebar-ag/storybook';
 ```ts
 import { pushToast } from '@codebar-ag/storybook';
 pushToast({ message: 'Saved.', type: 'success' });
+pushToast({ title: 'No access', message: 'Ask your administrator.', type: 'error', duration: 0 }); // sticky
 ```
 
 ## Before building new UI in a consuming app

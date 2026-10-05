@@ -62,3 +62,28 @@ export const WithDisabled: Story = {
             </Tabs>`,
     }),
 };
+
+// Counts after the labels, and context beside the tab list in #aside.
+export const WithCountsAndAside: Story = {
+    render: () => ({
+        components: { Tabs },
+        setup: () => ({
+            tabs: [
+                { key: 'tasks', label: 'Tasks', count: 8 },
+                { key: 'entries', label: 'Time entries', count: 42 },
+            ],
+        }),
+        template: `
+            <Tabs :tabs="tabs" class="max-w-xl">
+                <template #aside>61.5 h in total</template>
+                <template #tasks><p class="text-sm text-muted">Eight tasks.</p></template>
+                <template #entries><p class="text-sm text-muted">Forty-two entries.</p></template>
+            </Tabs>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+
+        await expect(canvas.getByRole('tab', { name: /Time entries/ })).toHaveTextContent('42');
+        await expect(canvas.getByText('61.5 h in total')).toBeVisible();
+    },
+};

@@ -1,0 +1,8 @@
+/* @codebar-ag/storybook — DocuWare mirror font (opt-in).
+   Open Sans backs `--font-dw`, used only by screens that mirror DocuWare's own
+   chrome (`.dw-screen`). It is loaded from Google Fonts, so it is opt-in: import
+   this file BEFORE tokens.css in the one app that renders such a screen.
+
+       @import "@codebar-ag/storybook/docuware.css";
+       @import "@codebar-ag/storybook/tokens.css"; */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap");
