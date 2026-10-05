@@ -41,6 +41,9 @@ around gaps in the kit. Everything here is additive except the two items under
 - **`SidebarItem` without `href` renders a `<button>`**, for actions (open a
   dialog, sign out) that were written as `href="#…"` + `@click.prevent` links.
   Plus `count` / `countLabel` for a count pill after the label.
+- **`AppShell` closes its drawer when a link in it is followed.** With a
+  persistent layout (the shell stays mounted across SPA visits) the drawer
+  stayed open over the page it had just navigated to.
 - **`AppShell` `offsetTop`** (a CSS length): starts the sticky sidebar below a
   full-width bar above the shell, instead of apps reaching into the shell with
   `[&>aside]:top-10 [&>aside]:h-[calc(100dvh-2.5rem)]`.
