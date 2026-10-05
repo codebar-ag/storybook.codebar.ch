@@ -15,7 +15,14 @@
 // not clickable and carries no divider, so it reads as part of the row above
 // rather than as a row of its own; a caller that wants nothing for a given
 // row simply renders nothing inside the slot.
-import { computed, getCurrentInstance } from 'vue';
+//
+// Narrow screens: pass `stackBelow` and a #stacked-row="{ row }" slot that
+// renders a `ListRow`, and below that width the rows show as a StackedList
+// instead of columns (the pager stays). It is a container query, not a
+// viewport one: the table stacks when *its own box* is narrow, wherever it
+// is placed. Without it every consumer hand-rolled the same pair — a
+// `md:hidden` list and a `hidden md:block` table — on every index page.
+import { computed, getCurrentInstance, useSlots } from 'vue';
 import { useSort } from '../../composables/useSort';
 import { useSelection } from '../../composables/useSelection';
 import { usePagination } from '../../composables/usePagination';
@@ -24,6 +31,8 @@ import Alert from '../molecules/Alert.vue';
 import Button from '../atoms/Button.vue';
 import EmptyState from '../molecules/EmptyState.vue';
 import Th from '../atoms/Th.vue';
+import StackedList from '../molecules/StackedList.vue';
+import { pick } from '../../helpers/pick';
 import { touchTargetBoundsClasses, touchTargetClasses, touchTargetLabelClasses } from '../../helpers/touchTarget';
 import { warnOnce } from '../../helpers/dev';
 
@@ -47,6 +56,11 @@ export interface DataTableProps<T extends Record<string, unknown>> {
     total?: number | null;
     stickyHeader?: boolean;
     density?: 'comfortable' | 'compact';
+    /**
+     * Container width below which rows render through #stacked-row instead
+     * of as a table: sm = 36rem, md = 42rem, lg = 56rem of the table's own box.
+     */
+    stackBelow?: 'sm' | 'md' | 'lg' | null;
 }
 
 const props = withDefaults(
@@ -64,6 +78,7 @@ const props = withDefaults(
         total: null,
         stickyHeader: false,
         density: 'comfortable',
+        stackBelow: null,
     },
 );
 
@@ -84,6 +99,7 @@ const emit = defineEmits<{
 // conditional (`@row-click="editable ? open : undefined"`) would gain the
 // handler without gaining the affordance that says the row is clickable.
 const instance = getCurrentInstance();
+const slots = useSlots();
 
 function hasRowClick(): boolean {
     return Boolean(instance?.vnode.props?.onRowClick);
@@ -159,6 +175,25 @@ const columnCount = computed(
     () => props.columns.length + (props.selectable ? 1 : 0) + 1, // +1 covers an eventual actions cell
 );
 
+// Full class strings (not built from parts) so Tailwind finds them in dist.
+const stackedListClasses: Record<string, string> = { sm: '@xl:hidden', md: '@2xl:hidden', lg: '@4xl:hidden' };
+const stackedTableClasses: Record<string, string> = { sm: 'hidden @xl:block', md: 'hidden @2xl:block', lg: 'hidden @4xl:block' };
+
+// Loading, error and empty states stay table rows at every width: they span
+// all columns anyway, and a stacked list of nothing would say less.
+function stacked(): { list: string; table: string } | null {
+    if (props.stackBelow === null || !slots['stacked-row']) {
+        return null;
+    }
+    if (props.loading || props.error !== null || visibleRows.value.length === 0) {
+        return null;
+    }
+    return {
+        list: pick(stackedListClasses, props.stackBelow, 'md', 'DataTable.stackBelow'),
+        table: pick(stackedTableClasses, props.stackBelow, 'md', 'DataTable.stackBelow'),
+    };
+}
+
 const cellPadding = computed(() => (props.density === 'compact' ? 'px-4 py-1.5' : 'px-4 py-3'));
 
 // Plain input rather than the Checkbox atom: table cells need the bare box
@@ -191,7 +226,22 @@ function onRowClick(row: T, event: MouseEvent): void {
 </script>
 
 <template>
-  <div>
+  <div :class="stacked() ? '@container' : undefined">
+    <StackedList
+      v-if="stacked()"
+      :class="stacked()?.list"
+    >
+      <template
+        v-for="row in visibleRows"
+        :key="keyOf(row)"
+      >
+        <slot
+          name="stacked-row"
+          :row="row"
+        />
+      </template>
+    </StackedList>
+
     <!-- Bulk toolbar: appears while a selection exists. -->
     <div
       v-if="selectable && selected.length > 0 && $slots['bulk-actions']"
@@ -214,7 +264,7 @@ function onRowClick(row: T, event: MouseEvent): void {
       </button>
     </div>
 
-    <div class="overflow-x-auto">
+    <div :class="['overflow-x-auto', stacked()?.table]">
       <table class="w-full text-left text-sm">
         <thead>
           <tr

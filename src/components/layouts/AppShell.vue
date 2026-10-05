@@ -11,8 +11,22 @@
 //         </template>
 //         <main content…>
 //     </AppShell>
-import { ref } from 'vue';
+//
+// `offsetTop` (a CSS length, e.g. "2.5rem") starts the sticky sidebar below a
+// full-width bar the app renders above the shell (an impersonation or
+// maintenance banner), so the bar does not cover the sidebar's top.
+import { computed, ref } from 'vue';
 import Drawer from '../organisms/Drawer.vue';
+
+export interface AppShellProps {
+    offsetTop?: string | null;
+}
+
+const props = withDefaults(defineProps<AppShellProps>(), { offsetTop: null });
+
+const asideStyle = computed(() =>
+    props.offsetTop === null ? undefined : { top: props.offsetTop, height: `calc(100dvh - ${props.offsetTop})` },
+);
 
 const sidebarOpen = ref(false);
 
@@ -26,6 +40,7 @@ function toggleSidebar(): void {
     <aside
       v-if="$slots.sidebar"
       class="sticky top-0 hidden h-dvh shrink-0 lg:block"
+      :style="asideStyle"
     >
       <slot name="sidebar" />
     </aside>

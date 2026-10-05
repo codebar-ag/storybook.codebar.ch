@@ -1,6 +1,6 @@
 {
   "name": "@codebar-ag/storybook",
-  "version": "1.22.1",
+  "version": "1.23.0",
   "description": "codebar-ag DocuHub — shared Vue 3 + Tailwind v4 design-system atoms and tokens, documented in Storybook.",
   "license": "MIT",
   "author": "codebar Solutions AG",
@@ -17,6 +17,7 @@
       "import": "./dist/flows.js"
     },
     "./tokens.css": "./dist/tokens.css",
+    "./docuware.css": "./dist/docuware.css",
     "./style.css": "./dist/flows.css"
   },
   "sideEffects": [
@@ -29,7 +30,7 @@
     "verify:externals": "node scripts/verify-externals.mjs",
     "verify:props": "node scripts/verify-props.mjs",
     "verify:version": "node scripts/verify-version.mjs",
-    "build:tokens": "node -e \"require('node:fs').copyFileSync('src/tokens.css','dist/tokens.css')\"",
+    "build:tokens": "node -e \"const fs=require('node:fs');fs.copyFileSync('src/tokens.css','dist/tokens.css');fs.copyFileSync('src/docuware.css','dist/docuware.css')\"",
     "build-storybook": "storybook build",
     "lint": "eslint \"src/**/*.{ts,vue}\"",
     "typecheck": "vue-tsc --noEmit",

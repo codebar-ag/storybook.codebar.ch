@@ -94,3 +94,31 @@ export const AutoDismiss: Story = {
             </div>`,
     }),
 };
+
+// At the top, with a title, and sticky: an error that waits for its ✕
+// (duration 0) — how an app surfaces a flashed server error.
+export const TopWithTitle: Story = {
+    render: () => ({
+        components: { Toaster, Button },
+        setup: () => ({
+            error: () => push({ title: 'Link no longer valid', message: 'Request a new sign-in link.', type: 'error', duration: 0 }),
+        }),
+        template: `
+            <div>
+                <Button variant="secondary" @click="error">Sticky error</Button>
+                <Toaster position="top" max-width="lg" />
+            </div>`,
+    }),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        const body = within(canvasElement.ownerDocument.body);
+
+        await userEvent.click(canvas.getByRole('button', { name: 'Sticky error' }));
+        const toast = await body.findByRole('alert');
+        await waitFor(() => expect(toast).toBeVisible());
+        await expect(toast).toHaveTextContent('Link no longer valid');
+
+        await userEvent.click(body.getByRole('button', { name: 'Dismiss' }));
+        await waitFor(() => expect(body.queryByRole('alert')).not.toBeInTheDocument());
+    },
+};

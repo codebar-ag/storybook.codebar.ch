@@ -6,13 +6,19 @@
 //     <Tabs v-model="active" :tabs="[{ key: 'general', label: 'General' }, …]">
 //         <template #general>…</template>
 //     </Tabs>
+//
+// `#aside` renders beside the tab list (right-aligned, wraps below on narrow
+// screens) for context that belongs to the tabs, such as a running total.
 import { ref, useId } from 'vue';
 import { useControllable } from '../../composables/useControllable';
+import { segmentedTrackClasses, tabCountClasses } from '../../helpers/segmented';
 
 export interface TabItem {
     key: string;
     label: string;
     disabled?: boolean;
+    /** A number after the label, e.g. the items in that panel. */
+    count?: number | null;
 }
 
 export interface TabsProps {
@@ -84,32 +90,44 @@ function onKeydown(index: number, event: KeyboardEvent): void {
 
 <template>
   <div>
-    <div
-      role="tablist"
-      class="inline-flex items-center gap-1 rounded-control border border-line bg-surface-2 p-1"
-    >
-      <button
-        v-for="(tab, index) in tabs"
-        :id="`${baseId}-tab-${tab.key}`"
-        :key="tab.key"
-        :ref="(el) => setButtonRef(el, index)"
-        type="button"
-        role="tab"
-        :aria-selected="active === tab.key ? 'true' : 'false'"
-        :aria-controls="`${baseId}-panel-${tab.key}`"
-        :tabindex="active === tab.key ? 0 : -1"
-        :disabled="tab.disabled"
-        :class="[
-          'inline-flex items-center justify-center min-h-9 whitespace-nowrap rounded-pill px-3.5 py-1 text-sm font-medium transition cursor-pointer',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50',
-          'disabled:opacity-50 disabled:cursor-not-allowed',
-          active === tab.key ? 'bg-surface text-ink shadow-card' : 'text-muted hover:text-ink',
-        ]"
-        @click="active = tab.key"
-        @keydown="onKeydown(index, $event)"
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div
+        role="tablist"
+        :class="segmentedTrackClasses"
       >
-        {{ tab.label }}
-      </button>
+        <button
+          v-for="(tab, index) in tabs"
+          :id="`${baseId}-tab-${tab.key}`"
+          :key="tab.key"
+          :ref="(el) => setButtonRef(el, index)"
+          type="button"
+          role="tab"
+          :aria-selected="active === tab.key ? 'true' : 'false'"
+          :aria-controls="`${baseId}-panel-${tab.key}`"
+          :tabindex="active === tab.key ? 0 : -1"
+          :disabled="tab.disabled"
+          :class="[
+            'inline-flex items-center justify-center min-h-11 whitespace-nowrap rounded-pill px-3.5 py-1 text-sm font-medium transition cursor-pointer',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50',
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+            active === tab.key ? 'bg-surface text-ink shadow-card' : 'text-muted hover:text-ink',
+          ]"
+          @click="active = tab.key"
+          @keydown="onKeydown(index, $event)"
+        >
+          {{ tab.label }}
+          <span
+            v-if="tab.count !== undefined && tab.count !== null"
+            :class="tabCountClasses"
+          >{{ tab.count }}</span>
+        </button>
+      </div>
+      <div
+        v-if="$slots.aside"
+        class="text-sm text-muted"
+      >
+        <slot name="aside" />
+      </div>
     </div>
 
     <div

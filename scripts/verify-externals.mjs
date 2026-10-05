@@ -13,7 +13,7 @@
 // import out of `flows.js`, so both are asserted here.
 import { readdirSync, readFileSync } from 'node:fs';
 
-const EXPECTED_FILES = ['flows.css', 'flows.js', 'index.d.ts', 'tokens.css'];
+const EXPECTED_FILES = ['docuware.css', 'flows.css', 'flows.js', 'index.d.ts', 'tokens.css'];
 
 const actual = readdirSync('dist').sort();
 const unexpected = actual.filter((file) => !EXPECTED_FILES.includes(file));

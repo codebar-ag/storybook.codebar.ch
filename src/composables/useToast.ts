@@ -3,13 +3,17 @@ import { reactive, readonly } from 'vue';
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
 export interface ToastInput {
+    /** Bold first line above the message (optional). */
+    title?: string | null;
     message?: string;
     type?: ToastType;
+    /** Milliseconds on screen; 0 keeps it until dismissed. */
     duration?: number;
 }
 
 export interface Toast {
     id: number;
+    title: string | null;
     message: string;
     type: ToastType;
     duration: number;
@@ -22,6 +26,10 @@ export interface Toast {
 const state = reactive<{ toasts: Toast[]; seq: number }>({ toasts: [], seq: 0 });
 
 function start(toast: Toast): void {
+    // A duration of 0 (or less) is a sticky toast: it waits for its ✕.
+    if (toast.duration <= 0) {
+        return;
+    }
     toast.startedAt = Date.now();
     toast.timer = setTimeout(() => dismiss(toast.id), toast.remaining);
 }
@@ -35,6 +43,7 @@ export function push(detail: ToastInput = {}): number {
     const duration = detail.duration ?? (type === 'error' ? 6000 : 3500);
     const toast: Toast = {
         id: ++state.seq,
+        title: detail.title ?? null,
         message: detail.message ?? 'Done.',
         type,
         duration,

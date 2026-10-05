@@ -5,6 +5,65 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.23.0
+
+Driven by a consistency audit of a consuming app (office.odoo), where every
+index page, settings page and app shell hand-rolled the same few patterns
+around gaps in the kit. Everything here is additive except the two items under
+**Changed**, which are bug fixes with a one-line migration.
+
+### Added
+
+- **`StackedList`**, the container `ListRow`s were missing. It renders a
+  `<ul role="list">` and each `ListRow` inside it wraps itself in an `<li>`, so
+  the rows form a real list. It also drops the first row's divider, so callers
+  no longer pass `:first="index === 0"` (it still works). Until now apps
+  wrapped rows in `List`, which is the dash-bulleted prose list: rows became
+  `<a>`/`<div>` children of a `<ul>` (invalid markup, announced as an empty
+  list) and inherited its `space-y-1.5` gaps.
+- **`ListRow` `title` / `description` props and a `#badge` slot.** One
+  typography for a row's two lines (truncated title + muted description, a
+  badge beside the title) instead of every caller styling its own spans, which
+  had drifted (`font-medium` or not, `truncate` or not, `text-xs` or `text-sm`).
+  The default slot still renders below for anything else.
+- **`DataTable` `stackBelow` (`sm` | `md` | `lg`) + `#stacked-row="{ row }"`.**
+  Below that width of the table's *own box* (a container query: 36 / 42 /
+  56rem) rows render through the slot as a `StackedList`; the pager stays.
+  Loading, error and empty states remain table rows. Replaces the
+  `md:hidden` list + `hidden md:block` table pair consumers wrote per page.
+- **`TabGroup`** (link tabs in their segmented track, a `<nav>` with a label,
+  scrolls sideways instead of the page) and **`Tab` `count`**. `Tabs` items
+  take `count` too, and `Tabs` has an `#aside` slot beside the tab list.
+- **`SettingsSection`**: title and description left, fields in a `Card` right,
+  stacked below `md`, sections divided by a rule.
+- **`FormActions` `divided` and `#hint`**: a rule above the row for closing a
+  long form, and a muted note before the buttons. The row now wraps.
+- **`SidebarItem` without `href` renders a `<button>`**, for actions (open a
+  dialog, sign out) that were written as `href="#…"` + `@click.prevent` links.
+  Plus `count` / `countLabel` for a count pill after the label.
+- **`AppShell` `offsetTop`** (a CSS length): starts the sticky sidebar below a
+  full-width bar above the shell, instead of apps reaching into the shell with
+  `[&>aside]:top-10 [&>aside]:h-[calc(100dvh-2.5rem)]`.
+- **Toasts: `title`, sticky toasts and `Toaster` `position`.** `push({ title })`
+  renders a bold first line; `duration: 0` keeps a toast until dismissed (it
+  used to dismiss immediately); `<Toaster position="top">` centres the stack at
+  the top. Error toasts are `role="alert"`.
+- **`./docuware.css` export** and the **`--text-control` token** (see below).
+
+### Changed
+
+- **Form controls use 16px text below `sm`** (`text-control sm:text-base` in
+  `formControlClasses`). iOS Safari zooms the page into any focused field
+  under 16px, and the kit's controls were 14px, so every sign-in, search and
+  settings field zoomed on iPhones. From `sm` up nothing changes.
+- **`tokens.css` no longer loads Open Sans from Google Fonts.** It was imported
+  for every consumer, so every visitor of every app contacted Google on first
+  paint, for a font only DocuWare mirror screens (`.dw-screen`, `font-dw`)
+  use. Such an app adds `@import "@codebar-ag/storybook/docuware.css";` before
+  `tokens.css`; without it `font-dw` falls back to its system fonts.
+- **`Tabs` buttons are 44px tall** (`min-h-11`, were `min-h-9`), matching the
+  link `Tab` and the kit's touch-target standard.
+
 ## v1.22.1
 
 ### Fixed
