@@ -38,7 +38,7 @@ const initials = computed(() =>
 
 const classes = computed(() =>
     cx(
-        'inline-flex items-center justify-center shrink-0 overflow-hidden rounded-full border border-line bg-surface-2 font-semibold text-muted select-none',
+        'relative inline-flex items-center justify-center shrink-0 overflow-hidden rounded-full border border-line bg-surface-2 font-semibold text-muted select-none',
         pick(sizes, props.size, 'md', 'Avatar.size'),
         classAttr.value,
     ),

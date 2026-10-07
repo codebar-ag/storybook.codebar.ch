@@ -264,7 +264,7 @@ function onRowClick(row: T, event: MouseEvent): void {
       </button>
     </div>
 
-    <div :class="['overflow-x-auto', stacked()?.table]">
+    <div :class="['relative overflow-x-auto', stacked()?.table]">
       <table class="w-full text-left text-sm">
         <thead>
           <tr

@@ -53,3 +53,21 @@ export const Default: Story = {
         await waitFor(() => expect(body.queryByRole('dialog')).not.toBeInTheDocument());
     },
 };
+
+// A drawer opened from far down a long page: the page stays put behind it and
+// comes back at the same scroll position. Exercised by tests/scroll-lock.spec.ts.
+export const OverLongPage: Story = {
+    render: () => ({
+        components: { Drawer, Button },
+        setup: () => ({ open: ref(false) }),
+        template: `
+            <div>
+                <div class="h-[150vh] text-sm text-muted">Scroll down to open the drawer.</div>
+                <Button @click="open = true">Open drawer</Button>
+                <div class="h-[150vh]" />
+                <Drawer v-model="open" title="Details">
+                    <p class="text-sm text-muted">The page behind this drawer does not scroll.</p>
+                </Drawer>
+            </div>`,
+    }),
+};

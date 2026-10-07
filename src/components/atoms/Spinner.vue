@@ -28,7 +28,7 @@ const sizes: Record<string, string> = {
 const { rootAttrs, classAttr } = useRootAttrs();
 
 const classes = computed(() =>
-    cx('inline-block animate-spin text-current', pick(sizes, props.size, 'md', 'Spinner.size'), classAttr.value),
+    cx('relative inline-block animate-spin text-current', pick(sizes, props.size, 'md', 'Spinner.size'), classAttr.value),
 );
 </script>
 

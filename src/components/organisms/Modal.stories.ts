@@ -145,3 +145,31 @@ export const FullSize: Story = {
         await waitFor(() => expect(body.queryByRole('dialog')).not.toBeInTheDocument());
     },
 };
+
+// Two dialogs over a page long enough to scroll. The page lock is shared and
+// reference-counted, so the page stays frozen until the LAST dialog is gone,
+// whichever order they leave in. The second dialog can unmount the first
+// while both are open, which must not release the page early either.
+// Exercised by tests/scroll-lock.spec.ts.
+export const Stacked: Story = {
+    render: () => ({
+        components: { Modal, Button },
+        setup: () => ({ first: ref(false), second: ref(false), firstMounted: ref(true) }),
+        template: `
+            <div>
+                <div class="h-[150vh] text-sm text-muted">Scroll down to open the dialogs.</div>
+                <Button @click="first = true">Open first dialog</Button>
+                <div class="h-[150vh]" />
+                <Modal v-if="firstMounted" v-model="first" title="First dialog">
+                    <Button @click="second = true">Open second dialog</Button>
+                </Modal>
+                <Modal v-model="second" title="Second dialog">
+                    <div class="flex flex-wrap gap-2">
+                        <Button variant="ghost" @click="first = false">Close the first dialog</Button>
+                        <Button variant="ghost" @click="firstMounted = false">Unmount the first dialog</Button>
+                        <Button variant="primary" @click="second = false">Close the second dialog</Button>
+                    </div>
+                </Modal>
+            </div>`,
+    }),
+};

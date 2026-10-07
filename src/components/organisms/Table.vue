@@ -4,7 +4,7 @@
 </script>
 
 <template>
-  <div class="overflow-x-auto">
+  <div class="relative overflow-x-auto">
     <table class="w-full text-left text-sm">
       <thead v-if="$slots.head">
         <tr

@@ -5,7 +5,7 @@ withDefaults(defineProps<RadioGroupProps>(), { label: null });
 </script>
 
 <template>
-  <fieldset class="space-y-3">
+  <fieldset class="relative space-y-3">
     <legend
       v-if="label !== null"
       class="sr-only"

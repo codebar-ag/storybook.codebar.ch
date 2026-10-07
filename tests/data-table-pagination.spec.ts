@@ -39,3 +39,17 @@ test('the DataTable pager fits inside its card at phone width', async ({ page })
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test('a DataTable with row actions does not scroll the page sideways at phone width', async ({ page }) => {
+    // The actions header is `<span class="sr-only">`, which is absolutely
+    // positioned. Unless the horizontal scroller is a containing block, the
+    // span escapes it to the table's far right edge and widens the page.
+    await page.setViewportSize({ width: 360, height: 800 });
+    await gotoStory(page, 'organisms-datatable--full');
+    await expect(page.getByText('Actions', { exact: true })).toHaveCount(1);
+
+    const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+});

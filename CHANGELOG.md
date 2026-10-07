@@ -5,6 +5,65 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.24.0
+
+### Fixed
+
+- **`SidebarItem` without `href` renders a plain sidebar row again in apps
+  that register `Button` globally.** v1.23.0 rendered the action through
+  `:is="'button'"`, which Vue resolves against registered components first, so
+  such apps got the kit's primary `Button` (a black "Sign out"). The native
+  element is now rendered with `h('button')`. Storybook registers `Button`
+  globally like consuming apps do, and `tests/sidebar-item.spec.ts` covers it.
+
+- **The page behind an open `Modal` or `Drawer` no longer scrolls on iOS
+  Safari.** `useScrollLock` set `overflow: hidden` on `<html>`, which iOS
+  ignores: a touch drag on the scrim scrolled the page underneath. The lock
+  now pins `<body>` with `position: fixed` at the current scroll offset and
+  puts the page back at the same position on release (instantly, even under
+  `scroll-behavior: smooth`). The desktop scrollbar is still compensated with
+  `padding-right`, so nothing shifts sideways. `FullscreenPanel` gets the same
+  fix, since it shares the lock.
+- **Stacked overlays no longer unlock the page early.** Each `useScrollLock`
+  kept its own copy of the page's styles, so closing the outer of two open
+  dialogs restored scrolling behind the inner one. The lock is now one
+  reference-counted lock for the whole page: it is released when the last
+  holder closes or is unmounted, in whatever order.
+- **Scrolling inside a `Drawer` body or a `size="full"` `Modal` body no longer
+  chains to the page** at its ends (`overscroll-behavior: contain`).
+- **A `DataTable` with row actions no longer scrolls the page sideways on
+  phones.** The actions header is an `sr-only` (absolutely positioned) span,
+  and the table's `overflow-x-auto` scroller was not a containing block, so
+  the span landed at the table's far right outside the scroller and widened
+  the whole page (142px at 360px wide). The scroller in `DataTable` and
+  `Table` is now `relative`.
+- **`PageHeading` header actions wrap on phones.** The `#actions` cluster was
+  `shrink-0`, so it took its max-content width and its buttons never wrapped:
+  three or more actions pushed the page sideways at 360px (408px of overflow
+  with four). It is now `min-w-0 max-w-full`: the cluster still sits
+  right-aligned beside the title on desktop, drops below it on a phone, and
+  wraps its own buttons there.
+- **The same two patterns, fixed wherever else the kit had them:**
+  - `shrink-0` action clusters in flex rows → `min-w-0 max-w-full` (and
+    `flex-wrap`, right-aligned where they sit at the row's end): `Card`
+    `#actions` (was `sm:shrink-0`), `ListRow` `#trailing`, `Navbar`
+    `#actions`.
+  - `sr-only` content anchored to a positioned box, so it cannot escape a
+    horizontal scroller to the page: `TabGroup`'s scroller is `relative`, and
+    so are `Avatar`, `Spinner`, `Toggle` (around its visually hidden input)
+    and `RadioGroup`'s fieldset — each of which can be rendered inside a
+    consumer's own `overflow-x-auto` container.
+
+### Changed
+
+- **`apexcharts` peer range now includes `^7.0.0`** (`^4.5.0 || ^5.0.0 ||
+  ^6.0.0 || ^7.0.0`). An app on apexcharts 7 could not install v1.23.0
+  (`ERESOLVE`). The kit is now built and tested against apexcharts 7.8.0.
+- **`useScrollLock` accepts a getter or plain boolean as well as a ref**
+  (`MaybeRefOrGetter<boolean>`), and releases on scope disposal, so it also
+  works inside an `effectScope`. Existing `useScrollLock(ref)` calls are
+  unchanged.
+
 ## v1.23.0
 
 Driven by a consistency audit of a consuming app (office.odoo), where every
