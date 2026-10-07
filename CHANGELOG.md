@@ -5,6 +5,18 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.24.1
+
+### Changed
+
+- **Dependency updates (development toolchain only).** The lockfile now
+  resolves `vue` and `@vue/server-renderer` (and the rest of `@vue/*`) 3.5.40
+  → 3.5.43, `@babel/parser` 7.29.7 → 7.29.9, `@babel/types` 7.29.7 → 7.29.8,
+  `postcss` 8.5.25 → 8.5.29, `nanoid` 3.3.16 → 3.3.20, `source-map-js` 1.2.1
+  → 1.2.2 and `postcss-selector-parser` 7.1.4 → 7.1.6. No declared ranges and
+  no public API changed; the library is now built with the 3.5.43 SFC
+  compiler. Supersedes Dependabot PRs #36, #37 and #38.
+
 ## v1.24.0
 
 ### Fixed
