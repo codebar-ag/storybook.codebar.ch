@@ -9,6 +9,13 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- **`SidebarItem` without `href` renders a plain sidebar row again in apps
+  that register `Button` globally.** v1.23.0 rendered the action through
+  `:is="'button'"`, which Vue resolves against registered components first, so
+  such apps got the kit's primary `Button` (a black "Sign out"). The native
+  element is now rendered with `h('button')`. Storybook registers `Button`
+  globally like consuming apps do, and `tests/sidebar-item.spec.ts` covers it.
+
 - **The page behind an open `Modal` or `Drawer` no longer scrolls on iOS
   Safari.** `useScrollLock` set `overflow: hidden` on `<html>`, which iOS
   ignores: a touch drag on the scrim scrolled the page underneath. The lock

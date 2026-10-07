@@ -38,7 +38,7 @@ export const Default: Story = {
                         </SidebarGroup>
                         <template #footer>
                             <SidebarGroup>
-                                <SidebarItem href="#" icon="logout">Sign out</SidebarItem>
+                                <SidebarItem icon="logout">Sign out</SidebarItem>
                             </SidebarGroup>
                         </template>
                     </Sidebar>

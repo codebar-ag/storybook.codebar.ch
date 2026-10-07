@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // One navigation entry: icon + label, active state, framework-agnostic `as`
 // for client-side routing (pass e.g. Inertia's Link).
-import { computed } from 'vue';
-import type { Component } from 'vue';
+import { computed, h } from 'vue';
+import type { Component, FunctionalComponent } from 'vue';
 import Icon from '../atoms/Icon.vue';
 import type { IconName } from '../../icons';
 import { cx } from '../../helpers/cx';
@@ -36,7 +36,14 @@ const props = withDefaults(
 // sidebar (`href="#profile"` + `@click.prevent`): announced as a link, opened
 // "#profile" on middle-click and, for sign-out, did a GET. Without `href` the
 // item is a real button instead.
-const tag = computed<string | Component>(() => (props.href === null ? 'button' : (props.as ?? 'a')));
+//
+// The native element is rendered through `h()` rather than `:is="'button'"`:
+// Vue resolves a string `:is` against registered components first, so an app
+// that registers the kit's `Button` globally got a primary Button here (a black
+// "Sign out") instead of a plain sidebar row.
+const NativeButton: FunctionalComponent = (_, { slots, attrs }) => h('button', attrs, slots.default?.());
+NativeButton.inheritAttrs = false;
+const tag = computed<string | Component>(() => (props.href === null ? NativeButton : (props.as ?? 'a')));
 
 const { rootAttrs, classAttr } = useRootAttrs();
 
