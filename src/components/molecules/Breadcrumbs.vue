@@ -29,6 +29,7 @@ withDefaults(
 <template>
   <nav
     v-if="items.length"
+    data-slot="breadcrumbs"
     aria-label="Breadcrumb"
   >
     <ol class="flex flex-wrap items-center gap-1.5 text-xs text-muted">
@@ -41,8 +42,10 @@ withDefaults(
           :is="as"
           v-if="index < items.length - 1 && item.href"
           :href="item.href"
-          class="truncate rounded transition hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-        >{{ item.label }}</component>
+          class="truncate rounded transition hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50"
+        >
+          {{ item.label }}
+        </component>
         <span
           v-else
           :aria-current="index === items.length - 1 ? 'page' : undefined"

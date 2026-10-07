@@ -36,10 +36,12 @@ withDefaults(
   <Badge
     :variant="variant"
     :category="category"
+    data-slot="status-badge"
   >
     <span
       v-if="dot"
       aria-hidden="true"
+      data-slot="status-badge-dot"
       class="size-1.5 rounded-full bg-current opacity-70"
     />
     {{ label }}

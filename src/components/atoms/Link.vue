@@ -24,11 +24,11 @@ const { rootAttrs, classAttr } = useRootAttrs();
 const tones: Record<string, string> = {
     default: 'text-ink decoration-dim hover:decoration-ink',
     muted: 'text-muted hover:text-ink',
-    accent: 'text-sm text-accent hover:underline',
+    accent: 'text-sm text-link hover:text-link-hover hover:underline',
 };
 
 const classes = computed(() => {
-    const base = 'transition rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
+    const base = 'transition rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/50';
     const underline = props.tone === 'accent' ? '' : 'underline underline-offset-2';
 
     return cx(base, underline, pick(tones, props.tone, 'default', 'Link.tone'), classAttr.value);
@@ -40,6 +40,8 @@ const classes = computed(() => {
     :is="as"
     v-if="as"
     :href="href"
+    data-slot="link"
+    :data-variant="tone"
     :class="classes"
     v-bind="rootAttrs"
   >
@@ -48,6 +50,8 @@ const classes = computed(() => {
   <a
     v-else
     :href="href"
+    data-slot="link"
+    :data-variant="tone"
     :class="classes"
     v-bind="rootAttrs"
   ><slot /></a>

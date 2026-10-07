@@ -42,7 +42,7 @@ const menuAlign = computed(() => (props.align === 'left' ? 'left-0' : 'right-0')
 
 const triggerBase =
     'inline-flex items-center gap-1.5 rounded-control transition cursor-pointer ' +
-    'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent/50';
+    'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-focus/50';
 
 function menuItems(): HTMLElement[] {
     return Array.from(menu.value?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? []);

@@ -39,7 +39,7 @@ const model = computed({
     />
     <button
       type="button"
-      class="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-dim transition hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded-r-control"
+      class="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-dim transition hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50 rounded-r-control"
       :aria-pressed="revealed ? 'true' : 'false'"
       :aria-label="revealed ? 'Hide password' : 'Show password'"
       @click="revealed = !revealed"

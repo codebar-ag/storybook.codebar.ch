@@ -18,12 +18,15 @@ defineEmits<{ 'toggle-sidebar': [] }>();
 </script>
 
 <template>
-  <header class="flex min-h-14 items-center gap-3 border-b border-line bg-surface px-4">
+  <header
+    data-slot="navbar"
+    class="flex min-h-14 items-center gap-3 border-b border-line bg-chrome shadow-chrome px-4"
+  >
     <button
       v-if="menuButton"
       type="button"
       :class="[
-        'flex size-9 items-center justify-center rounded-control text-muted transition hover:text-ink lg:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50',
+        'flex size-9 items-center justify-center rounded-control text-muted transition hover:text-ink lg:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50',
         touchTargetClasses,
       ]"
       aria-label="Open navigation"

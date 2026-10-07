@@ -57,7 +57,7 @@ useEscapeKey(() => close(), isOpen);
       type="button"
       aria-haspopup="dialog"
       :aria-expanded="isOpen ? 'true' : 'false'"
-      class="inline-flex items-center gap-1.5 rounded-control transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent/50"
+      class="inline-flex items-center gap-1.5 rounded-control transition cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-focus/50"
       @click="isOpen ? close() : (isOpen = true)"
     >
       <slot name="trigger" />

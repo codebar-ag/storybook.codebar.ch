@@ -6,9 +6,13 @@ defineProps<SidebarGroupProps>();
 </script>
 
 <template>
-  <div class="mb-4 last:mb-0">
+  <div
+    data-slot="sidebar-group"
+    class="mb-4 last:mb-0"
+  >
     <p
       v-if="label"
+      data-slot="sidebar-group-label"
       class="px-2.5 pb-1.5 text-2xs uppercase tracking-wide text-dim"
     >
       {{ label }}

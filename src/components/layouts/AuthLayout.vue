@@ -52,10 +52,14 @@ const cardWidth = computed(() => pick(MAX_WIDTHS, props.maxWidth, 'md', 'AuthLay
        the bottom of the viewport on tall screens instead of floating just under
        the card. Renders identically to the old markup when no footer slot is
        passed; only footer-using callers see the difference. -->
-  <div class="flex min-h-dvh flex-col items-center bg-bg px-4 py-10">
+  <div
+    data-slot="auth-layout"
+    class="flex min-h-dvh flex-col items-center bg-bg px-4 py-10"
+  >
     <div class="flex w-full flex-1 flex-col items-center justify-center">
       <div
         v-if="$slots.brand"
+        data-slot="auth-brand"
         class="mb-6"
       >
         <slot name="brand" />
@@ -63,6 +67,7 @@ const cardWidth = computed(() => pick(MAX_WIDTHS, props.maxWidth, 'md', 'AuthLay
 
       <Card
         size="lg"
+        data-slot="auth-card"
         :title="title"
         :description="description"
         class="w-full animate-fade"
@@ -74,6 +79,7 @@ const cardWidth = computed(() => pick(MAX_WIDTHS, props.maxWidth, 'md', 'AuthLay
 
     <div
       v-if="$slots.footer"
+      data-slot="auth-footer"
       class="mt-6 text-center text-xs text-muted"
     >
       <slot name="footer" />

@@ -75,6 +75,8 @@ const classes = computed(() =>
       :value="modelValue"
       :aria-invalid="invalid ? 'true' : undefined"
       :aria-describedby="describedBy"
+      data-slot="control"
+      :data-state="invalid ? 'invalid' : undefined"
       :class="classes"
       v-bind="{ ...passwordManagerAttrs, ...rootAttrs }"
       @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"

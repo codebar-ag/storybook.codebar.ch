@@ -93,6 +93,7 @@ function onKeydown(index: number, event: KeyboardEvent): void {
     <div class="flex flex-wrap items-center justify-between gap-3">
       <div
         role="tablist"
+        data-slot="tabs"
         :class="segmentedTrackClasses"
       >
         <button
@@ -102,15 +103,17 @@ function onKeydown(index: number, event: KeyboardEvent): void {
           :ref="(el) => setButtonRef(el, index)"
           type="button"
           role="tab"
+          data-slot="tab"
+          :data-state="active === tab.key ? 'active' : undefined"
           :aria-selected="active === tab.key ? 'true' : 'false'"
           :aria-controls="`${baseId}-panel-${tab.key}`"
           :tabindex="active === tab.key ? 0 : -1"
           :disabled="tab.disabled"
           :class="[
-            'inline-flex items-center justify-center min-h-11 whitespace-nowrap rounded-pill px-3.5 py-1 text-sm font-medium transition cursor-pointer',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50',
+            'relative inline-flex items-center justify-center min-h-11 whitespace-nowrap rounded-pill px-3.5 py-1 text-sm font-medium transition cursor-pointer',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            active === tab.key ? 'bg-surface text-ink shadow-card' : 'text-muted hover:text-ink',
+            active === tab.key ? 'bg-surface text-tab-active-fg shadow-card after:pointer-events-none after:absolute after:inset-x-3.5 after:bottom-0 after:h-0.5 after:bg-tab-active-marker' : 'text-muted hover:text-ink',
           ]"
           @click="active = tab.key"
           @keydown="onKeydown(index, $event)"

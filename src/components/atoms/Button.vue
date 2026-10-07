@@ -32,11 +32,11 @@ const { rootAttrs, classAttr } = useRootAttrs();
 
 const base =
     'relative inline-flex items-center justify-center gap-2 rounded-control font-semibold transition cursor-pointer ' +
-    'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent/50 ' +
+    'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-focus/50 ' +
     'disabled:opacity-50 disabled:cursor-not-allowed aria-busy:cursor-wait';
 
 const variants: Record<string, string> = {
-    primary: 'bg-ink text-white hover:bg-ink-hover',
+    primary: 'bg-primary text-on-primary hover:bg-primary-hover',
     secondary: 'bg-surface-2 border border-line text-ink hover:border-line-2',
     ghost: 'bg-transparent border border-line text-muted hover:text-ink',
     danger: 'bg-surface border border-danger-line text-danger hover:bg-danger-soft',
@@ -63,6 +63,13 @@ const classes = computed(() =>
     ),
 );
 
+// Stable theming hooks (Foundations/Theming): part of the public API.
+const slotAttrs = computed(() => ({
+    'data-slot': 'button',
+    'data-variant': props.variant,
+    'data-size': props.size,
+}));
+
 // Spread AFTER rootAttrs so `loading` wins over a caller-bound `disabled`;
 // empty when idle so callers keep full control.
 const loadingAttrs = computed(() =>
@@ -82,7 +89,7 @@ const loadingAttrs = computed(() =>
     :href="href ?? undefined"
     :class="classes"
     :aria-busy="loading ? 'true' : undefined"
-    v-bind="rootAttrs"
+    v-bind="{ ...slotAttrs, ...rootAttrs }"
   >
     <Spinner
       v-if="loading"
@@ -99,7 +106,7 @@ const loadingAttrs = computed(() =>
     :href="href ?? undefined"
     :class="classes"
     :aria-busy="loading ? 'true' : undefined"
-    v-bind="rootAttrs"
+    v-bind="{ ...slotAttrs, ...rootAttrs }"
   >
     <Spinner
       v-if="loading"
@@ -115,7 +122,7 @@ const loadingAttrs = computed(() =>
     v-else
     :type="type"
     :class="classes"
-    v-bind="{ ...rootAttrs, ...loadingAttrs }"
+    v-bind="{ ...slotAttrs, ...rootAttrs, ...loadingAttrs }"
   >
     <Spinner
       v-if="loading"

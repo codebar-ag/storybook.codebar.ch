@@ -211,7 +211,7 @@ onBeforeUnmount(() => view?.destroy());
         :value="copyValue"
         :label="copyLabel"
         :copied-message="copiedMessage"
-        class="mt-1.5 mr-1.5 rounded-control border border-line bg-surface/90 text-dim backdrop-blur-sm hover:text-ink focus-visible:ring-accent/50"
+        class="mt-1.5 mr-1.5 rounded-control border border-line bg-surface/90 text-dim backdrop-blur-sm hover:text-ink focus-visible:ring-focus/50"
       />
     </div>
     <div

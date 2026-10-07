@@ -65,8 +65,8 @@ function stepBy(direction: 1 | -1): void {
 <template>
   <div class="relative">
     <input
-      ref="inputRef"
       :id="name ?? undefined"
+      ref="inputRef"
       type="number"
       :name="name ?? undefined"
       :value="modelValue ?? ''"
@@ -76,6 +76,8 @@ function stepBy(direction: 1 | -1): void {
       :disabled="disabled"
       :aria-invalid="invalid ? 'true' : undefined"
       :aria-describedby="describedBy"
+      data-slot="control"
+      :data-state="invalid ? 'invalid' : undefined"
       :class="classes"
       @input="onInput"
     >

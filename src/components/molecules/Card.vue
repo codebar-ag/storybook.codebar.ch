@@ -61,6 +61,8 @@ const rootClass = computed(() =>
 
 <template>
   <div
+    data-slot="card"
+    :data-variant="variant"
     :class="rootClass"
     v-bind="rootAttrs"
   >
@@ -72,6 +74,7 @@ const rootClass = computed(() =>
          normal shape for a form's Save button — could never appear. -->
     <header
       v-if="title !== null || description !== null || $slots.title || $slots.actions"
+      data-slot="card-header"
       :class="['flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 border-b border-line', headerPadding[size]]"
     >
       <div class="min-w-0">
@@ -83,7 +86,8 @@ const rootClass = computed(() =>
              `#actions` on the far side of the header. -->
         <h2
           v-if="title !== null || $slots.title"
-          :class="['flex flex-wrap items-center gap-x-3 gap-y-1 font-semibold text-ink', titleSize[size]]"
+          data-slot="card-title"
+          :class="['flex flex-wrap items-center gap-x-3 gap-y-1 font-heading font-(number:--font-weight-heading) text-ink', titleSize[size]]"
         >
           <slot name="title">
             {{ title }}
@@ -104,12 +108,16 @@ const rootClass = computed(() =>
       </div>
     </header>
 
-    <div :class="padded ? bodyPadding[size] : ''">
+    <div
+      data-slot="card-body"
+      :class="padded ? bodyPadding[size] : ''"
+    >
       <slot />
     </div>
 
     <footer
       v-if="$slots.footer"
+      data-slot="card-footer"
       :class="[footerPadding[size], 'bg-surface-2 border-t border-line text-xs text-muted rounded-b-surface']"
     >
       <slot name="footer" />

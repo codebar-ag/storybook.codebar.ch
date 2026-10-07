@@ -76,6 +76,7 @@ useFocusTrap(panel, open, {
         <div
           ref="panel"
           tabindex="-1"
+          data-slot="modal"
           :class="[
             'relative z-10 w-full rounded-surface border border-line bg-surface shadow-card-hover focus:outline-none',
             size === 'full' ? 'flex h-full flex-col' : size === 'lg' ? 'max-w-3xl' : 'max-w-lg',
@@ -89,7 +90,8 @@ useFocusTrap(panel, open, {
               <slot name="header">
                 <h2
                   :id="titleId"
-                  class="text-lg font-semibold text-ink"
+                  data-slot="modal-title"
+                  class="text-lg font-heading font-(number:--font-weight-heading) text-ink"
                 >
                   {{ title }}
                 </h2>

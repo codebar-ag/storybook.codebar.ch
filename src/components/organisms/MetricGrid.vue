@@ -75,6 +75,7 @@ const gridClass = computed(() => {
 
 <template>
   <div
+    data-slot="metric-grid"
     class="grid gap-px bg-line border border-line rounded-control overflow-hidden"
     :class="gridClass"
   >

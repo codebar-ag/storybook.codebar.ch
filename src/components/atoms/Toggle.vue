@@ -44,7 +44,7 @@ const knobClasses = computed(
         :disabled="disabled"
         @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
       >
-      <span :class="[trackClasses, 'peer-focus-visible:ring-2 peer-focus-visible:ring-accent/50']">
+      <span :class="[trackClasses, 'peer-focus-visible:ring-2 peer-focus-visible:ring-focus/50']">
         <span :class="knobClasses" />
       </span>
     </span>

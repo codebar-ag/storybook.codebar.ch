@@ -14,10 +14,12 @@ withDefaults(
 <template>
   <nav
     :aria-label="label"
-    class="flex h-full w-60 flex-col border-r border-line bg-surface"
+    data-slot="sidebar"
+    class="flex h-full w-60 flex-col border-r border-line bg-chrome shadow-chrome"
   >
     <div
       v-if="$slots.brand"
+      data-slot="sidebar-brand"
       class="flex min-h-14 items-center border-b border-line px-4"
     >
       <slot name="brand" />
@@ -29,6 +31,7 @@ withDefaults(
 
     <div
       v-if="$slots.footer"
+      data-slot="sidebar-footer"
       class="border-t border-line px-2 py-3"
     >
       <slot name="footer" />

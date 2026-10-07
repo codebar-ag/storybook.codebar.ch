@@ -5,6 +5,47 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.25.0
+
+Theming API for consuming apps: role tokens and stable `data-*` hooks, so an
+app can restyle the kit (colours, fonts, borders, radii, shadows) from its own
+stylesheet without forking a component or selecting on utility classes. The
+kit ships no theme; every default resolves to today's value, and every story
+renders pixel-identical to v1.24.1.
+
+### Added
+
+- **Role tokens in `tokens.css`**, each defaulting to the token it replaces:
+  `--font-ui`, `--font-heading`, `--font-weight-heading`, `--text-page-title`
+  (+ `--line-height`), `--color-primary`, `--color-primary-hover`,
+  `--color-on-primary`, `--color-link`, `--color-link-hover`, `--color-focus`,
+  `--color-nav-active-bg`, `--color-nav-active-fg`,
+  `--color-nav-active-marker`, `--color-tab-active-fg`,
+  `--color-tab-active-marker`, `--color-chrome`, `--shadow-chrome` and
+  `--border-control`. Until now `ink` was both body text and the primary
+  button fill, and `accent` both links and every focus ring, so neither could
+  change without the other.
+- **`data-slot` hooks** on the components apps style most (`button`, `link`,
+  `control`, `badge`, `status-badge`, `alert`, `toast`, `card`, `page-heading`,
+  `tabs`/`tab`, `sidebar`, `sidebar-group`, `sidebar-item`, `navbar`,
+  `auth-layout`, `modal`, `drawer`, `table`/`th`/`td`, `metric`, ...), with
+  `data-variant`, `data-size`, `data-state` (`active`, `invalid`) and
+  `data-tone` where the component has one. They are public API: renaming one
+  is a breaking change. Full list: **Foundations/Theming**.
+- **Foundations/Theming** docs page listing the tokens and hooks, and the rule
+  that hooks are for styling only, never to reposition, resize or hide.
+
+### Changed
+
+- **Components read the role tokens** instead of the base ones: `Button`
+  primary (`bg-primary text-on-primary`), `Link` accent (`text-link`), every
+  focus ring (`ring-focus/50`, was `ring-accent/50`), `SidebarItem` and `Tab`
+  active states, `Navbar`/`Sidebar` background (`bg-chrome shadow-chrome`),
+  form-control border width, and the `PageHeading`, `Card`, `Modal` and
+  `Drawer` titles (`font-heading`). Same values, same rendering.
+- **`cx()` knows `text-page-title` is a font size**, so tailwind-merge no
+  longer drops it next to a text colour.
+
 ## v1.24.1
 
 ### Changed

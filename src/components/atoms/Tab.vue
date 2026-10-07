@@ -27,8 +27,10 @@ const { rootAttrs, classAttr } = useRootAttrs();
 
 const classes = computed(() =>
     cx(
-        'inline-flex items-center justify-center min-h-11 whitespace-nowrap rounded-pill px-3.5 py-1.5 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50',
-        props.active ? 'bg-surface text-ink shadow-card' : 'text-muted hover:text-ink',
+        'relative inline-flex items-center justify-center min-h-11 whitespace-nowrap rounded-pill px-3.5 py-1.5 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50',
+        // The active underline (`::after`) is transparent unless an app sets
+        // `--color-tab-active-marker`.
+        props.active ? 'bg-surface text-tab-active-fg shadow-card after:pointer-events-none after:absolute after:inset-x-3.5 after:bottom-0 after:h-0.5 after:bg-tab-active-marker' : 'text-muted hover:text-ink',
         classAttr.value,
     ),
 );
@@ -39,6 +41,8 @@ const classes = computed(() =>
     :is="as"
     :href="href"
     :aria-current="active ? 'page' : undefined"
+    data-slot="tab"
+    :data-state="active ? 'active' : undefined"
     :class="classes"
     v-bind="rootAttrs"
   >

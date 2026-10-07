@@ -16,7 +16,10 @@ withDefaults(
 </script>
 
 <template>
-  <div class="flex flex-col items-center text-center px-5 py-10">
+  <div
+    data-slot="empty-state"
+    class="flex flex-col items-center text-center px-5 py-10"
+  >
     <slot name="illustration">
       <IconBadge
         :icon="icon"
@@ -29,6 +32,7 @@ withDefaults(
 
     <h3
       v-if="title !== null"
+      data-slot="empty-state-title"
       class="font-semibold text-base text-ink"
     >
       {{ title }}

@@ -5,7 +5,10 @@
 
 <template>
   <div class="relative overflow-x-auto">
-    <table class="w-full text-left text-sm">
+    <table
+      data-slot="table"
+      class="w-full text-left text-sm"
+    >
       <thead v-if="$slots.head">
         <tr
           class="border-b border-line text-2xs uppercase tracking-wider text-dim [&>th]:px-4 [&>th]:py-2.5 [&>th]:font-medium"

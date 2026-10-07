@@ -28,19 +28,24 @@ const palette: Record<Tone, string> = {
     neutral: 'bg-surface-2 border-line text-ink',
 };
 
+const tone = computed(() => resolveTone(props.variant, 'info'));
+
 const classes = computed(() =>
-    cx('rounded-control border px-3.5 py-2.5 text-sm', palette[resolveTone(props.variant, 'info')], classAttr.value),
+    cx('rounded-control border px-3.5 py-2.5 text-sm', palette[tone.value], classAttr.value),
 );
 </script>
 
 <template>
   <div
+    data-slot="alert"
+    :data-tone="tone"
     :class="classes"
     role="alert"
     v-bind="rootAttrs"
   >
     <div
       v-if="title !== null"
+      data-slot="alert-title"
       class="font-semibold text-base mb-0.5"
     >
       {{ title }}
