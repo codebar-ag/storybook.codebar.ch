@@ -99,7 +99,7 @@ useFocusTrap(panel, open);
             </button>
           </div>
 
-          <div class="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+          <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4">
             <slot />
           </div>
 

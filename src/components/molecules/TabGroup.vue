@@ -20,7 +20,7 @@ defineProps<TabGroupProps>();
 <template>
   <nav
     :aria-label="label"
-    class="-mx-1 max-w-full overflow-x-auto px-1"
+    class="relative -mx-1 max-w-full overflow-x-auto px-1"
   >
     <div :class="segmentedTrackClasses">
       <slot />

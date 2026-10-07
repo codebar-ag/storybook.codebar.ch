@@ -35,7 +35,7 @@ const knobClasses = computed(
   <label
     class="flex items-start gap-3 min-h-11 py-1.5 cursor-pointer select-none has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50"
   >
-    <span class="mt-0.5">
+    <span class="relative mt-0.5">
       <input
         type="checkbox"
         class="peer sr-only"

@@ -112,7 +112,7 @@ useFocusTrap(panel, open, {
           </div>
           <div
             v-if="$slots.default"
-            :class="['px-5 py-4', { 'min-h-0 flex-1 overflow-y-auto': size === 'full' }]"
+            :class="['px-5 py-4', { 'min-h-0 flex-1 overflow-y-auto overscroll-contain': size === 'full' }]"
           >
             <slot />
           </div>

@@ -70,7 +70,7 @@ const classes = computed(() => cx('text-xl font-semibold text-ink', classAttr.va
       </div>
       <div
         v-if="$slots.actions"
-        class="flex flex-wrap items-center gap-2 shrink-0"
+        class="flex min-w-0 max-w-full flex-wrap items-center gap-2"
       >
         <slot name="actions" />
       </div>

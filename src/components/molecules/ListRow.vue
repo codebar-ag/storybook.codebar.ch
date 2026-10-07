@@ -71,7 +71,7 @@ const tag = computed(() => (props.href !== null ? (props.as ?? 'a') : 'div'));
       </div>
       <div
         v-if="$slots.trailing"
-        class="flex items-center gap-3 shrink-0"
+        class="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-3"
       >
         <slot name="trailing" />
       </div>

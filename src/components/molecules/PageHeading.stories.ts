@@ -82,3 +82,21 @@ export const WithBreadcrumbsAndActions: Story = {
         </PageHeading>`,
     }),
 };
+
+// Four actions: more than fit beside the title on a phone. The cluster drops
+// below the title and wraps its own buttons instead of widening the page.
+// Exercised at phone and desktop width by tests/page-heading.spec.ts.
+export const ManyActions: Story = {
+    render: () => ({
+        components: { PageHeading, Button },
+        template: `<PageHeading eyebrow="Mustermann AG" data-testid="title">
+            File cabinets
+            <template #actions>
+                <Button variant="secondary" size="sm">Export</Button>
+                <Button variant="secondary" size="sm">Import</Button>
+                <Button variant="secondary" size="sm">Sync now</Button>
+                <Button size="sm">New cabinet</Button>
+            </template>
+        </PageHeading>`,
+    }),
+};
