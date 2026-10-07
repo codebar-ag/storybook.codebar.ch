@@ -40,7 +40,7 @@ function toggle(): void {
         type="button"
         :aria-expanded="open ? 'true' : 'false'"
         :aria-controls="`${baseId}-panel`"
-        class="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-sm font-medium text-ink transition cursor-pointer hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/50"
+        class="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-sm font-medium text-ink transition cursor-pointer hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus/50"
         @click="toggle"
       >
         {{ title }}

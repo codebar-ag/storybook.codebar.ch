@@ -39,13 +39,15 @@ defineExpose({
 
 <template>
   <input
-    ref="inputRef"
     :id="name ?? undefined"
+    ref="inputRef"
     :type="type"
     :name="name ?? undefined"
     :value="modelValue"
     :aria-invalid="invalid ? 'true' : undefined"
     :aria-describedby="describedBy"
+    data-slot="control"
+    :data-state="invalid ? 'invalid' : undefined"
     :class="classes"
     v-bind="{ ...passwordManagerAttrs, ...rootAttrs }"
     @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"

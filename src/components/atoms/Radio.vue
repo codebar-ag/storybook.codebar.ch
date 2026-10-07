@@ -39,7 +39,7 @@ const cardClasses = computed(
   <label :class="cardClasses">
     <input
       type="radio"
-      class="mt-1 accent-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+      class="mt-1 accent-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50"
       :name="name ?? undefined"
       :value="value"
       :checked="checked"

@@ -27,7 +27,7 @@ const { describedBy } = useFieldA11y(props);
 const classes = computed(() =>
     cx(
         formControlClasses(props.invalid, 'px-2 py-1.5 cursor-pointer'),
-        'text-sm file:mr-3 file:rounded-control file:border-0 file:bg-ink file:px-3.5 file:py-1.5 file:text-sm file:text-white file:cursor-pointer',
+        'text-sm file:mr-3 file:rounded-control file:border-0 file:bg-primary file:px-3.5 file:py-1.5 file:text-sm file:text-on-primary file:cursor-pointer',
         'hover:file:opacity-90',
         props.invalid ? 'text-danger' : 'text-muted',
     ),
@@ -47,6 +47,8 @@ function onChange(event: Event): void {
     :name="name ?? undefined"
     :aria-invalid="invalid ? 'true' : undefined"
     :aria-describedby="describedBy"
+    data-slot="control"
+    :data-state="invalid ? 'invalid' : undefined"
     :class="classes"
     @change="onChange"
   >

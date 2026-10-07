@@ -8,7 +8,7 @@
  * into any focused field whose font is under 16px.
  */
 const BASE =
-    'block w-full rounded-control border text-control sm:text-base transition ' +
+    'block w-full rounded-control border-(length:--border-control) text-control sm:text-base transition ' +
     'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-2';
 
 const STATE_ERROR = 'border-danger-line bg-danger-soft/40 text-ink';

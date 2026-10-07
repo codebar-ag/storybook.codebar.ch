@@ -23,7 +23,7 @@ const { describedBy, ariaInvalid } = useFieldA11y(props);
 const boxClasses = computed(
     () =>
         'mt-0.5 h-4 w-4 shrink-0 rounded accent-ink focus:outline-none focus-visible:ring-2 ' +
-        'focus-visible:ring-accent/50 disabled:cursor-not-allowed ' +
+        'focus-visible:ring-focus/50 disabled:cursor-not-allowed ' +
         (props.invalid ? 'border-danger-line' : 'border-line'),
 );
 </script>

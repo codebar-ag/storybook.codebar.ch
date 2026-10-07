@@ -63,6 +63,7 @@ useFocusTrap(panel, open);
         <div
           ref="panel"
           tabindex="-1"
+          data-slot="drawer"
           :class="[
             'absolute inset-y-0 flex w-full flex-col border-line bg-surface shadow-card-hover focus:outline-none',
             width,
@@ -77,7 +78,8 @@ useFocusTrap(panel, open);
               <slot name="header">
                 <h2
                   :id="titleId"
-                  class="text-lg font-semibold text-ink"
+                  data-slot="drawer-title"
+                  class="text-lg font-heading font-(number:--font-weight-heading) text-ink"
                 >
                   {{ title }}
                 </h2>

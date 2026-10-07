@@ -31,11 +31,11 @@ withDefaults(
 
 const { rootAttrs, classAttr } = useRootAttrs();
 
-const classes = computed(() => cx('text-xl font-semibold text-ink', classAttr.value));
+const classes = computed(() => cx('text-page-title font-heading font-(number:--font-weight-heading) text-ink', classAttr.value));
 </script>
 
 <template>
-  <div>
+  <div data-slot="page-heading">
     <Breadcrumbs
       v-if="breadcrumbs.length"
       :items="breadcrumbs"
@@ -56,6 +56,7 @@ const classes = computed(() => cx('text-xl font-semibold text-ink', classAttr.va
           {{ eyebrow }}
         </p>
         <h1
+          data-slot="page-title"
           :class="classes"
           v-bind="rootAttrs"
         >

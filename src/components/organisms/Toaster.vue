@@ -76,6 +76,8 @@ const styleFor: Record<ToastType, string> = {
           'pointer-events-auto w-full flex gap-2.5 rounded-control border px-3.5 py-2.5 text-sm shadow-lg',
           styleFor[t.type],
         ]"
+        data-slot="toast"
+        :data-tone="t.type === 'error' ? 'danger' : t.type"
         :role="t.type === 'error' ? 'alert' : 'status'"
         @mouseenter="pause(t)"
         @mouseleave="resume(t)"

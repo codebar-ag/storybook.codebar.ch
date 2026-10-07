@@ -205,7 +205,7 @@ const cellPadding = computed(() => (props.density === 'compact' ? 'px-4 py-1.5' 
 // cell and forwards clicks to the input: the cell carries the bounds, the label
 // carries the target. See helpers/touchTarget.ts.
 const checkboxClasses =
-    'size-4 shrink-0 rounded accent-ink cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50';
+    'size-4 shrink-0 rounded accent-ink cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50';
 
 // Compact pager buttons: an `h-8` box with a 44px hit area (see the footer).
 // Merged over Button's own `h-11 px-3` by its tailwind-merge class handling.
@@ -226,7 +226,10 @@ function onRowClick(row: T, event: MouseEvent): void {
 </script>
 
 <template>
-  <div :class="stacked() ? '@container' : undefined">
+  <div
+    data-slot="data-table"
+    :class="stacked() ? '@container' : undefined"
+  >
     <StackedList
       v-if="stacked()"
       :class="stacked()?.list"
@@ -265,7 +268,10 @@ function onRowClick(row: T, event: MouseEvent): void {
     </div>
 
     <div :class="['relative overflow-x-auto', stacked()?.table]">
-      <table class="w-full text-left text-sm">
+      <table
+        data-slot="table"
+        class="w-full text-left text-sm"
+      >
         <thead>
           <tr
             :class="[
@@ -275,6 +281,7 @@ function onRowClick(row: T, event: MouseEvent): void {
           >
             <th
               v-if="selectable"
+              data-slot="th"
               :class="['w-10', touchTargetBoundsClasses]"
             >
               <label :class="touchTargetLabelClasses">
@@ -300,7 +307,10 @@ function onRowClick(row: T, event: MouseEvent): void {
             >
               {{ col.label }}
             </Th>
-            <th v-if="$slots['row-actions']">
+            <th
+              v-if="$slots['row-actions']"
+              data-slot="th"
+            >
               <span class="sr-only">Actions</span>
             </th>
           </tr>
@@ -324,17 +334,20 @@ function onRowClick(row: T, event: MouseEvent): void {
             >
               <td
                 v-if="selectable"
+                data-slot="td"
                 :class="cellPadding"
               />
               <td
                 v-for="col in columns"
                 :key="col.key"
+                data-slot="td"
                 :class="cellPadding"
               >
                 <div class="h-4 w-3/4 animate-pulse rounded-xs bg-surface-2" />
               </td>
               <td
                 v-if="$slots['row-actions']"
+                data-slot="td"
                 :class="cellPadding"
               />
             </tr>
@@ -346,6 +359,7 @@ function onRowClick(row: T, event: MouseEvent): void {
             class="border-t border-line first:border-t-0"
           >
             <td
+              data-slot="td"
               :colspan="columnCount"
               class="px-4 py-4"
             >
@@ -368,7 +382,10 @@ function onRowClick(row: T, event: MouseEvent): void {
             v-else-if="visibleRows.length === 0"
             class="border-t border-line first:border-t-0"
           >
-            <td :colspan="columnCount">
+            <td
+              data-slot="td"
+              :colspan="columnCount"
+            >
               <slot name="empty">
                 <EmptyState
                   icon="search"
@@ -398,6 +415,7 @@ function onRowClick(row: T, event: MouseEvent): void {
               >
                 <td
                   v-if="selectable"
+                  data-slot="td"
                   :class="[cellPadding, touchTargetBoundsClasses]"
                 >
                   <label :class="touchTargetLabelClasses">
@@ -413,6 +431,7 @@ function onRowClick(row: T, event: MouseEvent): void {
                 <td
                   v-for="col in columns"
                   :key="col.key"
+                  data-slot="td"
                   :class="[cellPadding, col.align === 'right' ? 'text-right tabular-nums' : '']"
                 >
                   <slot
@@ -425,6 +444,7 @@ function onRowClick(row: T, event: MouseEvent): void {
                 </td>
                 <td
                   v-if="$slots['row-actions']"
+                  data-slot="td"
                   :class="[cellPadding, 'w-px whitespace-nowrap text-right']"
                 >
                   <slot
@@ -440,6 +460,7 @@ function onRowClick(row: T, event: MouseEvent): void {
                    inside it do anything. -->
               <tr v-if="$slots['row-detail']">
                 <td
+                  data-slot="td"
                   :colspan="columnCount"
                   class="px-4 pt-0 pb-3"
                 >

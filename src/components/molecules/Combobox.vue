@@ -163,6 +163,8 @@ useClickOutside(root, close, open);
       autocomplete="off"
       data-1p-ignore
       data-lpignore="true"
+      data-slot="control"
+      :data-state="invalid ? 'invalid' : undefined"
       :class="classes"
       @input="onInput"
       @keydown="onKeydown"

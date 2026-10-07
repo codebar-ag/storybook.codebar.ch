@@ -52,8 +52,12 @@ const { rootAttrs, classAttr } = useRootAttrs();
 const classes = computed(() =>
     cx(
         'flex w-full items-center gap-2.5 rounded-control px-2.5 min-h-9 text-left text-sm font-medium transition cursor-pointer',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/50',
-        props.active ? 'bg-surface-2 text-ink' : 'text-muted hover:bg-surface-2 hover:text-ink',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus/50',
+        // Active: the nav-active role tokens. The marker is an inset edge bar,
+        // transparent (invisible) unless a consuming app sets the token.
+        props.active
+            ? 'bg-nav-active-bg text-nav-active-fg shadow-[inset_3px_0_0_var(--color-nav-active-marker)]'
+            : 'text-muted hover:bg-surface-2 hover:text-ink',
         classAttr.value,
     ),
 );
@@ -67,6 +71,8 @@ const classes = computed(() =>
       :type="href === null ? 'button' : undefined"
       :class="classes"
       :aria-current="active ? 'page' : undefined"
+      data-slot="sidebar-item"
+      :data-state="active ? 'active' : undefined"
       v-bind="rootAttrs"
     >
       <Icon
@@ -74,10 +80,12 @@ const classes = computed(() =>
         :name="icon"
         size="sm"
         class="shrink-0 text-dim"
+        data-slot="sidebar-item-icon"
       />
       <span class="min-w-0 flex-1 truncate"><slot /></span>
       <span
         v-if="count"
+        data-slot="sidebar-item-count"
         class="min-w-5 rounded-full bg-surface-2 px-1.5 text-center text-2xs font-medium text-ink tabular-nums"
         :aria-label="countLabel ?? undefined"
       >{{ count }}</span>

@@ -207,6 +207,55 @@
 
   /* DocuWare UI font — only applied inside the DocuWare App Registration mirror. */
   --font-dw: "Open Sans", system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+
+  /* ---- Theming tokens (public API, see Foundations/Theming) ----
+     Role tokens for the places where one base token used to do two jobs:
+     `ink` is body text AND the primary button fill, `accent` is links AND
+     focus rings AND the info tint. Each one DEFAULTS TO THE TOKEN IT REPLACES,
+     so the kit renders exactly as before until a consuming app redefines one
+     (e.g. on `:root` under its own selector). They are `var()` references on
+     purpose (`@theme`, not `@theme inline`): an app that only changes `ink`
+     still moves the primary button with it.
+
+     These names are a public API. Renaming or removing one is a breaking
+     change (major version). The kit itself never ships a theme. */
+
+  /* Typography roles. `font-ui` is the app font (the body of every consumer);
+     `IdCell` and code keep `font-mono` regardless. */
+  --font-ui:                 var(--font-mono);
+  --font-heading:            var(--font-ui);
+  --font-weight-heading:     600;
+  /* Page title (`PageHeading`). Defaults to the `text-xl` step. */
+  --text-page-title:               var(--text-xl);
+  --text-page-title--line-height:  var(--text-xl--line-height);
+
+  /* Primary action (`Button` variant="primary"). */
+  --color-primary:           var(--color-ink);
+  --color-primary-hover:     var(--color-ink-hover);
+  --color-on-primary:        #ffffff;
+
+  /* Links (`Link` tone="accent", breadcrumbs) and the focus ring. */
+  --color-link:              var(--color-accent);
+  --color-link-hover:        var(--color-link);
+  --color-focus:             var(--color-accent);
+
+  /* Navigation: the active `SidebarItem` and the active `Tab`. The markers
+     are an edge bar (sidebar) and an underline (tab); transparent = none. */
+  --color-nav-active-bg:     var(--color-surface-2);
+  --color-nav-active-fg:     var(--color-ink);
+  --color-nav-active-marker: transparent;
+  --color-tab-active-fg:     var(--color-ink);
+  --color-tab-active-marker: transparent;
+
+  /* App chrome: `Navbar` and `Sidebar` background and their elevation. */
+  --color-chrome:            var(--color-surface);
+  --shadow-chrome:           0 0 #0000;
+
+  /* Border width of form controls (Input, Select, Textarea, ...). Outside
+     Tailwind's namespaces, so no utility is generated: components read it as
+     an arbitrary value (`border-(length:--border-control)`), and Tailwind
+     emits it on `:root` as soon as something references it. */
+  --border-control:          1px;
 }
 
 @keyframes fade { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }

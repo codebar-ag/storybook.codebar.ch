@@ -45,7 +45,10 @@ function closeOnNavigate(event: MouseEvent): void {
 </script>
 
 <template>
-  <div class="flex min-h-dvh bg-bg text-ink">
+  <div
+    data-slot="app-shell"
+    class="flex min-h-dvh bg-bg text-ink"
+  >
     <aside
       v-if="$slots.sidebar"
       class="sticky top-0 hidden h-dvh shrink-0 lg:block"

@@ -22,7 +22,10 @@ defineProps<TabGroupProps>();
     :aria-label="label"
     class="relative -mx-1 max-w-full overflow-x-auto px-1"
   >
-    <div :class="segmentedTrackClasses">
+    <div
+      data-slot="tabs"
+      :class="segmentedTrackClasses"
+    >
       <slot />
     </div>
   </nav>

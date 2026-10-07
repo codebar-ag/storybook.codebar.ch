@@ -65,7 +65,10 @@ const sizes: Record<string, string> = {
 // `variant` deliberately has no prop default: with one, an unset `variant`
 // and an explicit `variant="neutral"` are indistinguishable here, so passing
 // both props could not be detected. `resolveTone(undefined, 'neutral')`
-// applies the same default one level down, so behaviour is unchanged.
+// applies the same default one level down, so behaviour is unchanged. The
+// resolved tone is also exposed as `data-tone` (Foundations/Theming).
+const tone = computed(() => resolveTone(props.variant, 'neutral'));
+
 const classes = computed(() => {
     const base = 'inline-flex items-center gap-1 font-medium rounded-control border ';
     const size = pick(sizes, props.size, 'md', 'Badge.size');
@@ -84,10 +87,16 @@ const classes = computed(() => {
         return `${base}${categoryPalette[resolveCategory(props.category, 'indigo')]} ${size}`;
     }
 
-    return `${base}${palette[resolveTone(props.variant, 'neutral')]} ${size}`;
+    return `${base}${palette[tone.value]} ${size}`;
 });
 </script>
 
 <template>
-  <span :class="classes"><slot /></span>
+  <span
+    data-slot="badge"
+    :data-tone="category === undefined ? tone : undefined"
+    :data-category="category !== undefined ? resolveCategory(category, 'indigo') : undefined"
+    :data-size="size"
+    :class="classes"
+  ><slot /></span>
 </template>

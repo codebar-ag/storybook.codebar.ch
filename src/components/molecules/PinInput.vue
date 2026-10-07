@@ -43,7 +43,7 @@ const chars = computed(() => {
 const cellClasses = computed(() =>
     cx(
         'size-11 rounded-control border text-center text-lg font-semibold text-ink transition',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50',
         'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-2',
         props.invalid ? 'border-danger-line bg-danger-soft/40' : 'border-line bg-bg',
     ),

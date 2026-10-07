@@ -20,7 +20,7 @@ withDefaults(
     <CopyButton
       v-if="copyable"
       :value="value"
-      class="text-dim hover:text-ink focus-visible:ring-accent/50"
+      class="text-dim hover:text-ink focus-visible:ring-focus/50"
     />
   </div>
 </template>

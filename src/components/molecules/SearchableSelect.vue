@@ -146,6 +146,7 @@ watch(query, () => {
       role="combobox"
       :aria-expanded="open"
       aria-haspopup="listbox"
+      data-slot="control"
       :class="triggerClasses"
       @click="open ? closeMenu() : openMenu()"
       @keydown="onTriggerKeydown"

@@ -19,7 +19,7 @@ export const Default: Story = {
         template: `<div>
             <CopyButton
                 value="https://mcp.gateway.test/mcp/acme/mustermann"
-                class="text-dim hover:text-ink focus-visible:ring-accent/50"
+                class="text-dim hover:text-ink focus-visible:ring-focus/50"
             />
             <Toaster />
         </div>`,
@@ -35,7 +35,7 @@ export const CustomToastMessage: Story = {
                 value="dhk_live_4f2a9c"
                 label="Copy API key"
                 copied-message="API key copied"
-                class="text-dim hover:text-ink focus-visible:ring-accent/50"
+                class="text-dim hover:text-ink focus-visible:ring-focus/50"
             />
             <Toaster />
         </div>`,
