@@ -5,6 +5,15 @@ All notable changes to `@codebar-ag/storybook`.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
 this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.25.1
+
+### Changed
+
+- **apexcharts 8 is supported.** The optional `apexcharts` peer range now
+  includes `^8.0.0`, and the kit develops and tests against apexcharts 8.4.
+  `Chart` uses only `new ApexCharts`, `render`, `updateOptions` and `destroy`,
+  which are unchanged in v8. Apps on apexcharts 4 to 7 need no change.
+
 ## v1.25.0
 
 Theming API for consuming apps: role tokens and stable `data-*` hooks, so an
